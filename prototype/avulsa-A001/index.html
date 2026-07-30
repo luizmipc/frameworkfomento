@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<!-- Protótipo não-funcional — task A001. HTML/CSS/JS puro, dados mockados, sem persistência real. -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Editais Abertos — Protótipo A001</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>Editais Abertos</h1>
+  <p class="subtitle">Acompanhe as chamadas de fomento disponíveis e organize seu progresso</p>
+</header>
+
+<nav class="view-switch" role="tablist" aria-label="Alternar visão">
+  <button type="button" role="tab" id="tab-tabela" aria-selected="true" aria-controls="view-tabela" class="view-btn active" data-view="tabela">Tabela</button>
+  <button type="button" role="tab" id="tab-kanban" aria-selected="false" aria-controls="view-kanban" class="view-btn" data-view="kanban">Kanban</button>
+</nav>
+
+<main>
+  <!-- Visão em tabela -->
+  <section id="view-tabela" role="tabpanel" aria-labelledby="tab-tabela" class="view">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Chamada</th>
+            <th scope="col">Descrição</th>
+            <th scope="col">Instituição</th>
+            <th scope="col">Abertura</th>
+            <th scope="col">Fechamento</th>
+            <th scope="col">Link</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-corpo">
+          <!-- linhas geradas via script.js a partir dos dados mockados -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Visão kanban -->
+  <section id="view-kanban" role="tabpanel" aria-labelledby="tab-kanban" class="view hidden">
+    <div class="board" id="board">
+      <div class="column" data-status="backlog">
+        <h2>Backlog</h2>
+        <div class="card-list" data-status="backlog"></div>
+      </div>
+      <div class="column" data-status="andamento">
+        <h2>Em andamento</h2>
+        <div class="card-list" data-status="andamento"></div>
+      </div>
+      <div class="column" data-status="validacao">
+        <h2>Validação</h2>
+        <div class="card-list" data-status="validacao"></div>
+      </div>
+      <div class="column" data-status="concluido">
+        <h2>Concluído</h2>
+        <div class="card-list" data-status="concluido"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<template id="card-template">
+  <article class="card" draggable="true" tabindex="0">
+    <h3 class="card-title"></h3>
+    <p class="card-inst"></p>
+    <p class="card-dates"></p>
+    <div class="card-actions">
+      <button type="button" class="move-btn" data-dir="-1" aria-label="Mover para coluna anterior">&larr;</button>
+      <button type="button" class="move-btn" data-dir="1" aria-label="Mover para próxima coluna">&rarr;</button>
+    </div>
+  </article>
+</template>
+
+<script src="script.js"></script>
+</body>
+</html>
