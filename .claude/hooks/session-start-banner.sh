@@ -20,4 +20,8 @@ Kanban e atalhos:
   /feature-start  atalho: specify->clarify->plan->tasks->kanban-sync numa tacada
   /quick-task     atalho: cria e ja implementa uma tarefa pequena
   /docs-sync      atualiza docs/ a partir do estado real do projeto
+
+Fundraiser (persona de captador de recursos):
+  /fundraiser-test             testa o prototipo estatico, devolve parecer em docs/persona/
+  /fundraiser-production-test  testa a aplicacao real ja implementada, devolve parecer em docs/persona/
 EOF
