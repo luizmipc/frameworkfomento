@@ -1,6 +1,6 @@
 ---
 name: "kanban-sync"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, ou cria uma nova tarefa avulsa e a aloca no quadro."
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, ou cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
 compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, e docs/ (ver item 0 do plano de implementação)"
 metadata:
@@ -56,8 +56,20 @@ direto para o modo "Criar nova tarefa" com essa descrição.
 
 ## Modo "Criar nova tarefa"
 
-1. Se `$ARGUMENTS` não trouxer a descrição da tarefa, pergunte no chat (texto
-   livre): "Qual a descrição dessa tarefa nova?"
+1. **Origem da(s) descrição(ões)**:
+   - Se `$ARGUMENTS` já trouxer a descrição da tarefa em linguagem natural,
+     pule a pergunta abaixo — origem é "manual", uma única descrição, use
+     `$ARGUMENTS` como texto.
+   - Caso contrário, pergunte via `AskUserQuestion` (2 opções): **"Como você
+     quer criar essa tarefa nova?"**
+     - **"Descrever manualmente"** (Recomendado) — pergunte no chat (texto
+       livre): "Qual a descrição dessa tarefa nova?". Uma única descrição.
+     - **"A partir de um teste de persona (docs/persona/)"** — rode a
+       sub-rotina **Origem: docs/persona/** (abaixo); ela devolve uma lista
+       de uma ou mais descrições (uma por dor escolhida).
+   - Repita os passos 2 a 6 abaixo **para cada descrição** da lista resultante,
+     na ordem, antes de seguir ao passo 7 (uma única Sincronização/Retrospectiva
+     no final, mesmo que várias tarefas tenham sido criadas).
 2. **Checagem de escopo**: releia as seções `#sl` e `#fr` de
    `docs/index.html`. Se ainda estiverem no texto inicial ("A preencher"),
    siga sem checagem. Caso contrário, avalie se a descrição parece não bater
@@ -90,8 +102,40 @@ direto para o modo "Criar nova tarefa" com essa descrição.
      protótipo junto da linha da task em `KANBAN.md`.
    - **"Não"** — pule esta etapa.
 7. Rode a **Sincronização** (para também atualizar as tasks reais de
-   `specs/*/tasks.md`, preservando a tarefa avulsa recém-criada).
+   `specs/*/tasks.md`, preservando a(s) tarefa(s) avulsa(s) recém-criada(s)).
 8. Rode a **Retrospectiva**.
+
+## Origem: docs/persona/
+
+Sub-rotina do Modo "Criar nova tarefa" (passo 1) — transforma dores
+documentadas em `docs/persona/*.html` (geradas por `/fundraiser-test` ou
+`/fundraiser-production-test`) em uma ou mais descrições de tarefa avulsa.
+Não corrige nada nem edita o arquivo de persona — só lê.
+
+1. Liste os arquivos: `find docs/persona -maxdepth 1 -name '*.html'`. Se
+   nenhum existir, informe "Nenhum teste de persona encontrado em
+   docs/persona/ ainda — rode /fundraiser-test ou /fundraiser-production-test
+   primeiro." e volte à pergunta do passo 1 do Modo "Criar nova tarefa" (o
+   usuário escolhe manual ou desiste).
+2. Se houver mais de um arquivo, pergunte via `AskUserQuestion` (até 4
+   opções, rotuladas pelo nome do arquivo sem extensão) qual usar. Se houver
+   só um, use-o direto sem perguntar.
+3. Leia o arquivo escolhido e extraia cada dor da seção `#dores` (um
+   `<section class="story" id="dor-N">` por dor, com título em `<h3>` e o
+   texto de "Por que é um problema"). Se existir uma seção "Para quem
+   resolver" (`#resolver`), use-a para já saber o dono provável de cada dor
+   (`designer`, `product-owner`, `dev`).
+4. Ofereça as dores via `AskUserQuestion` (`multiSelect: true`) para o
+   usuário escolher quais viram tarefa — mesma paginação do Passo 2 de
+   `kanban-start/SKILL.md`: até 4 por chamada (3 primeiras + "Ver mais
+   dores" se houver mais de 4), rótulo = título curto da dor (`Dor N —
+   <título>`), descrição = resumo de 1 frase de "Por que é um problema".
+5. Para cada dor selecionada, monte a descrição da tarefa: `<título da dor>
+   (via teste de persona docs/persona/<arquivo>#dor-N)` — o suficiente para
+   quem for implementar abrir o link e ler o parecer completo; não copie o
+   parecer inteiro para dentro do `KANBAN.md`.
+6. Devolva a lista de descrições montadas ao passo 1 do Modo "Criar nova
+   tarefa".
 
 ## Checagem de escopo
 
@@ -167,7 +211,9 @@ registre a lição aprendida no arquivo correto (um agente em
 ## Done When
 
 - [ ] Tipo de reunião determinado (acompanhamento ou criar tarefa)
-- [ ] `KANBAN.md` reflete o estado atual (ou a nova tarefa foi adicionada)
+- [ ] Se "criar tarefa": origem escolhida (manual ou docs/persona/) e
+      `KANBAN.md` reflete o estado atual com a(s) tarefa(s) nova(s)
+      adicionada(s)
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
       a escolha do usuário (abandonar ou atualizar docs)
 - [ ] Retrospectiva rodou e, se houve problema reportado, o arquivo correto
