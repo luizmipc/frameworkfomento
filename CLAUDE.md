@@ -14,3 +14,4 @@ When code is added to this repo, update this file with:
 
 - Commit messages always follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`, etc.).
 - After committing, push right away unless the user says otherwise.
+- Exception: inside the `/kanban-start` flow (and `/quick-task`, which inherits it), don't push automatically — Passo 10 of `.claude/skills/kanban-start/SKILL.md` asks explicitly, at the end of the retrospective, whether to commit-only or commit-and-push.

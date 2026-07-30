@@ -194,6 +194,34 @@ QA rodaram e passaram corretamente?"**
 Este é o procedimento canônico de retrospectiva — `kanban-sync/SKILL.md`
 referencia esta seção em vez de repeti-la.
 
+Ao final da Retrospectiva (nos dois ramos — "Sem problemas" e depois de
+registrar a lição aprendida em "Encontrei um problema"), siga para o Passo
+10. **Exceção**: se o fluxo parou antes por bloqueio de QA (Passo 6, retry
+esgotado), a Retrospectiva nem chega a rodar — não há Passo 10 nesse caso.
+
+## Passo 10 — Commit
+
+Pergunte via `AskUserQuestion` (3 opções): **"Retrospectiva concluída. Como
+registrar essa mudança no git?"**
+- **"Commit e push"** (Recomendado) — cria o commit e dá push na sequência.
+- **"Só commit"** — cria o commit, sem push (fica local para revisão).
+- **"Não commitar agora"** — não faz nada; reporte como pendente no
+  Completion Report.
+
+Se "Commit e push" ou "Só commit":
+1. Rode `git status` e `git diff` para revisar exatamente o que mudou nesta
+   task (implementação do `dev`, ajustes em `docs/`, `KANBAN.md`,
+   `specs/<slug>/tasks.md`).
+2. Monte a mensagem em **Conventional Commits** (`feat:`, `fix:`, `docs:`,
+   `chore:`, etc. — conforme a natureza da mudança predominante): título
+   curto no padrão, seguido de um **corpo detalhado**. O commit deve
+   funcionar como documentação da mudança, não só um rótulo — inclua o que
+   mudou, por que (contexto da task/spec que motivou), decisões relevantes
+   tomadas durante a implementação, e o resultado do QA. Errar para mais
+   detalhe, não para menos.
+3. `git add` só os arquivos relevantes (nunca `-A`/`.`), depois `git commit`.
+4. Se "Commit e push", rode `git push` na sequência.
+
 ## Completion Report
 
 ```
@@ -205,6 +233,7 @@ referencia esta seção em vez de repeti-la.
 - Resultado do QA: <aprovado | reprovado (retry usado) | reprovado (bloqueado)>
 - Estado no KANBAN.md: <In Progress | Done>
 - docs/ atualizado: <arquivo(s) ou "nenhum">
+- Commit: <hash curto + resumo do título | "só commit, sem push" | "não commitado">
 
 Rode /kanban-start de novo para a próxima tarefa, ou /kanban-sync só para
 olhar o quadro.
@@ -223,4 +252,6 @@ olhar o quadro.
 - [ ] Checkpoint de etapa rodou após dev, após QA aprovar, e após
       atualização de docs (quando esta última aconteceu)
 - [ ] `kanban-sync` rodou de novo após o ciclo dev/qa
-- [ ] Retrospectiva rodou ao final
+- [ ] Retrospectiva rodou ao final (quando não houve bloqueio de QA)
+- [ ] Depois da Retrospectiva, perguntou-se sobre commit/push e, se aceito,
+      o commit seguiu Conventional Commits com corpo detalhado
