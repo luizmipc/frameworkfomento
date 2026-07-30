@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.venv/
+app/db.sqlite3
+.claude/settings.local.json

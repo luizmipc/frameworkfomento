@@ -1,0 +1,17 @@
+{
+  "enabledPlugins": {
+    "ponytail@ponytail": true
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash /home/lm/repos/frameworkfomento/.claude/hooks/session-start-banner.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
