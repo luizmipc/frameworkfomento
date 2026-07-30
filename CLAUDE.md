@@ -9,3 +9,8 @@ This repository is a fresh scaffold — it currently contains only a README and 
 When code is added to this repo, update this file with:
 - Build/lint/test commands (and how to run a single test)
 - The high-level architecture once it exists
+
+## Git workflow
+
+- Commit messages always follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`, etc.).
+- After committing, push right away unless the user says otherwise.
