@@ -1,0 +1,130 @@
+:root {
+  --fg: #1a1d24;
+  --muted: #5a6070;
+  --accent: #3a5fd9;
+  --border: #dde1e8;
+  --bg: #f4f5f7;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem 1rem;
+}
+
+#export-pdf {
+  margin-bottom: 1.5rem;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 0.4rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+#export-pdf:hover {
+  opacity: 0.9;
+}
+
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  background: #fff;
+  padding: 16mm 18mm;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+}
+
+.kicker {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+}
+
+h1 {
+  font-size: 1.7rem;
+  margin: 0 0 0.4rem;
+  line-height: 1.2;
+}
+
+.lede {
+  color: var(--muted);
+  font-size: 1rem;
+  margin: 0;
+}
+
+header {
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem 2rem;
+}
+
+.block h2 {
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin: 0 0 0.5rem;
+}
+
+.block p, .block ul {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--fg);
+  margin: 0;
+}
+
+.block ul {
+  padding-left: 1.1rem;
+}
+
+.block li + li {
+  margin-top: 0.3rem;
+}
+
+footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+footer p {
+  margin: 0.2rem 0;
+}
+
+footer strong {
+  color: var(--fg);
+}
+
+@media print {
+  .no-print { display: none; }
+  body { padding: 0; background: #fff; }
+  .page {
+    width: auto;
+    min-height: auto;
+    box-shadow: none;
+    padding: 0;
+  }
+  @page {
+    size: A4;
+    margin: 16mm 18mm;
+  }
+}
