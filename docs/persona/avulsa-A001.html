@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persona — Marina Advíncula (protótipo avulsa-A001) — frameworkfomento</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <p class="kicker group-label">docs/persona</p>
+    <a href="#top">Marina Advíncula</a>
+    <a href="#canvas">Quem é essa persona</a>
+    <a href="#tarefas">Tarefas testadas</a>
+    <a href="#dores">Dores identificadas</a>
+    <a href="#bem">O que funcionou bem</a>
+    <a href="#resolver">Para quem resolver</a>
+
+    <p class="kicker group-label">frameworkfomento</p>
+    <a href="../index.html">Documentação</a>
+  </nav>
+
+  <main>
+    <p class="kicker">fundraiser-test · docs/persona</p>
+    <h1 id="top">Marina Advíncula</h1>
+    <p class="quote">"Eu não tenho tempo de garimpar edital em seis abas diferentes — se a tela não me diz em cinco segundos o que fecha essa semana, eu perco pra planilha mesmo."</p>
+    <p class="lede">Teste de usabilidade ao vivo, via browser real (Chrome conectado, extensão <code>mcp__claude-in-chrome__*</code>, servido via <code>python3 -m http.server</code> — não leitura de código nem <code>file://</code>), do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-07-30, via comando <code>/fundraiser-test</code>. Um item específico (sincronia entre visões) foi confirmado por leitura de <code>script.js</code>, não por clique ao vivo — sinalizado no lugar.</p>
+
+    <h2 id="canvas">Quem é essa persona</h2>
+    <table>
+      <tbody>
+        <tr><th>Papel</th><td>Coordenadora de captação de recursos (parcial, 20h/semana — o resto do tempo ela é educadora)</td></tr>
+        <tr><th>Organização</th><td>Instituto Semear — ONG de educação socioambiental, porte pequeno, equipe de 4 pessoas, sem setor de captação dedicado</td></tr>
+        <tr><th>Editais acompanhados hoje</th><td>Entre 8 e 12 simultaneamente (públicos e privados), em estágios diferentes de andamento</td></tr>
+        <tr><th>Ferramentas atuais</th><td>Planilha Google Sheets compartilhada com o time + lembretes no Google Calendar + grupo de WhatsApp da equipe para avisos de prazo</td></tr>
+        <tr><th>Familiaridade técnica</th><td>Média — confortável com planilhas, Trello e formulários online; não é desenvolvedora, não lê código nem espera "aprender" uma ferramenta nova</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Objetivos</h3>
+    <ul>
+      <li>Saber, sem precisar reler tudo, quais editais fecham nas próximas semanas para priorizar o tempo escasso da equipe.</li>
+      <li>Ter uma visão única de "quanto falta" para cada proposta em andamento, sem depender de memória ou de perguntar no grupo do WhatsApp.</li>
+      <li>Conseguir abrir a chamada oficial de um edital específico rapidamente quando precisa reconferir um detalhe.</li>
+    </ul>
+    <h3>Frustrações atuais (antes de testar o protótipo)</h3>
+    <ul>
+      <li>A planilha não avisa sozinha quando um prazo está próximo — ela depende de lembrete manual no Calendar, que às vezes não é criado a tempo.</li>
+      <li>Não há coluna de "estágio" padronizada na planilha — cada pessoa da equipe anota o andamento com palavras diferentes ("enviado", "em elaboração", "quase lá"), o que gera retrabalho para entender o real status.</li>
+      <li>Links de chamadas se perdem em conversas antigas do WhatsApp quando alguém precisa reabrir um edital semanas depois.</li>
+    </ul>
+
+    <h2 id="tarefas">Tarefas testadas</h2>
+    <ol>
+      <li>Descobrir, olhando a tela, quais editais fecham em breve, para decidir a ordem de prioridade da semana.</li>
+      <li>Abrir o link oficial de um edital específico ("Programa de Fomento a Startups de Impacto") a partir do quadro Kanban, onde ela está acompanhando o progresso dele.</li>
+      <li>Mover um edital do Backlog para "Em andamento" ao começar a trabalhar nele, e verificar se o estágio muda também na tabela.</li>
+      <li>Usar a tela numa janela de navegador do tamanho que ela normalmente usa no dia a dia (não maximizada — split-screen com e-mail/planilha ao lado) e ver se a tabela continua legível.</li>
+      <li>Ver o quadro Kanban completo, com as quatro colunas visíveis de uma vez, num monitor de desktop padrão.</li>
+    </ol>
+
+    <h2 id="dores">Parecer — dores identificadas</h2>
+
+    <section class="story" id="dor-1">
+      <div class="story-head">
+        <span class="badge badge-high">🔴 alta</span>
+        <h3>Tabela em janela estreita esconde justamente as colunas de prazo</h3>
+      </div>
+      <p><strong>O que aconteceu:</strong> na largura de janela padrão testada (~463px, tamanho inicial antes de redimensionar — próximo do que sobra numa tela em split-screen com e-mail ou planilha aberta ao lado), só 3 das 6 colunas da tabela ficam visíveis sem rolar (Chamada, Descrição, Instituição). Abertura, Fechamento e Link — as três colunas mais decisivas para priorizar — ficam fora da área visível, sem qualquer indicador de que há mais conteúdo à direita (sem seta, sombra ou gradiente na borda).</p>
+      <p><strong>Por que é um problema:</strong> Marina normalmente não trabalha com o navegador maximizado — ela alterna entre e-mail, planilha e essa tela. Se a primeira coisa que ela vê ao abrir a tela é uma tabela sem data de fechamento visível, e nada sugere que precisa rolar, o objetivo principal da tarefa ("o que fecha essa semana?") falha silenciosamente. É exatamente o cenário que a SC-005 da spec ("identificar editais com prazo vencido em poucos segundos") promete resolver.</p>
+      <p><strong>Recomendação:</strong> layout responsivo para a tabela (ex.: colunas priorizadas primeiro, ou empilhamento em card) — fica com o designer.</p>
+    </section>
+
+    <section class="story" id="dor-2">
+      <div class="story-head">
+        <span class="badge badge-high">🔴 alta</span>
+        <h3>Quadro Kanban não cabe nem em desktop padrão</h3>
+      </div>
+      <p><strong>O que aconteceu:</strong> mesmo numa janela larga de desktop (1440×900), as quatro colunas do quadro (Backlog, Em andamento, Validação, Concluído) juntas ultrapassam a largura disponível — a coluna "Concluído" fica parcialmente fora da tela, exigindo rolagem horizontal. Confirmado via screenshot rolando a página.</p>
+      <p><strong>Por que é um problema:</strong> o valor de um quadro Kanban é justamente enxergar todos os estágios de uma vez — é assim que Marina decide rapidamente "o que ainda está parado no Backlog vs. o que já terminei". Se ela precisa rolar horizontalmente até em um monitor comum, perde exatamente essa visão panorâmica, e provavelmente nem vai perceber que existe uma quarta coluna, achando que só há três estágios visíveis.</p>
+      <p><strong>Recomendação:</strong> ajustar a largura mínima das colunas do quadro para caber as quatro em resoluções de desktop comuns — fica com o designer.</p>
+    </section>
+
+    <section class="story" id="dor-3">
+      <div class="story-head">
+        <span class="badge badge-medium">🟡 média</span>
+        <h3>Card do Kanban não tem o link da chamada</h3>
+      </div>
+      <p><strong>O que aconteceu:</strong> os cards do quadro mostram chamada, instituição e datas, mas não o link para a chamada oficial. Para abrir o link de um edital que Marina está acompanhando no quadro (Tarefa 2), é preciso trocar para a visão Tabela e localizar o mesmo edital de novo lá.</p>
+      <p><strong>Por que é um problema:</strong> Marina passa a maior parte do tempo na visão Kanban (é onde ela decide o que priorizar); ter que trocar de aba/visão e reencontrar o mesmo edital para simplesmente abrir o link é um passo a mais desnecessário, e quebra o hábito de "olhar o card, abrir a chamada, decidir". A própria spec (FR-012) já pede o link acessível "diretamente a partir da tabela e do quadro" — o protótipo atende isso só na tabela.</p>
+      <p><strong>Recomendação:</strong> incluir o link (ou um atalho para ele) no card do quadro.</p>
+    </section>
+
+    <section class="story" id="dor-4">
+      <div class="story-head">
+        <span class="badge badge-medium">🟡 média</span>
+        <h3>Sem busca, filtro ou ordenação em nenhuma das duas visões</h3>
+      </div>
+      <p><strong>O que aconteceu:</strong> nem a tabela nem o quadro oferecem ordenar por data de fechamento, filtrar por instituição ou buscar por nome. Com os 5 editais mockados isso não incomoda — mas Marina acompanha de 8 a 12 editais reais ao mesmo tempo.</p>
+      <p><strong>Por que é um problema:</strong> sem ordenação por prazo, "o que fecha primeiro" continua exigindo leitura manual de todas as linhas/cards — a mesma tarefa manual que a planilha atual já exige dela, sem ganho real. Isso não está no escopo declarado de A001/US1 (que é listagem + acompanhamento de estágio, não organização avançada), mas é uma limitação que vai aparecer rápido assim que o volume de editais crescer além do mock.</p>
+      <p><strong>Recomendação:</strong> não é bloqueante para esta spec — registrar como candidato a requisito futuro, a critério do product-owner.</p>
+    </section>
+
+    <section class="story" id="dor-5">
+      <div class="story-head">
+        <span class="badge badge-low">🟢 baixa</span>
+        <h3>Card focável por Tab, mas sem ação própria</h3>
+      </div>
+      <p><strong>O que aconteceu:</strong> cada card tem <code>tabindex="0"</code> (é alcançado pela tecla Tab) mas não reage a nada além dos dois botões internos (que já são <code>&lt;button&gt;</code> nativos e funcionam com Enter/Espaço). O foco no card em si não faz nada.</p>
+      <p><strong>Por que é um problema:</strong> para alguém navegando por teclado, é uma parada extra sem função aparente em cada um dos 5+ cards — pequeno atrito cumulativo, não uma tarefa quebrada.</p>
+    </section>
+
+    <section class="story" id="dor-6">
+      <div class="story-head">
+        <span class="badge badge-low">🟢 baixa</span>
+        <h3>Indicação de prazo vencido (FR-011) não pôde ser observada ao vivo</h3>
+      </div>
+      <p><strong>O que aconteceu:</strong> nenhum dos 5 editais mockados tem data de fechamento vencida (todas são de 2026, no futuro) — não foi possível confirmar visualmente, ao vivo, se/como o protótipo destacaria um edital com prazo vencido.</p>
+      <p><strong>Por que é um problema:</strong> é justamente o tipo de situação em que Marina mais precisaria de destaque visual — um edital que passou da data sem ela perceber. Isso é lacuna do dataset de demonstração do protótipo, não necessariamente do design; mas também significa que essa parte do requisito (FR-011) segue sem validação por este teste.</p>
+    </section>
+
+    <h2 id="bem">O que funcionou bem</h2>
+    <ul>
+      <li><strong>Mover estágio é rápido e sem ruído:</strong> clicar em "→" moveu o card instantaneamente, sem diálogo de confirmação nem esperar carregamento — bate com o hábito dela de decisões rápidas entre uma tarefa e outra.</li>
+      <li><strong>Bordas do fluxo tratadas corretamente:</strong> o primeiro card do Backlog já nasce com "←" desabilitado, e o card em "Concluído" tem "→" desabilitado — não dá pra "sair" dos dois extremos por engano. Comportamento sólido, sem gambiarra visível.</li>
+      <li><strong>Link abre em nova aba</strong> (<code>target="_blank" rel="noopener"</code>, confirmado no HTML): ela não perde a tela de acompanhamento ao abrir a chamada oficial para conferir um detalhe.</li>
+      <li><strong>Drag-and-drop implementado como alternativa aos botões</strong> (confirmado em <code>script.js</code>, não testado ao vivo): dá a ela a opção de arrastar o card em vez de clicar, se preferir.</li>
+      <li><em>Não testado ao vivo, confirmado por leitura de código:</em> tabela e quadro leem do mesmo array de dados em memória, então uma mudança de estágio no quadro deveria refletir na tabela sem passo extra — coerente com o que ela espera (uma fonte de verdade única), mas não foi clicado/confirmado visualmente nesta sessão.</li>
+    </ul>
+
+    <h2 id="resolver">Para quem resolver</h2>
+    <ul>
+      <li><strong>Dor 1</strong> (tabela some prazo em janela estreita) → <code>designer</code> (layout responsivo).</li>
+      <li><strong>Dor 2</strong> (quadro não cabe em desktop) → <code>designer</code> (largura das colunas do quadro).</li>
+      <li><strong>Dor 3</strong> (link ausente no card) → <code>designer</code> (onde/como exibir) e <code>product-owner</code> (FR-012 já pede link acessível "da tabela e do quadro" — o protótipo atende só a tabela).</li>
+      <li><strong>Dor 4</strong> (sem busca/ordenação) → <code>product-owner</code> (candidato a requisito futuro, fora do escopo declarado de US1).</li>
+      <li><strong>Dor 5</strong> (tabindex sem função) → <code>designer</code> (detalhe de acessibilidade).</li>
+      <li><strong>Dor 6</strong> (FR-011 não observável) → nota para quem curar o dataset de demonstração na próxima rodada de teste; não é um achado sobre o design em si.</li>
+    </ul>
+
+    <p class="page-footer">Este documento não corrige nada — é insumo para o <code>product-owner</code>/<code>designer</code> agirem sobre o parecer, via <code>/quick-task</code> ou ajuste de <code>spec.md</code>, a critério de quem revisa.</p>
+  </main>
+
+</div>
+<script src="../assets/script.js" defer></script>
+</body>
+</html>

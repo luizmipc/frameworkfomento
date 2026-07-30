@@ -26,6 +26,7 @@ Este projeto é desenvolvido com o [GitHub Spec Kit](https://github.com/github/s
 
 Documentação viva do projeto:
 - `docs/` — requisitos funcionais/não funcionais, regras de negócio, escopo, arquitetura, diagrama de classes, critérios de aceite. Site HTML autocontido, sem markdown — abra `docs/index.html` no navegador.
+- `docs/persona/` — documentos de Persona (canvas + parecer/dores) gerados por `/fundraiser-test` e `/fundraiser-production-test`, um captador de recursos real testando o protótipo ou a aplicação em produção.
 - `.specify/memory/constitution.md` — princípios não-negociáveis do projeto (simplicidade/YAGNI, qualidade via QA antes de "Done", spec antes de código, etc.).
 - `specs/<feature>/` — spec, plano e tasks de cada feature, geradas pelo Spec Kit.
 - `KANBAN.md` — quadro To Do / In Progress / Done, única fonte de verdade do que está em andamento.
@@ -46,6 +47,8 @@ Documentação viva do projeto:
 | `/docs-sync` | Revisa e atualiza `docs/` a partir do estado real do projeto |
 | `/feature-start` | Atalho: roda specify→clarify→checklist→plan→tasks→kanban-sync numa tacada só, para uma feature grande/nova |
 | `/quick-task` | Atalho: cria uma tarefa avulsa e já a implementa (kanban-sync + kanban-start em um comando), para ajustes pequenos |
+| `/fundraiser-test` | O `fundraiser` vira um captador de recursos real e testa um protótipo estático, devolvendo um documento de Persona com parecer/dores em `docs/persona/` |
+| `/fundraiser-production-test` | Igual ao anterior, mas testa a aplicação real já implementada (rodando de verdade), não o protótipo |
 
 ### Por onde começar, de acordo com a intenção
 
@@ -55,6 +58,8 @@ Documentação viva do projeto:
 - **"Quero implementar a próxima tarefa do quadro"** → `/kanban-start` (a seleção é feita aqui mesmo no chat, com opções clicáveis).
 - **"Achei um bug numa tarefa que já estava Done"** → `/quick-task` descrevendo o bug e referenciando o ID original (ex.: "Corrige regressão em T012: ..."). Nunca "reabra" a task antiga — `tasks.md`/`KANBAN.md` são um registro histórico; a correção é uma task nova e rastreável.
 - **"Quero atualizar a documentação do projeto"** → `/docs-sync`.
+- **"Quero saber que dores um captador de recursos real sentiria usando o protótipo atual"** → `/fundraiser-test` (não corrige nada, só devolve o parecer honesto em `docs/persona/`).
+- **"Quero saber que dores um captador de recursos real sentiria usando a aplicação já implementada"** → `/fundraiser-production-test` (mesma ideia, mas na aplicação rodando de verdade, não no protótipo).
 - **"Quero mudar um princípio/regra do projeto"** → `/speckit-constitution`.
 
 O `/kanban-start` já cuida de acionar o `dev` para implementar, o `qa` como gate obrigatório (testes de UI e lógica antes de fechar a task) e, ao final, pergunta se algo deu errado — se sim, registra a lição aprendida no arquivo do agente/skill responsável, para o processo melhorar com o tempo. Depois dessa retrospectiva, pergunta também se deve commitar ou commitar e dar push — sempre em Conventional Commits, com uma mensagem detalhada o suficiente para o commit servir como documentação da mudança (o quê, por quê, decisões tomadas na implementação e resultado do QA).
