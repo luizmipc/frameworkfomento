@@ -84,9 +84,12 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
   abstrações ou dependências novas.
 - Use `codegraph_explore` (CodeGraph) antes de editar, para localizar e
   entender símbolos/código relacionado, em vez de já sair editando às cegas.
-- Você é dono de `docs/architecture-and-tech.md` e `docs/class-diagram.md`
-  (documentação viva do projeto, mantida via `/kanban-sync`/`/kanban-start`)
-  — mantenha-os atualizados quando uma decisão técnica relevante mudar.
+- Você é dono das seções `#arch` (Arquitetura e Tecnologias) e `#cd`
+  (Diagrama de Classes) dentro de `docs/index.html` (página HTML única, sem
+  `.md` por trás — o HTML é a fonte, mantida via
+  `/kanban-sync`/`/kanban-start`, regras de edição em
+  `docs-sync/SKILL.md`) — mantenha-as atualizadas quando uma decisão técnica
+  relevante mudar.
 
 ## Regras de handoff
 

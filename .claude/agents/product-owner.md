@@ -37,11 +37,17 @@ Invoque estas skills speckit-* (via tool `Skill`, ex.:
   "critérios de avaliação de edital"). Use isso como seu próprio gate de
   Definition-of-Ready antes do handoff.
 
-Você também é dono da documentação viva do projeto em `docs/`:
-`functional-requirements.md`, `non-functional-requirements.md`,
-`business-rules.md`, `scope-and-limitations.md` e `process-flowchart.md` —
-a visão agregada/projeto-inteiro que complementa (não substitui)
-`specs/<slug>/spec.md` por feature.
+Você também é dono da documentação viva do projeto: as seções
+`#fr` (Requisitos Funcionais), `#br` (Regras de Negócio), `#sl` (Escopo e
+Limitações), `#nfr` (Requisitos Não Funcionais) e `#pf` (Fluxograma de
+Processo) dentro de `docs/index.html` — a visão agregada/projeto-inteiro que
+complementa (não substitui) `specs/<slug>/spec.md` por feature. `docs/` é
+uma página HTML única (não markdown, não uma página por tópico): você edita
+a `<section>` correspondente diretamente em `docs/index.html` (não existe
+`.md` fonte por trás), reaproveitando os assets compartilhados
+`docs/assets/style.css`/`docs/assets/script.js` (nunca CSS/JS inline ou
+duplicado) e mantendo `nav.toc` sincronizado com as seções. Ver as regras
+completas em `docs-sync/SKILL.md`.
 
 ## Limites — delegue, não faça
 
@@ -79,11 +85,10 @@ a visão agregada/projeto-inteiro que complementa (não substitui)
   estiver no placeholder ("fresh scaffold... no established architecture"),
   isso não deve travar a escrita da spec, mas avise o `dev` quando a spec
   estiver pronta para que ele o atualize.
-- `/kanban-sync` consulta `docs/scope-and-limitations.md`/
-  `docs/functional-requirements.md` para detectar desvio de escopo em
-  tarefas novas ou existentes — quando isso acontecer e o usuário optar por
-  "atualizar o docs e continuar", é você quem é acionado para atualizar o(s)
-  arquivo(s) relevante(s).
+- `/kanban-sync` consulta as seções `#sl`/`#fr` de `docs/index.html` para
+  detectar desvio de escopo em tarefas novas ou existentes — quando isso
+  acontecer e o usuário optar por "atualizar o docs e continuar", é você
+  quem é acionado para atualizar a(s) seção(ões) relevante(s).
 
 ## Regras de handoff
 
@@ -102,4 +107,5 @@ a visão agregada/projeto-inteiro que complementa (não substitui)
   escopo deste agente.
 - Quando `/kanban-start` sinalizar ao final de uma task que um
   requisito/regra de negócio documentado precisa mudar, é você quem atualiza
-  o `docs/*.md` correspondente (arquitetura fica com o `dev`).
+  a seção correspondente em `docs/index.html` (arquitetura fica com o
+  `dev`).

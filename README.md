@@ -25,7 +25,7 @@ Este projeto está em estágio inicial. A estrutura de código, funcionalidades 
 Este projeto é desenvolvido com o [GitHub Spec Kit](https://github.com/github/spec-kit) (fluxo orientado por spec) mais um quadro Kanban local (`KANBAN.md`) e seis agentes de papel em `.claude/agents/`: `product-owner`, `dev`, `designer`, `scrum-master`, `qa` e `fundraiser`. Cada um tem escopo e regras de handoff documentados no próprio arquivo.
 
 Documentação viva do projeto:
-- `docs/` — requisitos funcionais/não funcionais, regras de negócio, escopo, arquitetura, diagrama de classes, critérios de aceite.
+- `docs/` — requisitos funcionais/não funcionais, regras de negócio, escopo, arquitetura, diagrama de classes, critérios de aceite. Site HTML autocontido, sem markdown — abra `docs/index.html` no navegador.
 - `.specify/memory/constitution.md` — princípios não-negociáveis do projeto (simplicidade/YAGNI, qualidade via QA antes de "Done", spec antes de código, etc.).
 - `specs/<feature>/` — spec, plano e tasks de cada feature, geradas pelo Spec Kit.
 - `KANBAN.md` — quadro To Do / In Progress / Done, única fonte de verdade do que está em andamento.

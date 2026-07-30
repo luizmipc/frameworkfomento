@@ -45,12 +45,12 @@ direto para o modo "Criar nova tarefa" com essa descrição.
 ## Modo "Acompanhamento"
 
 1. Rode a **Sincronização** (seção abaixo).
-2. Antes de escrever `KANBAN.md`, releia `docs/scope-and-limitations.md` e
-   `docs/functional-requirements.md`. Se esses arquivos ainda estiverem no
-   esqueleto inicial ("A preencher"), não há nada para comparar — siga sem
-   checagem. Caso contrário, avalie (por julgamento, não regra
-   determinística) se alguma task reconciliada parece ter saído do escopo
-   documentado. Se sim, rode a **Checagem de escopo** antes de continuar.
+2. Antes de escrever `KANBAN.md`, releia as seções `#sl` e `#fr` de
+   `docs/index.html`. Se ainda estiverem no texto inicial ("A preencher"),
+   não há nada para comparar — siga sem checagem. Caso contrário, avalie
+   (por julgamento, não regra determinística) se alguma task reconciliada
+   parece ter saído do escopo documentado. Se sim, rode a **Checagem de
+   escopo** antes de continuar.
 3. Escreva `KANBAN.md` e reporte contagens/anomalias.
 4. Rode a **Retrospectiva**.
 
@@ -58,8 +58,8 @@ direto para o modo "Criar nova tarefa" com essa descrição.
 
 1. Se `$ARGUMENTS` não trouxer a descrição da tarefa, pergunte no chat (texto
    livre): "Qual a descrição dessa tarefa nova?"
-2. **Checagem de escopo**: releia `docs/scope-and-limitations.md` e
-   `docs/functional-requirements.md`. Se ainda estiverem no esqueleto inicial,
+2. **Checagem de escopo**: releia as seções `#sl` e `#fr` de
+   `docs/index.html`. Se ainda estiverem no texto inicial ("A preencher"),
    siga sem checagem. Caso contrário, avalie se a descrição parece não bater
    com o que está documentado (ex.: menciona um tipo de integração, edital ou
    funcionalidade que os docs listam como fora de escopo). Se sim, rode a
@@ -77,7 +77,7 @@ direto para o modo "Criar nova tarefa" com essa descrição.
 5. Adicione a tarefa à seção `## To Do` de `KANBAN.md`, sob a feature
    escolhida (ou sob `### (avulsas)` se "sem feature"). Tarefas `A\d{3}` não
    têm `tasks.md` correspondente — existem só em `KANBAN.md` (ver formato em
-   `KANBAN.md` — Formato, e nota em `docs/architecture-and-tech.md` se
+   `KANBAN.md` — Formato, e nota em `docs/index.html` (seção `#arch`) se
    relevante).
 6. Pergunte via `AskUserQuestion` (2 opções): **"Essa tarefa envolve
    tela/fluxo de usuário?"**
@@ -96,17 +96,17 @@ direto para o modo "Criar nova tarefa" com essa descrição.
 ## Checagem de escopo
 
 Informe ao usuário, em prosa, o que motivou a suspeita de desvio de escopo
-(ex.: "essa tarefa parece adicionar um tipo de integração que
-`docs/scope-and-limitations.md` lista como fora de escopo"). Depois pergunte
+(ex.: "essa tarefa parece adicionar um tipo de integração que a seção `#sl`
+de `docs/index.html` lista como fora de escopo"). Depois pergunte
 via `AskUserQuestion` (2 opções): **"O que você quer fazer?"**
 - **"Abandonar"** — não cria a tarefa (modo criar-tarefa) ou não inclui essa
   task normalmente no quadro, deixando uma nota para discussão (modo
   acompanhamento). Não mexa em `docs/`. Pare aqui (não roda Retrospectiva
   neste caso — não houve reunião de fato concluída).
 - **"Atualizar o docs e continuar"** — acione o subagente `product-owner`
-  (tool de subagentes, `subagent_type: "product-owner"`) para atualizar
-  `docs/scope-and-limitations.md` e/ou `docs/functional-requirements.md`
-  refletindo a mudança. Depois, retome o fluxo normal de onde parou.
+  (tool de subagentes, `subagent_type: "product-owner"`) para atualizar a(s)
+  seção(ões) `#sl`/`#fr` de `docs/index.html` refletindo a mudança. Depois,
+  retome o fluxo normal de onde parou.
 
 ## Sincronização
 

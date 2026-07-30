@@ -1,0 +1,244 @@
+/* Estilo compartilhado de todo docs/*.html — não duplicar por página.
+   Convenção: cada página linka este arquivo via <link rel="stylesheet"
+   href="../assets/style.css"> (ou "assets/style.css" a partir de docs/index.html). */
+
+:root {
+  --bg: #0f1115;
+  --fg: #f2f3f5;
+  --muted: #9aa0ab;
+  --accent: #5b8cff;
+  --card: #171a21;
+  --border: #262b35;
+  --ok: #4fbf7b;
+  --planned: #d8a94b;
+  --warn: #e0a63e;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+}
+
+a { color: var(--accent); }
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+  padding: 0.05rem 0.35rem;
+  font-size: 0.85em;
+  color: var(--accent);
+}
+
+pre {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+}
+pre code { background: none; border: none; padding: 0; color: var(--fg); }
+pre.tree { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem; white-space: pre; }
+
+/* --- layout: sidebar nav.toc + main, usado por toda página com seções --- */
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+nav.toc {
+  width: 15rem;
+  flex-shrink: 0;
+  padding: 2rem 1rem;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  max-height: 100vh;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+
+nav.toc p.kicker { margin: 0 0 1rem; }
+
+nav.toc a {
+  display: block;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+}
+
+nav.toc a:hover,
+nav.toc a.active {
+  color: var(--fg);
+  background: var(--card);
+}
+
+main {
+  flex: 1;
+  padding: 3rem 4vw 6rem;
+  max-width: 52rem;
+}
+
+main > p.back { margin-top: 0; }
+
+/* --- tipografia --- */
+h1 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); margin: 0 0 0.5rem; }
+
+h2 {
+  font-size: 1.5rem;
+  margin-top: 3rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.4rem;
+}
+
+h3 { font-size: 1.1rem; color: var(--accent); margin-top: 2rem; }
+h4 { font-size: 0.95rem; color: var(--fg); margin: 1.5rem 0 0.5rem; }
+
+p.source, p.lede { color: var(--muted); }
+p.lede { font-size: 1.02rem; max-width: 42rem; }
+
+.kicker {
+  display: block;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+ul { padding-left: 1.3rem; }
+li { margin-bottom: 0.6rem; }
+li code { font-size: 0.85em; }
+
+/* --- callout / status banner --- */
+.callout {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 1rem 1.25rem;
+  border-radius: 0.4rem;
+  margin: 1.5rem 0;
+  color: var(--muted);
+}
+.callout.planned { border-left-color: var(--planned); }
+
+.status-banner {
+  display: inline-block;
+  background: var(--card);
+  border-left: 3px solid var(--warn);
+  padding: 0.6rem 1rem;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+}
+
+/* --- badge --- */
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  margin-bottom: 0.8rem;
+}
+.badge-implemented { background: rgba(79,191,123,0.15); color: var(--ok); border: 1px solid var(--ok); }
+.badge-planned { background: rgba(216,169,75,0.15); color: var(--planned); border: 1px solid var(--planned); }
+.badge-untested { background: rgba(224,166,62,0.15); color: var(--warn); border: 1px solid rgba(224,166,62,0.4); }
+.badge-passed { background: rgba(90,200,130,0.15); color: #5ac882; border: 1px solid rgba(90,200,130,0.4); }
+
+/* --- details --- */
+details {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.4rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+details summary { cursor: pointer; font-weight: 600; }
+details[open] summary { margin-bottom: 0.75rem; }
+
+/* --- table --- */
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin: 1rem 0; }
+th, td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.status-cell { color: var(--warn); }
+
+/* --- seções tipo "story" (critérios de aceite) --- */
+section.story, section.cross, section.sc, section.edge, section.scope {
+  padding: 2.5rem 0;
+  border-bottom: 1px solid var(--border);
+}
+section.story:last-of-type { border-bottom: none; }
+
+.story-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+.story-head h2, .story-head h3 { margin: 0; border: none; padding: 0; flex: 1 1 auto; }
+
+.scenarios { list-style: decimal; padding-left: 1.4rem; margin: 0; display: flex; flex-direction: column; gap: 0.9rem; }
+.scenarios li span { display: block; margin-bottom: 0.3rem; }
+
+.related { margin-top: 1.25rem; color: var(--muted); font-size: 0.9rem; }
+
+.cross-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.cross-list li { background: var(--card); border: 1px solid var(--border); border-radius: 0.4rem; padding: 0.75rem 1rem; }
+.ref { color: var(--muted); font-size: 0.85rem; }
+
+.edge ul, .scope ul { color: var(--muted); }
+
+/* --- diagrama de classes (UML simplificado) --- */
+.diagram { display: flex; align-items: flex-start; justify-content: center; gap: 0; flex-wrap: wrap; padding: 2rem 0; overflow-x: auto; }
+.uml-class { background: var(--card); border: 1px solid var(--border); border-radius: 8px; min-width: 15rem; max-width: 17rem; font-size: 0.85rem; box-shadow: 0 4px 18px rgba(0,0,0,0.35); }
+.uml-class .stereotype { text-align: center; font-size: 0.7rem; color: var(--muted); padding-top: 0.5rem; }
+.uml-class .name { text-align: center; font-weight: 700; font-size: 1.05rem; padding: 0.2rem 1rem 0.7rem; border-bottom: 1px solid var(--border); }
+.uml-class .members { list-style: none; margin: 0; padding: 0.7rem 1rem; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.78rem; }
+.uml-class .members li { margin-bottom: 0.35rem; color: var(--fg); white-space: nowrap; }
+.uml-class .members li .type { color: var(--muted); }
+.uml-class.entity { border-color: var(--accent); }
+.uml-class.entity .name { color: var(--accent); border-bottom-color: var(--accent); }
+
+.connector { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 8rem; padding-top: 3.5rem; color: var(--muted); font-size: 0.78rem; text-align: center; gap: 0.25rem; }
+.connector .line { width: 100%; height: 0; border-top: 2px solid var(--muted); position: relative; }
+.connector .line::after { content: "▶"; position: absolute; right: -0.15rem; top: -0.62rem; color: var(--muted); font-size: 0.8rem; }
+.connector .mult { font-size: 0.72rem; color: var(--accent); }
+
+/* --- footer de página --- */
+footer, .page-footer {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.85rem;
+  max-width: 42rem;
+}
+
+/* --- nav.toc: rótulo de grupo (não-clicável) entre blocos de links --- */
+nav.toc p.kicker.group-label { margin: 1.5rem 0 0.5rem; }
+nav.toc p.kicker.group-label:first-child { margin-top: 0; }
+
+/* --- cards de link externo (seção "Outras fontes") --- */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr)); gap: 1rem; margin: 1rem 0; }
+.doc-card {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 1.1rem 1.25rem;
+  text-decoration: none;
+  color: var(--fg);
+}
+.doc-card:hover { border-color: var(--accent); }
+.doc-card h3 { margin: 0 0 0.4rem; color: var(--fg); }
+.doc-card p { margin: 0; color: var(--muted); font-size: 0.88rem; }
+
+@media (max-width: 720px) {
+  .layout { flex-direction: column; }
+  nav.toc { width: 100%; position: static; max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
+}

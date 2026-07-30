@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>frameworkfomento — Documentação</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <p class="kicker group-label">frameworkfomento</p>
+    <a href="#top">Documentação</a>
+
+    <p class="kicker group-label">product-owner</p>
+    <a href="#fr">Requisitos Funcionais</a>
+    <a href="#br">Regras de Negócio</a>
+    <a href="#sl">Escopo e Limitações</a>
+    <a href="#nfr">Requisitos Não Funcionais</a>
+    <a href="#pf">Fluxograma de Processo</a>
+
+    <p class="kicker group-label">dev</p>
+    <a href="#arch">Arquitetura e Tecnologias</a>
+    <a href="#cd">Diagrama de Classes</a>
+
+    <p class="kicker group-label">qa</p>
+    <a href="#ac">Critérios de Aceite</a>
+
+    <p class="kicker group-label">Outras fontes</p>
+    <a href="#outras">Comunicação, specs/, KANBAN.md</a>
+  </nav>
+
+  <main>
+    <p class="kicker">frameworkfomento</p>
+    <h1 id="top">Documentação</h1>
+    <p class="lede">Documentação viva do projeto — gerada e mantida a partir do estado real do
+    repositório (<code>specs/</code>, código em <code>app/</code>, <code>KANBAN.md</code>) via
+    <code>/docs-sync</code>. Uma página só, sem markdown — use a navegação à esquerda para pular
+    direto para uma seção.</p>
+
+    <!-- ============================== product-owner ============================== -->
+
+    <h2 id="fr">Requisitos Funcionais</h2>
+    <p class="source">Dono: product-owner. Consolidado a partir das specs de feature em <code>specs/&lt;slug&gt;/spec.md</code>.</p>
+
+    <h3 id="fr-editais">Feature: Gerenciamento de Editais de Fomento</h3>
+    <p class="source">Spec de origem: <a href="../specs/001-manage-call-for-proposals/spec.md">specs/001-manage-call-for-proposals/spec.md</a></p>
+    <p>Permite que um captador de recursos cadastre, liste, acompanhe o progresso e mantenha atualizados os editais de fomento (públicos ou privados) que está monitorando.</p>
+
+    <h4 id="fr-listagem">Listagem e quadro de progresso (User Story 1 — P1)</h4>
+    <ul>
+      <li><code>FR-001</code> Listagem em tabela com nome da chamada, descrição, instituição responsável, link e datas importantes (abertura e fechamento).</li>
+      <li><code>FR-002</code> Quadro de progresso (kanban) com exatamente quatro colunas, nesta ordem: Backlog, Em andamento, Validação, Concluído.</li>
+      <li><code>FR-009</code> O edital pode ser movido entre quaisquer colunas, em qualquer direção (avançar ou retornar).</li>
+      <li><code>FR-010</code> O estágio fica sincronizado entre a tabela e o quadro de progresso — mudar em uma reflete imediatamente na outra.</li>
+      <li><code>FR-011</code> Indicação visual de editais com data de fechamento já vencida.</li>
+      <li><code>FR-012</code> O link para a chamada é acessível diretamente a partir da tabela e do quadro.</li>
+    </ul>
+
+    <h4 id="fr-cadastro">Cadastro de edital (User Story 2 — P2)</h4>
+    <ul>
+      <li><code>FR-003</code> Cadastro de novo edital com, no mínimo: nome da chamada, instituição responsável, descrição, link e data de fechamento.</li>
+      <li><code>FR-004</code> Registro opcional da data de abertura das submissões.</li>
+      <li><code>FR-005</code> Bloqueio do cadastro sem os campos obrigatórios, com indicação de quais faltam.</li>
+      <li><code>FR-006</code> Registro da documentação exigida pelo edital.</li>
+      <li><code>FR-007</code> Registro dos critérios de avaliação usados para julgar as propostas.</li>
+      <li><code>FR-008</code> Todo edital recém-cadastrado nasce no estágio "Backlog".</li>
+    </ul>
+
+    <h4 id="fr-edicao">Edição e remoção (User Story 3 — P3)</h4>
+    <ul>
+      <li><code>FR-013</code> Edição de qualquer dado de um edital já cadastrado.</li>
+      <li><code>FR-014</code> Remoção de um edital da lista de acompanhamento ativo.</li>
+    </ul>
+
+    <h4 id="fr-escopo-individual">Escopo individual do captador</h4>
+    <ul>
+      <li><code>FR-015</code> Cada edital pertence à lista de um único captador — sem base compartilhada/curada visível a outros.</li>
+      <li><code>FR-016</code> Visualização e edição restritas ao captador que cadastrou o edital; colaboração multiusuário fora de escopo.</li>
+      <li><code>FR-017</code> Documentação exigida e critérios de avaliação são texto livre descritivo, sem checklist estruturado item a item.</li>
+    </ul>
+
+    <div class="callout">
+      Nenhuma outra feature foi especificada até o momento além de "Gerenciamento de Editais de Fomento". Esta seção será expandida conforme novas specs forem criadas.
+    </div>
+
+    <h2 id="br">Regras de Negócio</h2>
+    <p class="source">Dono: product-owner. Políticas e restrições do domínio — distintas dos requisitos funcionais, valem sempre, independente da tela ou fluxo.</p>
+
+    <h3 id="br-editais">Feature: Gerenciamento de Editais de Fomento</h3>
+    <p class="source">Spec de origem: <a href="../specs/001-manage-call-for-proposals/spec.md">specs/001-manage-call-for-proposals/spec.md</a></p>
+
+    <h4 id="br-ciclo-de-vida">Ciclo de vida do edital</h4>
+    <ul>
+      <li>Todo edital recém-cadastrado começa, obrigatoriamente, no estágio <strong>Backlog</strong> do quadro de progresso.</li>
+      <li>O quadro tem exatamente quatro estágios possíveis, nesta ordem: <strong>Backlog → Em andamento → Validação → Concluído</strong>. Cada edital tem exatamente um estágio ativo por vez.</li>
+      <li>Um edital pode ser movido entre quaisquer colunas, em qualquer direção — inclusive de volta, e inclusive pulando colunas intermediárias. Não há avanço sequencial obrigatório.</li>
+    </ul>
+
+    <h4 id="br-cadastro">Cadastro e dados obrigatórios</h4>
+    <ul>
+      <li>Um edital só pode ser salvo com, no mínimo: nome da chamada, instituição responsável, link e data de fechamento. Sem esses quatro campos, o cadastro é bloqueado.</li>
+      <li>A data de abertura é desejável, mas não obrigatória.</li>
+      <li>Documentação exigida e critérios de avaliação são texto livre descritivo, sem controle individual de status "atendido/pendente" por item — o acompanhamento de progresso é feito só pelo Estágio de Acompanhamento.</li>
+    </ul>
+
+    <h4 id="br-propriedade">Propriedade e visibilidade</h4>
+    <ul>
+      <li>Cada edital pertence à lista de um único captador. Cadastrar sempre cria um registro pessoal — não existe base compartilhada/curada visível a outros captadores.</li>
+      <li>Visualização e edição de um edital são restritas ao captador que o cadastrou. Colaboração multiusuário/por organização proponente está fora de escopo desta feature.</li>
+    </ul>
+
+    <h4 id="br-prazos">Prazos</h4>
+    <ul>
+      <li>Um edital com data de fechamento vencida deve ser indicado visualmente, independentemente de já estar em "Concluído" ou não — a indicação é sempre visual, sem notificação automática (e-mail, push).</li>
+    </ul>
+
+    <h4 id="br-remocao">Remoção de edital</h4>
+    <ul>
+      <li>Remover um edital o retira das visões ativas (tabela e quadro). Se isso implica exclusão definitiva ou apenas arquivamento fica a critério do planejamento técnico, desde que o edital removido deixe de aparecer nas listas ativas.</li>
+    </ul>
+
+    <div class="callout">
+      Nenhuma outra feature foi especificada até o momento além de "Gerenciamento de Editais de Fomento". Esta seção será expandida conforme novas specs forem criadas e clarificadas.
+    </div>
+
+    <h2 id="sl">Escopo e Limitações</h2>
+    <p class="source">Dono: product-owner. Consultado por <code>/kanban-sync</code> para detectar desvio de escopo em tarefas novas ou existentes.</p>
+
+    <h3 id="sl-editais">Feature: Gerenciamento de Editais de Fomento</h3>
+    <p class="source">Spec de origem: <a href="../specs/001-manage-call-for-proposals/spec.md">specs/001-manage-call-for-proposals/spec.md</a></p>
+
+    <h4 id="sl-dentro">Dentro do escopo</h4>
+    <ul>
+      <li>Cadastro manual de editais (públicos ou privados) com nome, descrição, instituição, link, datas, documentação exigida e critérios de avaliação (texto livre).</li>
+      <li>Listagem em tabela de todos os editais do captador.</li>
+      <li>Quadro de progresso (kanban) com quatro colunas fixas e movimentação livre entre elas.</li>
+      <li>Edição de qualquer dado de um edital já cadastrado.</li>
+      <li>Remoção de um edital da lista de acompanhamento ativo.</li>
+      <li>Indicação visual de prazo de fechamento vencido.</li>
+      <li>Gerenciamento individual: cada captador só cadastra, acompanha e edita os próprios editais.</li>
+    </ul>
+
+    <h4 id="sl-fora">Fora do escopo (nesta feature)</h4>
+    <details open>
+      <summary>Autenticação/login</summary>
+      <p>Assume-se que o captador já é um usuário autenticado do framework; o mecanismo de autenticação é tratado por outra feature, se necessário.</p>
+    </details>
+    <details open>
+      <summary>Base compartilhada/curada de editais</summary>
+      <p>Não há lista de editais visível ou compartilhada entre captadores diferentes — cada cadastro é pessoal.</p>
+    </details>
+    <details open>
+      <summary>Colaboração multiusuário</summary>
+      <p>Não há compartilhamento de editais ou do quadro de progresso entre membros de uma mesma organização proponente; visualização e edição restritas a quem cadastrou.</p>
+    </details>
+    <details open>
+      <summary>Checklist estruturado de documentação</summary>
+      <p>Documentação exigida e critérios de avaliação são texto livre descritivo, sem marcação individual "atendido/pendente" por item.</p>
+    </details>
+    <details open>
+      <summary>Integração automática com fontes externas de editais</summary>
+      <p>Não há raspagem de sites de fomento ou similar — o cadastro é sempre manual, feito pelo captador.</p>
+    </details>
+    <details open>
+      <summary>Notificações automáticas</summary>
+      <p>Não há e-mail/push sobre prazos próximos ou vencidos — a indicação é apenas visual, dentro da própria tela de listagem/quadro.</p>
+    </details>
+    <details open>
+      <summary>Exclusão definitiva vs. arquivamento de dados</summary>
+      <p>O comportamento exato de remoção (hard delete vs. soft delete) não é definido pela spec de negócio; fica a critério do planejamento técnico, desde que o edital removido deixe de aparecer nas visões ativas.</p>
+    </details>
+
+    <h4 id="sl-limitacoes">Limitações conhecidas (edge cases sem requisito dedicado)</h4>
+    <p>Identificados na spec como Edge Cases, mas sem requisito funcional dedicado até o momento:</p>
+    <ul>
+      <li>Comportamento da listagem/localização de um edital específico com um volume grande de editais cadastrados (ex.: mais de 50).</li>
+      <li>Dois editais diferentes com o mesmo nome de chamada (ex.: edições anuais de um mesmo programa).</li>
+    </ul>
+
+    <div class="callout">
+      Nenhuma outra feature foi especificada até o momento além de "Gerenciamento de Editais de Fomento". Esta seção será expandida conforme novas specs forem criadas.
+    </div>
+
+    <h2 id="nfr">Requisitos Não Funcionais</h2>
+    <p class="source">Dono: product-owner.</p>
+    <div class="callout">
+      A preencher — nenhum requisito não funcional (performance, acessibilidade,
+      idioma, segurança de dados sensíveis, etc.) foi definido em nenhuma spec
+      até o momento. <code>specs/001-manage-call-for-proposals/spec.md</code> não
+      declara NFRs próprios — só requisitos funcionais e critérios de aceite.
+      Esta seção é atualizada pelo <code>product-owner</code> via
+      <code>/docs-sync</code> assim que uma spec definir um NFR real.
+    </div>
+
+    <h2 id="pf">Fluxograma de Processo</h2>
+    <p class="source">Dono: product-owner.</p>
+    <div class="callout">
+      A preencher — nenhum fluxo de processo de ponta a ponta (ex.: elaboração
+      e submissão de uma proposta a um edital de fomento) foi documentado
+      ainda. <code>specs/001-manage-call-for-proposals/spec.md</code> descreve
+      cenários de aceite por user story, mas não um fluxograma formal. Quando
+      houver conteúdo real, esta seção passa a ter um diagrama renderizado
+      em HTML/CSS/SVG (sem lib de diagramas nova), atualizado pelo
+      <code>product-owner</code> via <code>/docs-sync</code>.
+    </div>
+
+    <!-- ============================== dev ============================== -->
+
+    <h2 id="arch">Arquitetura e Tecnologias</h2>
+    <p class="lede">Dono: <code>dev</code>. Mantido via <code>/kanban-sync</code> e <code>/kanban-start</code>. Fonte: <a href="../specs/001-manage-call-for-proposals/plan.md">plan.md</a>/<a href="../specs/001-manage-call-for-proposals/data-model.md">data-model.md</a>.</p>
+
+    <h3 id="arch-atual">Estado atual (implementado)</h3>
+    <span class="badge badge-implemented">Implementado</span>
+    <ul>
+      <li>Django 6.0.7 gerenciado por <code>uv</code> (<code>app/pyproject.toml</code>/<code>app/uv.lock</code>).</li>
+      <li>Containerizado via <code>Dockerfile</code> (raiz) + <code>docker-compose.yml</code> — a imagem roda <code>uv run manage.py runserver 0.0.0.0:8000</code>, com <code>./app</code> montado como volume e um volume anônimo sobre <code>/app/.venv</code>.</li>
+      <li>Nenhum app Django real ainda além do scaffold padrão (<code>app/config/{settings,urls,wsgi,asgi}.py</code>). Confirmar com <code>find app -name "*.py" -not -path "*/.venv/*"</code> antes de assumir o contrário.</li>
+      <li>Banco: SQLite em arquivo (<code>app/db.sqlite3</code>), sem serviço de banco separado no <code>docker-compose.yml</code>.</li>
+    </ul>
+
+    <h3 id="arch-planejado">Planejado: feature <code>manage-call-for-proposals</code></h3>
+    <span class="badge badge-planned">Planejado — ainda não implementado</span>
+    <div class="callout planned">
+      Este bloco descreve o plano técnico de
+      <a href="../specs/001-manage-call-for-proposals/plan.md">specs/001-manage-call-for-proposals/plan.md</a>
+      e
+      <a href="../specs/001-manage-call-for-proposals/data-model.md">data-model.md</a>.
+      Ainda não foi construído em <code>app/</code> — <code>tasks.md</code> tem 40 tasks
+      (T001–T040), todas em "To Do" no <code>KANBAN.md</code>, até a implementação
+      rodar via <code>/kanban-start</code>/<code>speckit-implement</code>.
+    </div>
+
+    <h4>Resumo</h4>
+    <p>Um único app Django novo, <code>editais</code>, dentro do projeto <code>app/</code> existente,
+    oferecendo CRUD completo de <code>Edital</code> escopado por captador (via
+    <code>django.contrib.auth</code>, já instalado no scaffold), mais duas visões
+    server-rendered dos mesmos dados: tabela (<code>ListView</code>) e quadro kanban de 4
+    colunas (agrupado por <code>estagio</code>). Mudar de estágio é uma ação simples (POST
+    com botões "mover para trás/frente"), sem JavaScript nem dependência nova.</p>
+
+    <h3 id="arch-decisoes">Decisões técnicas</h3>
+    <ul>
+      <li><strong>Nenhuma dependência nova</strong>: só Django e sua stdlib (<code>django.contrib.auth</code>, <code>django.contrib.admin</code>, <code>django.forms</code>) — nenhum <code>uv add</code> previsto.</li>
+      <li><strong>Storage</strong>: SQLite já configurado, suficiente para o volume esperado (dezenas a poucas centenas de editais por captador, uso individual).</li>
+      <li><strong>Autenticação mínima</strong> via <code>django.contrib.auth.urls</code> (<code>LoginView</code>/<code>LogoutView</code> prontas + <code>templates/registration/login.html</code>), sem cadastro self-service, recuperação de senha nem perfis — só o suficiente para escopar dados por <code>captador=request.user</code> (FR-015/FR-016). Usuários são criados via <code>manage.py createsuperuser</code>/<code>/admin/</code>.</li>
+      <li><strong>Um único model <code>Edital</code></strong>, sem tabelas auxiliares: <code>documentacao_exigida</code> e <code>criterios_avaliacao</code> são <code>TextField</code> de texto livre no próprio model, não uma entidade relacionada (FR-017).</li>
+      <li><strong>Estágio de acompanhamento</strong> (<code>estagio</code>) é <code>CharField</code> com <code>choices</code> (<code>Estagio(TextChoices)</code>, 4 valores fixos), não um model separado — sem atributos próprios que justifiquem virar entidade.</li>
+      <li><strong>Mudança de estágio via POST simples</strong>, sem drag-and-drop obrigatório: botões acessíveis "mover para trás/frente" no quadro kanban, mesmo padrão de interação do protótipo de referência de A001 (<code>prototype/avulsa-A001/script.js</code>).</li>
+      <li><strong>Exclusão é hard delete</strong> (<code>DeleteView</code>/<code>.delete()</code> padrão do Django) — sem soft delete/histórico, YAGNI até uma spec futura pedir recuperação.</li>
+      <li><strong><code>prazo_vencido</code> é calculado</strong>, não armazenado: <code>@property</code> Python (<code>data_fechamento &lt; date.today()</code>), sem job/cron.</li>
+      <li><code>LANGUAGE_CODE = 'pt-br'</code> e <code>TIME_ZONE = 'America/Sao_Paulo'</code> planejados em <code>config/settings.py</code> (Constitution: interface em português).</li>
+      <li><strong>Sem serviço novo no <code>docker-compose.yml</code></strong> — SQLite em arquivo continua suficiente.</li>
+    </ul>
+    <p class="lede">Justificativas completas de cada decisão (com alternativas descartadas) em
+    <a href="../specs/001-manage-call-for-proposals/research.md">specs/001-manage-call-for-proposals/research.md</a>.</p>
+
+    <h3 id="arch-estrutura">Estrutura de código planejada</h3>
+    <pre class="tree">app/
+├── config/
+│   ├── settings.py        # + 'editais' em INSTALLED_APPS, LOGIN_URL,
+│   │                       #   LOGIN_REDIRECT_URL, LANGUAGE_CODE='pt-br'
+│   └── urls.py             # + path('', include('editais.urls'))
+│                            # + path('accounts/', include('django.contrib.auth.urls'))
+├── editais/                # novo app Django (planejado, ainda não criado)
+│   ├── models.py            # Edital
+│   ├── forms.py             # EditalForm (ModelForm)
+│   ├── views.py             # ListView tabela, ListView kanban,
+│   │                         #   Create/Update/DeleteView, mover_estagio
+│   ├── urls.py
+│   ├── admin.py              # opcional: registro simples para /admin
+│   ├── migrations/
+│   ├── templates/editais/
+│   │   ├── edital_list.html        # visão tabela
+│   │   ├── edital_kanban.html      # visão quadro de progresso
+│   │   ├── edital_form.html        # cadastro/edição
+│   │   └── edital_confirm_delete.html
+│   └── tests.py             # TestCase por User Story
+└── templates/registration/login.html   # template mínimo da LoginView padrão</pre>
+
+    <h3 id="arch-rotas">Contrato de rotas planejado</h3>
+    <table>
+      <thead>
+        <tr><th>Método</th><th>Rota</th><th>View</th><th>Efeito</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GET</td><td><code>/</code></td><td><code>EditalListView</code></td><td>Tabela com todos os editais do captador logado.</td></tr>
+        <tr><td>GET</td><td><code>/kanban/</code></td><td><code>EditalKanbanView</code></td><td>Quadro com 4 colunas fixas, editais agrupados por <code>estagio</code>.</td></tr>
+        <tr><td>POST</td><td><code>/&lt;int:pk&gt;/mover/</code></td><td><code>mover_estagio</code></td><td><code>direcao=anterior|proxima</code> — move um passo, no-op nas bordas.</td></tr>
+        <tr><td>GET/POST</td><td><code>/novo/</code></td><td><code>EditalCreateView</code></td><td>Cria edital com <code>estagio=BACKLOG</code> e <code>captador=request.user</code>.</td></tr>
+        <tr><td>GET/POST</td><td><code>/&lt;int:pk&gt;/editar/</code></td><td><code>EditalUpdateView</code></td><td>Edita campos do edital (exceto <code>captador</code>/<code>estagio</code>).</td></tr>
+        <tr><td>GET/POST</td><td><code>/&lt;int:pk&gt;/remover/</code></td><td><code>EditalDeleteView</code></td><td>Confirma e remove definitivamente (hard delete).</td></tr>
+        <tr><td>—</td><td><code>/accounts/login/</code>, <code>/accounts/logout/</code></td><td><code>django.contrib.auth.urls</code></td><td>Login/logout mínimos.</td></tr>
+      </tbody>
+    </table>
+    <p class="lede">Todas as rotas de <code>editais</code> exigem sessão autenticada
+    (<code>LoginRequiredMixin</code>) e operam só sobre editais do <code>request.user</code> —
+    acesso a um <code>id</code> de outro captador retorna <code>404</code>, não <code>403</code>
+    (evita vazar a existência do registro). Detalhe completo em
+    <a href="../specs/001-manage-call-for-proposals/contracts/urls.md">specs/001-manage-call-for-proposals/contracts/urls.md</a>.</p>
+
+    <h3 id="arch-testes">Testes planejados</h3>
+    <p><code>django.test.TestCase</code> (stdlib do Django), rodado via
+    <code>uv run manage.py test editais</code> — um <code>TestCase</code> por User Story,
+    cobrindo os Acceptance Scenarios de <code>spec.md</code>.</p>
+
+    <h2 id="cd">Diagrama de Classes</h2>
+    <p class="lede">Dono: <code>dev</code>. Mantido via <code>/kanban-sync</code> e <code>/kanban-start</code>. Fonte: <a href="../specs/001-manage-call-for-proposals/data-model.md">data-model.md</a>.</p>
+
+    <p><strong>Estado atual (implementado):</strong> nenhum model Django existe ainda em <code>app/</code> —
+    confirmar com <code>find app -name "*.py" -not -path "*/.venv/*"</code>.</p>
+
+    <h3 id="cd-planejado">Planejado: feature <code>manage-call-for-proposals</code></h3>
+    <span class="badge badge-planned">Planejado — ainda não implementado</span>
+    <div class="callout planned">
+      Diagrama abaixo descreve o model planejado em
+      <a href="../specs/001-manage-call-for-proposals/data-model.md">specs/001-manage-call-for-proposals/data-model.md</a>.
+      Ainda não implementado em <code>app/editais/models.py</code>.
+    </div>
+
+    <div class="diagram">
+      <div class="uml-class">
+        <p class="stereotype">&laquo;django.contrib.auth&raquo;</p>
+        <p class="name">User</p>
+        <ul class="members">
+          <li>id <span class="type">: AutoField</span></li>
+        </ul>
+      </div>
+
+      <div class="connector">
+        <span class="mult">1 &nbsp;→&nbsp; 0..*</span>
+        <div class="line"></div>
+        <span>captador<br>(related_name=editais)</span>
+      </div>
+
+      <div class="uml-class entity">
+        <p class="name">Edital</p>
+        <ul class="members">
+          <li>id <span class="type">: AutoField</span></li>
+          <li>captador <span class="type">: FK(User)</span></li>
+          <li>nome_chamada <span class="type">: CharField</span></li>
+          <li>instituicao <span class="type">: CharField</span></li>
+          <li>descricao <span class="type">: TextField</span></li>
+          <li>link <span class="type">: URLField</span></li>
+          <li>data_abertura <span class="type">: DateField?</span></li>
+          <li>data_fechamento <span class="type">: DateField</span></li>
+          <li>documentacao_exigida <span class="type">: TextField?</span></li>
+          <li>criterios_avaliacao <span class="type">: TextField?</span></li>
+          <li>estagio <span class="type">: CharField(choices)</span></li>
+          <li>criado_em <span class="type">: DateTimeField</span></li>
+          <li>atualizado_em <span class="type">: DateTimeField</span></li>
+          <li>+ prazo_vencido() <span class="type">: bool</span></li>
+        </ul>
+      </div>
+
+      <div class="connector">
+        <span class="mult">1 &nbsp;→&nbsp; 1</span>
+        <div class="line"></div>
+        <span>estagio</span>
+      </div>
+
+      <div class="uml-class">
+        <p class="stereotype">&laquo;TextChoices&raquo;</p>
+        <p class="name">Estagio</p>
+        <ul class="members">
+          <li>BACKLOG</li>
+          <li>ANDAMENTO</li>
+          <li>VALIDACAO</li>
+          <li>CONCLUIDO</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 id="cd-notas">Notas</h3>
+    <ul>
+      <li><code>Edital</code> é o único model da feature — <code>documentacao_exigida</code> e <code>criterios_avaliacao</code> são texto livre no próprio model, não entidades relacionadas (ver decisão em <code>research.md</code>, "Um único model <code>Edital</code>, sem tabelas auxiliares").</li>
+      <li><code>Estagio</code> é um <code>TextChoices</code> interno a <code>Edital</code> (não um model/tabela separada) com 4 valores fixos, na ordem em que aparecem nas colunas do quadro kanban: Backlog → Em andamento → Validação → Concluído. Qualquer transição entre os 4 valores é permitida nos dois sentidos.</li>
+      <li><code>prazo_vencido</code> é uma <code>@property</code> computada (<code>data_fechamento &lt; date.today()</code>), não um campo persistido.</li>
+      <li><code>captador</code> nunca é exposto no formulário de edição — é atribuído a partir de <code>request.user</code> na criação, e toda <code>QuerySet</code> das views filtra por <code>captador=request.user</code> (isolamento por usuário, FR-015/FR-016).</li>
+      <li>Migration única planejada: <code>0001_initial</code> (sem dado legado a migrar).</li>
+    </ul>
+
+    <!-- ============================== qa ============================== -->
+
+    <h2 id="ac">Critérios de Aceite</h2>
+    <p class="lede">Dono: <code>qa</code>. Contrato extraído de <code>specs/001-manage-call-for-proposals/spec.md</code> — o que a implementação precisa satisfazer para a feature ser considerada testada e aprovada.</p>
+    <p class="status-banner">Nenhum critério abaixo foi verificado ainda — 0 testes automatizados escritos, 0 tasks em Done.</p>
+
+    <section class="story" id="ac-us1">
+      <div class="story-head">
+        <p class="kicker">User Story 1 · P1</p>
+        <h3>Acompanhar editais em um quadro de progresso</h3>
+        <span class="badge badge-untested">não verificado — 0/4</span>
+      </div>
+      <ol class="scenarios">
+        <li><span>Dado editais cadastrados, ao acessar a listagem, o captador vê uma tabela com nome da chamada, descrição, instituição responsável, link e datas (abertura/fechamento).</span><code>FR-001</code></li>
+        <li><span>Dado editais cadastrados, ao acessar o quadro de progresso, cada edital aparece como cartão em uma das quatro colunas (Backlog, Em andamento, Validação, Concluído).</span><code>FR-002, FR-008</code></li>
+        <li><span>Dado um edital em "Em andamento", ao movê-lo para "Validação", o novo estágio reflete tanto no quadro quanto na tabela.</span><code>FR-009, FR-010</code></li>
+        <li><span>Dado um edital em qualquer coluna que não a primeira, o captador consegue movê-lo de volta a uma coluna anterior.</span><code>FR-009</code></li>
+      </ol>
+      <p class="related">Success criteria relacionados: <code>SC-001</code>, <code>SC-003</code></p>
+    </section>
+
+    <section class="story" id="ac-us2">
+      <div class="story-head">
+        <p class="kicker">User Story 2 · P2</p>
+        <h3>Cadastrar um edital com os dados necessários para geri-lo</h3>
+        <span class="badge badge-untested">não verificado — 0/3</span>
+      </div>
+      <ol class="scenarios">
+        <li><span>Ao informar nome da chamada, instituição, descrição, link e datas de abertura/fechamento, o sistema salva o edital e o exibe na listagem e no quadro, iniciando em Backlog.</span><code>FR-003, FR-004, FR-008</code></li>
+        <li><span>Ao tentar salvar sem um campo obrigatório (nome, instituição, link ou fechamento), o sistema impede o salvamento e indica os campos faltando.</span><code>FR-005</code></li>
+        <li><span>Ao registrar documentação exigida e critérios de avaliação, essas informações ficam associadas ao edital e disponíveis para consulta.</span><code>FR-006, FR-007, FR-017</code></li>
+      </ol>
+      <p class="related">Success criteria relacionados: <code>SC-002</code>, <code>SC-004</code></p>
+    </section>
+
+    <section class="story" id="ac-us3">
+      <div class="story-head">
+        <p class="kicker">User Story 3 · P3</p>
+        <h3>Manter os dados de um edital atualizados</h3>
+        <span class="badge badge-untested">não verificado — 0/2</span>
+      </div>
+      <ol class="scenarios">
+        <li><span>Ao editar qualquer dado de um edital já cadastrado, o sistema salva a alteração e a exibe atualizada em todas as visões.</span><code>FR-013</code></li>
+        <li><span>Ao remover um edital que não é mais relevante, o sistema deixa de exibi-lo na tabela e no quadro.</span><code>FR-014</code></li>
+      </ol>
+      <p class="related">Success criteria relacionados: <code>SC-006</code></p>
+    </section>
+
+    <section class="cross" id="ac-cross">
+      <p class="kicker">Requisitos transversais</p>
+      <h3>Sem cenário Given/When/Then dedicado, mas testáveis por si</h3>
+      <ul class="cross-list">
+        <li><code>FR-011</code> Indicação visual de editais com prazo vencido (tabela e/ou quadro). <span class="ref">&rarr; SC-005</span></li>
+        <li><code>FR-012</code> Link da chamada acessível diretamente a partir da tabela e do quadro.</li>
+        <li><code>FR-015</code> Cada edital pertence à lista de um único captador — sem base compartilhada nesta feature.</li>
+        <li><code>FR-016</code> Visualização e edição restritas ao captador que cadastrou o edital.</li>
+      </ul>
+    </section>
+
+    <section class="sc" id="ac-sc">
+      <p class="kicker">Success Criteria</p>
+      <h3>Mensuráveis, ainda não medidos</h3>
+      <table>
+        <thead><tr><th>ID</th><th>Critério</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>SC-001</td><td>Ver todos os editais com dados essenciais e estágio numa única tela</td><td class="status-cell">não medido</td></tr>
+          <tr><td>SC-002</td><td>Cadastrar um edital completo em até 5 minutos</td><td class="status-cell">não medido</td></tr>
+          <tr><td>SC-003</td><td>Mover um edital entre estágios em 3 ações ou menos</td><td class="status-cell">não medido</td></tr>
+          <tr><td>SC-004</td><td>100% dos editais exibem prazo de fechamento e link</td><td class="status-cell">não medido</td></tr>
+          <tr><td>SC-005</td><td>Identificar editais com prazo vencido em poucos segundos</td><td class="status-cell">não medido</td></tr>
+          <tr><td>SC-006</td><td>Correção de dado refletida imediatamente nas duas visões</td><td class="status-cell">não medido</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="edge" id="ac-edge">
+      <p class="kicker">Edge cases</p>
+      <h3>A cobrir quando houver implementação</h3>
+      <ul>
+        <li>Edital sem link oficial disponível no momento do cadastro.</li>
+        <li>Edital com data de fechamento já passada, ainda não movido para "Concluído".</li>
+        <li>Dois editais com o mesmo nome de chamada (ex.: edições anuais).</li>
+        <li>Tentativa de mover um edital diretamente do Backlog para Concluído.</li>
+        <li>Edital sem data de abertura definida (só fechamento).</li>
+        <li>Listagem com número grande de editais (ex.: mais de 50).</li>
+      </ul>
+    </section>
+
+    <section class="scope" id="ac-scope">
+      <p class="kicker">Fora de escopo nesta feature</p>
+      <h3>Não vira critério de aceite aqui</h3>
+      <ul>
+        <li>Autenticação/login do captador.</li>
+        <li>Integração automática com fontes externas de editais.</li>
+        <li>Notificações automáticas (e-mail, push) sobre prazos.</li>
+        <li>Checklist estruturado de documentos item a item — documentação e critérios são texto livre (<code>FR-017</code>).</li>
+        <li>Colaboração multiusuário entre membros de uma mesma organização (<code>FR-016</code>).</li>
+      </ul>
+    </section>
+
+    <p class="page-footer">Quando o <code>dev</code> reportar uma task concluída, o <code>qa</code> escreve testes de UI e lógica ancorados nestes cenários, roda <code>uv run manage.py test</code> em <code>app/</code>, e atualiza os badges acima — sem alterar o texto dos critérios, que pertence ao <code>product-owner</code> via <code>spec.md</code>.</p>
+
+    <!-- ============================== outras fontes ============================== -->
+
+    <h2 id="outras">Outras fontes</h2>
+    <div class="card-grid">
+      <a class="doc-card" href="communications/pitch/index.html">
+        <h3>Pitch Deck</h3>
+        <p>Apresentação do projeto, navegável por slides.</p>
+      </a>
+      <a class="doc-card" href="communications/onepage/index.html">
+        <h3>One-pager</h3>
+        <p>Resumo de uma página, com exportação para PDF.</p>
+      </a>
+      <a class="doc-card" href="../specs/">
+        <h3>specs/</h3>
+        <p>Spec, plano e tasks de cada feature (Spec Kit).</p>
+      </a>
+      <a class="doc-card" href="../KANBAN.md">
+        <h3>KANBAN.md</h3>
+        <p>Quadro To Do / In Progress / Done — fonte de verdade do andamento.</p>
+      </a>
+      <a class="doc-card" href="../.specify/memory/constitution.md">
+        <h3>Constitution</h3>
+        <p>Princípios não-negociáveis do projeto.</p>
+      </a>
+    </div>
+  </main>
+
+</div>
+<script src="assets/script.js" defer></script>
+</body>
+</html>
