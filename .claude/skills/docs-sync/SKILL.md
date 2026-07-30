@@ -59,6 +59,16 @@ Para cada grupo em escopo, invoque o subagente dono (tool de subagentes,
   decisões já tomadas. Se não houver nada novo para um arquivo, deixe-o como
   está (esqueleto "A preencher" continua correto até haver conteúdo real).
 
+Quando um arquivo `docs/*.md` em escopo sai do esqueleto "A preencher" pela
+primeira vez ou recebe uma revisão substancial, peça também ao subagente uma
+versão navegável em HTML/CSS/JS autocontido (sem framework, sem dependência
+nova) ao lado do `.md` — o mesmo padrão já usado em
+`docs/communications/pitch/` e `docs/communications/onepage/` (HTML puro +
+CSS + JS na mesma pasta). Objetivo: a documentação funciona como "docs
+online" fáceis de abrir num navegador, não só como markdown cru. Não é
+necessário refazer isso a cada rodada — só quando o conteúdo do `.md` mudou
+o bastante para a versão HTML ficar desatualizada.
+
 ## Passo 4 — Reportar
 
 ```
