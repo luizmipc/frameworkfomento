@@ -91,16 +91,29 @@ direto para o modo "Criar nova tarefa" com essa descrição.
    têm `tasks.md` correspondente — existem só em `KANBAN.md` (ver formato em
    `KANBAN.md` — Formato, e nota em `docs/index.html` (seção `#arch`) se
    relevante).
-6. Pergunte via `AskUserQuestion` (2 opções): **"Essa tarefa envolve
-   tela/fluxo de usuário?"**
-   - **"Sim"** — acione o subagente `designer` (tool de subagentes,
-     `subagent_type: "designer"`) pedindo a criação de um protótipo estático
-     em `prototype/<slug-ou-avulsa>-<ID>/` com `index.html`, `style.css` e
-     `script.js` (HTML/CSS/JS puro, sem framework, sem lógica real, com um
-     comentário no topo do HTML identificando-o como protótipo
-     não-funcional), refletindo a descrição da tarefa. Registre o caminho do
-     protótipo junto da linha da task em `KANBAN.md`.
-   - **"Não"** — pule esta etapa.
+6. Antes de perguntar, cheque se a task já se refere a um protótipo
+   **existente** — o caso comum é uma task originada da sub-rotina "Origem:
+   docs/persona/": o protótipo correspondente é sempre
+   `prototype/<mesmo-nome-do-arquivo-de-persona>/` (ex.:
+   `docs/persona/avulsa-A001.html` → `prototype/avulsa-A001/`). Confirme com
+   `find prototype -maxdepth 1 -type d -name '<candidato>'`.
+   - **Se já existe um protótipo para esse ID base**: pule a pergunta
+     Sim/Não abaixo — acione o subagente `designer`
+     (`subagent_type: "designer"`) pedindo para **ajustar esse protótipo
+     existente** (nunca criar uma pasta nova para a mesma tela), descrevendo
+     a mudança pedida pela task. Registre o mesmo caminho já existente junto
+     da linha da task em `KANBAN.md` (várias tasks podem apontar para o
+     mesmo protótipo, uma por dor/ajuste).
+   - **Caso contrário**, pergunte via `AskUserQuestion` (2 opções): **"Essa
+     tarefa envolve tela/fluxo de usuário?"**
+     - **"Sim"** — acione o `designer` pedindo a criação de um protótipo
+       estático **novo** em `prototype/<slug-ou-avulsa>-<ID>/` com
+       `index.html`, `style.css` e `script.js` (HTML/CSS/JS puro, sem
+       framework, sem lógica real, com um comentário no topo do HTML
+       identificando-o como protótipo não-funcional), refletindo a
+       descrição da tarefa. Registre o caminho do protótipo junto da linha
+       da task em `KANBAN.md`.
+     - **"Não"** — pule esta etapa.
 7. Rode a **Sincronização** (para também atualizar as tasks reais de
    `specs/*/tasks.md`, preservando a(s) tarefa(s) avulsa(s) recém-criada(s)).
 8. Rode a **Retrospectiva**.
