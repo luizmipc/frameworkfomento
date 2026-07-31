@@ -1,6 +1,6 @@
 ---
 name: "kanban-start"
-description: "Apresenta as tarefas To Do do KANBAN.md como opções selecionáveis no chat, deixa escolher o fluxo do Spec Kit (manual ou decidido pelo dev), delega a implementação ao dev, aciona o QA como gate obrigatório, e roda uma retrospectiva de feedback ao final."
+description: "Apresenta as tarefas To Do do KANBAN.md como opções selecionáveis no chat (com atalho para criar tarefas novas a partir das dores de um teste de persona em docs/persona/, sem precisar rodar /kanban-sync à parte), deixa escolher o fluxo do Spec Kit (manual ou decidido pelo dev), delega a implementação ao dev, aciona o QA como gate obrigatório, e roda uma retrospectiva de feedback ao final."
 argument-hint: "Opcional: um Task ID (ex. T012 ou A001), com ou sem prefixo de slug, para pular a navegação por perguntas"
 compatibility: "Requires KANBAN.md (gerado por kanban-sync) e os subagentes dev/qa/designer/product-owner/scrum-master em .claude/agents/"
 metadata:
@@ -38,6 +38,17 @@ tarefa avulsa via `/kanban-sync`)." e pare.
 Leia a seção `## To Do` de `KANBAN.md` (inclui tasks `T\d{3}` com feature e
 `A\d{3}` avulsas), preservando a ordem em que aparecem.
 
+Rode `find docs/persona -maxdepth 1 -name '*.html'`. Se houver pelo menos um
+arquivo, reserve uma vaga para a opção fixa **"Criar tarefa a partir de
+dores de persona"** na **primeira** `AskUserQuestion` deste passo (seja ela
+a pergunta de feature/bucket abaixo, ou, se só havia um bucket com
+pendências, a própria pergunta de tarefa) — conta contra o limite de 4
+opções (ex.: com 2 features + avulsas, ainda cabem todas + a opção de
+persona; com 4 features, mostre as 3 primeiras + a opção de persona,
+adiando o resto para depois, igual à paginação de "Ver mais" abaixo). Se
+escolhida, vá para a sub-rotina **Origem: persona** (abaixo) em vez de
+continuar a seleção normal.
+
 Respeite o limite de 4 opções por chamada de `AskUserQuestion` (mais o
 "Other" de texto livre, sempre disponível para o usuário digitar qualquer
 Task ID fora das opções mostradas):
@@ -56,6 +67,30 @@ Task ID fora das opções mostradas):
     repita com o próximo lote até acabarem.
 - Se o usuário usar "Other" para digitar um ID fora das opções mostradas,
   valide que existe e está em To Do no escopo atual antes de aceitar.
+
+## Origem: persona
+
+Sub-rotina do Passo 2, acionada ao escolher "Criar tarefa a partir de dores
+de persona" — evita ter que rodar `/kanban-sync` à parte antes de
+`/kanban-start` só para este caso.
+
+1. Rode a sub-rotina **Origem: docs/persona/** de `kanban-sync/SKILL.md`
+   (escolha do arquivo de persona, extração das dores, seleção via
+   `AskUserQuestion` com `multiSelect: true`) para obter uma lista de uma ou
+   mais descrições de tarefa.
+2. Para cada descrição da lista, rode os passos 2 a 6 do **Modo "Criar nova
+   tarefa"** de `kanban-sync/SKILL.md` (checagem de escopo, alocação em
+   feature/avulsa, geração do próximo ID avulso, adição em `KANBAN.md`,
+   pergunta sobre protótipo) — **pare antes do passo 7 dele**
+   (Sincronização); quem sincroniza este fluxo combinado é o próprio
+   `/kanban-start` (Passo 1 já rodou antes de chegar aqui, e o Passo 7 roda
+   depois do ciclo dev/QA).
+3. Se exatamente **uma** tarefa foi criada, use o ID dela diretamente e
+   siga para o Passo 4 deste comando (pule o resto da navegação do Passo 2).
+4. Se **mais de uma** foi criada, releia `## To Do` de `KANBAN.md` (agora
+   incluindo as tarefas recém-criadas) e retome a seleção normal do Passo 2
+   desde o início, para o usuário escolher qual iniciar agora — as demais
+   ficam em To Do para uma próxima chamada de `/kanban-start`.
 
 ## Passo 3 — Escolher o fluxo (flexibilidade)
 
@@ -241,8 +276,8 @@ olhar o quadro.
 
 ## Done When
 
-- [ ] Uma única task foi selecionada (via `AskUserQuestion` ou `$ARGUMENTS`
-      validado)
+- [ ] Uma única task foi selecionada (via `AskUserQuestion`, `$ARGUMENTS`
+      validado, ou criada na hora via "Origem: persona")
 - [ ] `KANBAN.md` foi atualizado (In Progress → Done ou nota de bloqueio)
 - [ ] `specs/<slug>/tasks.md` só foi tocado pelo `dev` (nunca por este
       comando diretamente)
