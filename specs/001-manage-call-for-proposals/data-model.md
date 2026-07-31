@@ -13,7 +13,7 @@ documentação/critérios/estágio em models separados.
 | `nome_chamada`           | `CharField(max_length=255)`                     | sim (FR-003) | |
 | `instituicao`            | `CharField(max_length=255)`                     | sim (FR-003) | Instituição que publica o edital (CHK028) — não a organização proponente do captador. |
 | `descricao`              | `TextField`                                     | sim (FR-003) | |
-| `link`                   | `URLField`                                      | sim (FR-003/FR-005 — ver research.md) | |
+| `link`                   | `URLField(blank=True)`                          | não (FR-003 revisado — clarify de 2026-07-31) | Desejável mas opcional no cadastro; cobre o caso de edital anunciado antes da publicação do link oficial (Edge Case). Pode ser adicionado depois via edição (FR-013). |
 | `data_abertura`          | `DateField(null=True, blank=True)`               | não (FR-004, Edge Case) | Pode ficar em branco quando só a data de fechamento é conhecida. |
 | `data_fechamento`        | `DateField`                                      | sim (FR-003) | Prazo de submissão. |
 | `documentacao_exigida`   | `TextField(blank=True)`                          | não (FR-006) | Texto livre (FR-017). |
@@ -42,10 +42,11 @@ class Estagio(models.TextChoices):
 
 ### Validações
 
-- Campos obrigatórios (`nome_chamada`, `instituicao`, `descricao`, `link`,
+- Campos obrigatórios (`nome_chamada`, `instituicao`, `descricao`,
   `data_fechamento`) são reforçados pelo próprio `ModelForm`/`required` do
   model — cobre FR-005 (mensagem de erro por campo faltando é o
-  comportamento padrão do Django forms, sem código extra).
+  comportamento padrão do Django forms, sem código extra). `link` NÃO entra
+  nessa lista (FR-003 revisado): `URLField(blank=True)` no model.
 - Nenhuma validação de unicidade em `nome_chamada` — Edge Case de nomes
   duplicados (CHK017) é aceito como cenário válido (duas edições anuais do
   mesmo programa), conforme observado no checklist como risco baixo/não

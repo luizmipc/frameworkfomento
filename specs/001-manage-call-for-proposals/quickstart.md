@@ -40,8 +40,10 @@ uv run manage.py runserver 0.0.0.0:8000
 2. **US2 — Cadastrar edital (P2, mas primeiro no roteiro pois US1 depende
    de dados existentes)**
    - Acesse `/novo/`, tente salvar sem preencher nada → confirma FR-005
-     (erros por campo obrigatório: nome, instituição, link, data de
+     (erros por campo obrigatório: nome, instituição, descrição, data de
      fechamento).
+   - Cadastre um edital sem preencher o link e confirme que salva com
+     sucesso → confirma FR-003 (link é opcional no cadastro).
    - Preencha nome da chamada, instituição, descrição, link, data de
      fechamento (e opcionalmente data de abertura, documentação exigida,
      critérios de avaliação) e salve → confirma US2 Acceptance Scenario 1
