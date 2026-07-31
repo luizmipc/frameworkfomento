@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T00:32Z
+**Última sincronização**: 2026-07-31T00:35Z
 
 ## To Do
 
@@ -92,6 +92,17 @@ todas as colunas.
   data passada, então esse requisito nunca foi validado por teste ao vivo.
   Protótipo: `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-4`.
+- [ ] A007 Confirmar visualmente, ao vivo, o comportamento responsivo em
+  janela estreita (~463px): o CSS de `prototype/avulsa-A001/` já parece
+  correto por leitura de código (`@media (max-width: 640px)` empilha a
+  tabela em cards com `data-label`), mas não foi clicado/visto de fato
+  nesta nem na rodada anterior de `/fundraiser-test` — a ferramenta de
+  resize do browser se comportou de forma inconsistente nas duas
+  tentativas. Não é uma task de correção — é um lembrete para confirmar
+  numa próxima rodada de teste (browser real redimensionado, ou emulação
+  de dispositivo) antes de considerar o dor-1 original encerrado.
+  Protótipo: `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-1`.
 
 ### (avulsas)
 
