@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T01:55Z
+**Última sincronização**: 2026-07-31T02:10Z
 
 ## To Do
 
@@ -80,23 +80,6 @@ todas as colunas.
   `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1` (rodada 1) /
   `#dor-5` (rodada 4).
-- [ ] A012 Busca da tabela/quadro não reconhece o termo digitado sem
-  acento ("inovacao" não encontra "Inovação") — comparação de texto
-  literal, sem normalização. Falha silenciosa real em português.
-  Protótipo: `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-1`.
-- [ ] A013 Adicionar indicador visível quando busca/filtro estão ativos
-  (ex.: "Filtrando por: BNDES · Limpar filtros") — hoje os contadores por
-  coluna do Kanban (A009) refletem o total filtrado sem nenhum aviso,
-  risco real de sub-contagem em quem lê o número achando que é o total
-  geral. Protótipo: `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-2`.
-- [ ] A014 Mensagem discreta por coluna do Kanban quando o filtro zera o
-  resultado ali (equivalente à mensagem "Nenhum edital encontrado com
-  esses critérios" que a Tabela já tem) — hoje uma coluna vazia por
-  filtro é visualmente idêntica a uma coluna genuinamente sem editais
-  naquele estágio. Protótipo: `prototype/avulsa-A001/`. Via teste de
-  persona `docs/persona/avulsa-A001.html#dor-3`.
 
 ### (avulsas)
 
@@ -155,3 +138,15 @@ _Nenhuma tarefa em progresso._
   browser em 2026-07-31 (badges "Vence em até 7 dias"/"Vence em até 21
   dias" nas duas visões, com precedência correta sobre o badge de
   vencido).
+- [x] A012 Busca reconhece termo sem acento ("inovacao" encontra
+  "Inovação"). Protótipo: `prototype/avulsa-A001/`. Confirmado ao vivo
+  via browser em 2026-07-31.
+- [x] A013 Indicador visível de busca/filtro ativo, com "Limpar filtros".
+  Protótipo: `prototype/avulsa-A001/`. Confirmado ao vivo via browser em
+  2026-07-31 (indicador aparece com busca e com filtro de instituição,
+  "Limpar filtros" reseta os dois sem tocar a ordenação).
+- [x] A014 Mensagem de estado vazio por coluna do Kanban quando o filtro
+  zera o resultado ali. Protótipo: `prototype/avulsa-A001/`. Confirmado
+  ao vivo via browser em 2026-07-31 (filtrando por uma instituição com 1
+  único edital, as 3 colunas restantes mostraram "Nenhum edital
+  encontrado com esses critérios." com contador "(0)").
