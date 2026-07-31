@@ -58,11 +58,12 @@
       <li><code>FR-012</code> O link para a chamada é acessível diretamente a partir da tabela e do quadro.</li>
       <li><code>FR-022</code> Indicação visual em amarelo, distinta do vermelho de FR-011, para editais com prazo se aproximando em quatro níveis (até 7, 14, 21 ou 30 dias antes do fechamento) — mostrando apenas o nível mais urgente aplicável quando o edital se encaixa em mais de um.</li>
       <li><code>FR-024</code> Cabeçalho de cada coluna do quadro de progresso exibe a quantidade de editais naquela coluna, atualizada dinamicamente ao entrar/sair/mover um edital.</li>
+      <li><code>FR-031</code> Tabela e quadro de progresso permanecem utilizáveis em diferentes larguras de tela: dados essenciais legíveis em telas estreitas sem ocultar colunas na tabela; as quatro colunas do quadro visíveis lado a lado em desktop padrão, sem rolagem horizontal.</li>
     </ul>
 
     <h4 id="fr-cadastro">Cadastro de edital (User Story 2 — P2)</h4>
     <ul>
-      <li><code>FR-003</code> Cadastro de novo edital com, no mínimo: nome da chamada, instituição responsável, descrição, link e data de fechamento.</li>
+      <li><code>FR-003</code> Cadastro de novo edital com, no mínimo: nome da chamada, instituição responsável, descrição e data de fechamento. O link para a chamada é desejável, mas opcional — pode ser adicionado depois via edição (FR-013).</li>
       <li><code>FR-004</code> Registro opcional da data de abertura das submissões.</li>
       <li><code>FR-005</code> Bloqueio do cadastro sem os campos obrigatórios, com indicação de quais faltam.</li>
       <li><code>FR-006</code> Registro da documentação exigida pelo edital.</li>
@@ -76,7 +77,7 @@
       <li><code>FR-014</code> Remoção definitiva de um edital da lista de acompanhamento ativo.</li>
       <li><code>FR-027</code> Marcação de um edital como "Ignorado" — atributo de visibilidade ortogonal ao estágio de acompanhamento, distinto da remoção (FR-014) e não um quinto estágio do quadro (FR-002 permanece com quatro colunas). Cobre o caso de um edital avaliado e descartado por não ter a ver com a área de atuação do captador, sem perder o registro de que já foi avaliado.</li>
       <li><code>FR-028</code> Editais "Ignorado" ficam ocultos por padrão da tabela, do quadro de progresso e das contagens (FR-023/FR-024), mantendo o estágio de acompanhamento inalterado.</li>
-      <li><code>FR-029</code> Visão/filtro dedicado para o captador consultar os editais marcados como "Ignorado".</li>
+      <li><code>FR-029</code> Alternância entre a visão de editais ativos e a de editais marcados como "Ignorado", apresentada como um controle de duas posições nomeadas ("‹ Ativos" / "Ignorados ›", com contador) — não um checkbox/toggle liga-desliga, nem uma quinta coluna do quadro, nem uma rota separada.</li>
       <li><code>FR-030</code> Reversão da marcação "Ignorado", devolvendo o edital à tabela e ao quadro de progresso no estágio em que já estava.</li>
     </ul>
 
@@ -89,7 +90,7 @@
 
     <h4 id="fr-busca">Busca, filtro e ordenação (User Story 4 — P4)</h4>
     <ul>
-      <li><code>FR-018</code> Busca de editais por nome da chamada (texto parcial), na tabela e no quadro de progresso.</li>
+      <li><code>FR-018</code> Busca de editais por nome da chamada (texto parcial), na tabela e no quadro de progresso, ignorando diferenças de acentuação (ex.: "inovacao" encontra "Inovação").</li>
       <li><code>FR-019</code> Filtro de editais por instituição responsável, na tabela e no quadro de progresso.</li>
       <li><code>FR-020</code> Ordenação da tabela por data de fechamento (crescente ou decrescente).</li>
       <li><code>FR-021</code> Dentro de cada coluna do quadro de progresso, cartões ordenados por data de fechamento (mais próximo primeiro), como critério secundário ao agrupamento por estágio.</li>
@@ -117,7 +118,7 @@
 
     <h4 id="br-cadastro">Cadastro e dados obrigatórios</h4>
     <ul>
-      <li>Um edital só pode ser salvo com, no mínimo: nome da chamada, instituição responsável, link e data de fechamento. Sem esses quatro campos, o cadastro é bloqueado.</li>
+      <li>Um edital só pode ser salvo com, no mínimo: nome da chamada, instituição responsável, descrição e data de fechamento. Sem esses quatro campos, o cadastro é bloqueado. O link para a chamada é desejável, mas não bloqueia o cadastro.</li>
       <li>A data de abertura é desejável, mas não obrigatória.</li>
       <li>Documentação exigida e critérios de avaliação são texto livre descritivo, sem controle individual de status "atendido/pendente" por item — o acompanhamento de progresso é feito só pelo Estágio de Acompanhamento.</li>
     </ul>
@@ -166,6 +167,7 @@
       <li>Indicação visual de prazo de fechamento vencido.</li>
       <li>Gerenciamento individual: cada captador só cadastra, acompanha e edita os próprios editais.</li>
       <li>Busca por nome da chamada e filtro por instituição responsável, na tabela e no quadro de progresso; ordenação por data de fechamento na tabela e, dentro de cada coluna, no quadro de progresso.</li>
+      <li>Apresentação responsiva da tabela e do quadro de progresso — dados essenciais legíveis em telas estreitas, quatro colunas do quadro visíveis sem rolagem horizontal em desktop padrão.</li>
     </ul>
 
     <h4 id="sl-fora">Fora do escopo (nesta feature)</h4>

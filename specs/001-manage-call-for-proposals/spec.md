@@ -75,6 +75,15 @@ valor sozinho, mesmo sem as demais user stories implementadas.
    move um edital de uma coluna para outra, **Then** o cabeçalho de cada
    coluna afetada (origem e destino) atualiza imediatamente a quantidade de
    editais exibida naquela coluna, refletindo o novo total.
+7. **Given** o captador acessa a tela de listagem em uma tela estreita (ex.:
+   celular), **When** a largura disponível não comporta todas as colunas
+   lado a lado, **Then** o sistema reorganiza a apresentação da tabela (sem
+   ocultar nenhuma coluna) para manter nome da chamada, descrição,
+   instituição responsável, link e datas legíveis e acessíveis; **and**,
+   separadamente, na visão de quadro de progresso em uma resolução de
+   desktop padrão, as quatro colunas (Acceptance Scenario 2) permanecem
+   visíveis lado a lado, sem exigir rolagem horizontal para comparar
+   colunas.
 
 ---
 
@@ -224,7 +233,9 @@ ordenados pela proximidade da data de fechamento.
 
 1. **Given** existem editais cadastrados com nomes de chamada diferentes,
    **When** o captador digita um termo de busca, **Then** a tabela passa a
-   exibir apenas os editais cujo nome da chamada contém esse termo.
+   exibir apenas os editais cujo nome da chamada contém esse termo,
+   ignorando diferenças de acentuação (ex.: buscar "inovacao" encontra um
+   edital chamado "Inovação").
 2. **Given** existem editais de instituições responsáveis diferentes,
    **When** o captador seleciona um filtro por instituição responsável,
    **Then** a tabela passa a exibir apenas os editais daquela instituição.
@@ -370,7 +381,12 @@ ordenados pela proximidade da data de fechamento.
   progresso do edital é feito pelo Estágio de Acompanhamento.
 - **FR-018**: O sistema DEVE permitir que o captador busque editais pelo
   nome da chamada, usando busca textual parcial, tanto na visão de tabela
-  quanto na visão de quadro de progresso.
+  quanto na visão de quadro de progresso. A comparação usada pela busca DEVE
+  ignorar diferenças de acentuação (ex.: digitar "inovacao" encontra um
+  edital chamado "Inovação"), para que o captador não precise digitar
+  acentos corretamente para localizar um edital. Formalização de um
+  comportamento já implementado e confirmado ao vivo no protótipo
+  `prototype/avulsa-A001/` (task A012 do quadro do projeto).
 - **FR-019**: O sistema DEVE permitir que o captador filtre a listagem de
   editais por instituição responsável, tanto na visão de tabela quanto na
   visão de quadro de progresso.
@@ -475,14 +491,48 @@ ordenados pela proximidade da data de fechamento.
   contagens exibidas (total geral de FR-023 e contagem por coluna de
   FR-024) — mantendo inalterado o estágio de acompanhamento que o edital já
   tinha antes de ser ignorado.
-- **FR-029**: O sistema DEVE oferecer ao captador uma forma de visualizar os
-  editais marcados como "Ignorado", separada da visão padrão (tabela e
-  quadro de progresso), para que ele possa revisá-los sem precisar lembrar
-  manualmente de cada um.
+- **FR-029**: O sistema DEVE oferecer ao captador uma forma de alternar
+  entre a visão de editais ativos e a visão de editais marcados como
+  "Ignorado", tanto na tabela quanto no quadro de progresso, para que ele
+  possa revisar os ignorados sem precisar lembrar manualmente de cada um.
+  Essa alternância DEVE ser apresentada como um controle de duas posições
+  nomeadas (ex.: "‹ Ativos" / "Ignorados ›", com indicação da quantidade de
+  editais ignorados) — não como uma caixa de marcação (checkbox/toggle)
+  liga-desliga, não como uma quinta coluna do quadro de progresso (FR-002
+  permanece com exatamente quatro colunas) e não como uma rota/tela
+  totalmente separada. Os dois conjuntos (ativos e ignorados) são tratados
+  como posições opostas de uma mesma alternância, reaproveitando os mesmos
+  controles de busca/filtro/ordenação e a mesma lógica de contagem total
+  (FR-023) já usados pela visão padrão. Justificativa de UX (decisão do
+  `designer`): um controle de alternância de duas posições nomeadas é o
+  padrão indicado para alternar entre visões/categorias mutuamente
+  exclusivas (Nielsen Norman Group) — diferente de um checkbox/toggle, que
+  comunica o estado liga/desliga de uma única propriedade, não a troca entre
+  dois conjuntos nomeados de itens. Revisão desta rodada: o texto original
+  de FR-029 deixava o mecanismo de UI deliberadamente em aberto ("uma
+  visão/filtro dedicado"); agora que a decisão de UX foi tomada e
+  implementada e confirmada ao vivo no protótipo `prototype/avulsa-A001/`
+  (task A018), o requisito passa a especificar o padrão de interação real
+  em vez de permanecer livre.
 - **FR-030**: O sistema DEVE permitir que o captador desmarque um edital
   como "Ignorado" a partir da visão de ignorados (FR-029), fazendo-o voltar
   a aparecer na tabela e no quadro de progresso, no mesmo estágio de
   acompanhamento em que já estava antes de ser ignorado.
+- **FR-031**: O sistema DEVE manter a listagem em tabela e o quadro de
+  progresso utilizáveis em diferentes larguras de tela. Na tabela, os dados
+  essenciais (nome da chamada, descrição, instituição responsável, link e
+  datas) DEVEM permanecer legíveis e acessíveis em telas estreitas (ex.:
+  celular), reorganizando a apresentação quando necessário em vez de ocultar
+  qualquer coluna. No quadro de progresso, as quatro colunas (FR-002) DEVEM
+  permanecer visíveis lado a lado em resoluções de desktop padrão, sem exigir
+  rolagem horizontal. Este requisito é tratado como FR separado de FR-001/
+  FR-002 (e não uma extensão deles) porque cobre um sinal distinto —
+  usabilidade da apresentação através de diferentes tamanhos de tela, não a
+  existência dos dados/colunas em si, que FR-001/FR-002 já garantem. Ver
+  Acceptance Scenario 7 de User Story 1. Formalização de um comportamento já
+  implementado e confirmado ao vivo no protótipo `prototype/avulsa-A001/`
+  (tasks A002 e A003 do quadro do projeto), que nunca havia sido registrado
+  como requisito.
 
 ### Key Entities
 
