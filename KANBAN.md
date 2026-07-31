@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T01:10Z
+**Última sincronização**: 2026-07-31T01:27Z
 
 ## To Do
 
@@ -64,34 +64,6 @@ todas as colunas.
 - [ ] T046 [US4] Implementar busca (`busca`) e filtro (`instituicao`) via querystring em `EditalListView`/`EditalKanbanView` (FR-018, FR-019; depende de T016, T018)
 - [ ] T047 [US4] Implementar ordenação por `data_fechamento` (principal na tabela via `ordenar`; secundária dentro de cada coluna do quadro) em `app/editais/views.py` (FR-020, FR-021; depende de T046)
 - [ ] T048 [P] [US4] Adicionar campos de busca/filtro/ordenação em `edital_list.html` e `edital_kanban.html` — alinhar com `designer` (depende de T046, T047)
-- [ ] A002 Layout responsivo da tabela de editais: em janelas estreitas
-  (~463px, próximo de uma tela em split-screen) só 3 das 6 colunas ficam
-  visíveis sem rolar, e são exatamente as 3 menos decisivas — Abertura,
-  Fechamento e Link (os dados mais decisivos para priorizar) somem sem
-  nenhum indicador de que há mais conteúdo à direita. Protótipo:
-  `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-1`.
-- [ ] A003 Ajustar largura mínima das colunas do quadro Kanban: as 4 colunas
-  (Backlog/Em andamento/Validação/Concluído) juntas ultrapassam a largura
-  disponível mesmo em desktop padrão (1440×900), exigindo rolagem
-  horizontal e escondendo parcialmente "Concluído". Protótipo:
-  `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-2`.
-- [ ] A004 Incluir o link da chamada no card do quadro Kanban — hoje só a
-  tabela mostra o link; FR-012 já pede ele acessível "diretamente a partir
-  da tabela e do quadro". Protótipo: `prototype/avulsa-A001/`. Via teste de
-  persona `docs/persona/avulsa-A001.html#dor-3`.
-- [ ] A005 Remover o `tabindex="0"` do card do Kanban (ou dar a ele uma
-  ação própria) — hoje é alcançável por Tab mas não reage a nada além dos
-  2 botões internos, uma parada extra sem função para quem navega por
-  teclado. Protótipo: `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-3`.
-- [ ] A006 Adicionar ao menos um edital mockado com `data_fechamento` no
-  passado no protótipo, para permitir observar ao vivo a indicação visual
-  de prazo vencido (FR-011) — nenhum dos 5 editais mockados atuais tem
-  data passada, então esse requisito nunca foi validado por teste ao vivo.
-  Protótipo: `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-4`.
 - [ ] A007 Confirmar visualmente, ao vivo, o comportamento responsivo em
   janela estreita (~463px): o CSS de `prototype/avulsa-A001/` já parece
   correto por leitura de código (`@media (max-width: 640px)` empilha a
@@ -103,25 +75,6 @@ todas as colunas.
   de dispositivo) antes de considerar o dor-1 original encerrado.
   Protótipo: `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1`.
-- [ ] A009 Mostrar, no cabeçalho de cada coluna do quadro Kanban, quantos
-  editais existem naquele estágio (ex.: "Validação (2)") — hoje é preciso
-  contar os cards visualmente; um captador com volume real de editais já
-  monta esse resumo por status manualmente hoje (planilha). Protótipo:
-  `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-3`.
-- [ ] A010 Adicionar ao protótipo `prototype/avulsa-A001/` uma referência
-  visual de busca, filtro por instituição e ordenação por data de
-  fechamento (User Story 4, FR-018 a FR-021 em `spec.md`) — diferente de
-  US1-US3, essa user story ainda não tem protótipo, só a implementação
-  real planejada em T041-T048 de `specs/001-manage-call-for-proposals/tasks.md`.
-  Via teste de persona `docs/persona/avulsa-A001.html#dor-2`.
-- [ ] A011 Adicionar ao protótipo `prototype/avulsa-A001/` a indicação de
-  prazo próximo em níveis (FR-022 em `spec.md`): destaque amarelo para
-  editais que vencem em até 7, 14, 21 ou 30 dias (mostrando só o nível
-  mais urgente aplicável), distinto do destaque vermelho já existente
-  (A006) para prazo já vencido. Pedido direto do usuário após revisão do
-  quadro, não via teste de persona.
-
 ### (avulsas)
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento
@@ -147,3 +100,35 @@ _Nenhuma tarefa em progresso._
   depender de lembrete manual a cada nova task avulsa criada. Auditoria
   rodada em 2026-07-31: A002-A006 já corretas no código, nenhum ajuste
   necessário; A007 fora de escopo (não é task de código).
+- [x] A002 Layout responsivo da tabela de editais (colunas decisivas não
+  somem em janela estreita). Protótipo: `prototype/avulsa-A001/`.
+  Confirmado ao vivo via browser em 2026-07-31 (ordem de colunas
+  Chamada/Fechamento/Abertura/Link/Instituição/Descrição).
+- [x] A003 Largura mínima das colunas do quadro Kanban (4 colunas cabem em
+  desktop padrão sem rolagem). Protótipo: `prototype/avulsa-A001/`.
+  Confirmado ao vivo via browser em 2026-07-31.
+- [x] A004 Link da chamada no card do quadro Kanban. Protótipo:
+  `prototype/avulsa-A001/`. Confirmado ao vivo via browser em 2026-07-31
+  (link "Ver chamada ↗" presente em todos os cards).
+- [x] A005 `tabindex="0"` supérfluo removido do card do Kanban. Protótipo:
+  `prototype/avulsa-A001/`. Confirmado em 2026-07-31 (`grep tabindex` não
+  retorna nada em `index.html`/`script.js`; árvore de acessibilidade só
+  lista os elementos nativamente focáveis).
+- [x] A006 Edital mockado com prazo vencido + indicação visual (FR-011).
+  Protótipo: `prototype/avulsa-A001/`. Confirmado ao vivo via browser em
+  2026-07-31 (badge "Vencido" na tabela e no card do quadro).
+- [x] A009 Contagem de editais por coluna do quadro Kanban. Protótipo:
+  `prototype/avulsa-A001/`. Confirmado ao vivo via browser em 2026-07-31,
+  incluindo atualização dinâmica da contagem ao mover um card entre
+  colunas.
+- [x] A010 Protótipo de busca, filtro por instituição e ordenação por
+  fechamento (User Story 4, FR-018 a FR-021). Protótipo:
+  `prototype/avulsa-A001/`. Confirmado ao vivo via browser em 2026-07-31
+  (busca textual, filtro populado dinamicamente com as 5 instituições,
+  ordenação da tabela, e ordenação secundária dentro de cada coluna do
+  quadro).
+- [x] A011 Indicação de prazo próximo em níveis — 7/14/21/30 dias, amarelo
+  (FR-022). Protótipo: `prototype/avulsa-A001/`. Confirmado ao vivo via
+  browser em 2026-07-31 (badges "Vence em até 7 dias"/"Vence em até 21
+  dias" nas duas visões, com precedência correta sobre o badge de
+  vencido).
