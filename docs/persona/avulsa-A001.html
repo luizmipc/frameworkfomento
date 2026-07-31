@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Persona — Fernanda Vasconcelos (protótipo avulsa-A001, 3ª rodada) — frameworkfomento</title>
+<title>Persona — Tarcísio Andrade (protótipo avulsa-A001, 4ª rodada) — frameworkfomento</title>
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
 
   <nav class="toc">
     <p class="kicker group-label">docs/persona</p>
-    <a href="#top">Fernanda Vasconcelos</a>
+    <a href="#top">Tarcísio Andrade</a>
     <a href="#canvas">Quem é essa persona</a>
     <a href="#tarefas">Tarefas testadas</a>
     <a href="#dores">Dores identificadas</a>
@@ -23,91 +23,114 @@
   </nav>
 
   <main>
-    <p class="kicker">fundraiser-test · docs/persona · 3ª rodada (pós A005–A008)</p>
-    <h1 id="top">Fernanda Vasconcelos</h1>
-    <p class="quote">"Eu respondo por três clientes ao mesmo tempo. Se a tela não me diz rápido o que venceu, sou eu que descubro tarde demais — numa reunião, na frente do cliente."</p>
-    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-07-30, via comando <code>/fundraiser-test</code>. Esta é a <strong>3ª rodada</strong> de teste deste protótipo. Resumo do histórico: a 1ª rodada (Marina Advíncula) encontrou 6 dores, das quais as 2 de severidade alta e 1 média viraram as tasks A002–A004, corrigidas pelo <code>designer</code>. A 2ª rodada (Ricardo Bittencourt) reconfirmou ao vivo as 3 correções e reencontrou as 3 dores restantes (renumeradas dor-1 a dor-4): dor-2 (sem busca/filtro/ordenação) virou a User Story 4 formal em <code>spec.md</code> — ainda sem protótipo/implementação; dor-3 (tabindex sem função no card) e dor-4 (nenhum edital mockado com prazo vencido) viraram as tasks A005/A006, corrigidas; dor-1 (viewport estreito não confirmado ao vivo) ficou pendente como task A007, lembrete de re-verificação. Entre a 2ª e esta rodada, uma auditoria (task A008) confirmou que A002–A006 seguem corretas no código atual — nada regrediu. Nesta rodada, tabela e Kanban em desktop (~1568px) foram observados ao vivo via browser; a viewport estreita (~440px) foi tentada pela <strong>3ª vez consecutiva</strong> e segue não confirmável neste ambiente de teste — ver dor-1.</p>
+    <p class="kicker">fundraiser-test · docs/persona · 4ª rodada (pós A002–A006, A009–A011)</p>
+    <h1 id="top">Tarcísio Andrade</h1>
+    <p class="quote">"Eu não preciso de mais uma tela bonita. Preciso saber, em 10 segundos, o que vence essa semana e quantos editais eu já tirei do papel — o resto eu resolvo na planilha se precisar."</p>
+    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-07-30, via comando <code>/fundraiser-test</code>. Esta é a <strong>4ª rodada</strong> de teste deste protótipo. Resumo do histórico: a 1ª rodada (Marina Advíncula) encontrou 6 dores, 3 viraram as tasks A002–A004. A 2ª rodada (Ricardo Bittencourt) reconfirmou essas 3 e reencontrou as 3 restantes: dor-2 (sem busca/filtro/ordenação) virou a User Story 4 formal em <code>spec.md</code>; dor-3/dor-4 viraram A005/A006; dor-1 (viewport estreito, não confirmável ao vivo) virou a task-lembrete A007. A 3ª rodada (Fernanda Vasconcelos) confirmou A006 ao vivo pela 1ª vez, tentou A007 pela 3ª vez sem sucesso, e encontrou 2 dores novas que motivaram A009 (contador por coluna do Kanban) e reforçaram A010 (protótipo de busca/filtro/ordenação para a US4). Entre a 3ª rodada e esta: A002–A006 e A009–A011 foram <strong>todas implementadas e confirmadas Done</strong> no <code>KANBAN.md</code>, incluindo os quatro níveis de alerta de prazo próximo (FR-022, amarelo, task A011). A007 segue em To Do. Nesta rodada, tabela e Kanban em desktop (~1568px) foram observados ao vivo via browser numa sessão anterior desta mesma sessão (busca, filtro, ordenação, badges e contador confirmados funcionando); a viewport estreita (~440px) teve uma 4ª tentativa de confirmação ao vivo, desta vez lendo <code>window.innerWidth</code> diretamente após o redimensionamento — o valor não mudou (2556px antes e depois), provando que a ferramenta de redimensionamento não afeta <code>window.innerWidth</code> neste ambiente. Ver dor-5.</p>
 
     <h2 id="canvas">Quem é essa persona</h2>
     <table>
       <tbody>
-        <tr><th>Papel</th><td>Consultora freelance de captação de recursos — presta serviço avulso/contratado, sem vínculo fixo, para múltiplas organizações ao mesmo tempo</td></tr>
-        <tr><th>Organização</th><td>Atende simultaneamente três OSCs de pequeno porte: uma ONG de educação infantil, uma associação de agricultura familiar e um coletivo de arte comunitária — nenhuma tem equipe interna de captação, por isso contratam Fernanda por projeto</td></tr>
-        <tr><th>Editais acompanhados hoje</th><td>Cerca de 15 no total, divididos entre os três clientes, em estágios bem diferentes — de "olhando se vale a pena" até "proposta já enviada, aguardando resultado"</td></tr>
-        <tr><th>Ferramentas atuais</th><td>Planilha Google compartilhada com cada cliente (uma aba por organização, com colunas de prazo e status) + Google Calendar para lembretes de prazo + WhatsApp para reportar andamento aos clientes</td></tr>
-        <tr><th>Familiaridade técnica</th><td>Média — usa bem Google Workspace e formulários no dia a dia, mas não é da área de tecnologia; não tem paciência para aprender uma ferramenta complexa, quer algo que "funcione direto" sem treinamento</td></tr>
+        <tr><th>Papel</th><td>Coordenador de captação de recursos, funcionário CLT interno (não terceirizado) de uma organização de médio porte</td></tr>
+        <tr><th>Organização</th><td>OSC de saúde comunitária com cerca de 40 funcionários, atuação em três estados — capta recursos para os próprios programas, não presta serviço a terceiros</td></tr>
+        <tr><th>Editais acompanhados hoje</th><td>Entre 12 e 18 simultaneamente, a maioria de fundações privadas e alguns editais públicos estaduais/municipais — número cresce e diminui ao longo do ano conforme os ciclos de fomento abrem</td></tr>
+        <tr><th>Ferramentas atuais</th><td>Planilha Google (uma linha por edital, colunas de status e prazo preenchidas manualmente) + quadro Trello com uma lista por estágio, mantidos em paralelo — ele mesmo reconhece que os dois já saíram de sincronia mais de uma vez</td></tr>
+        <tr><th>Familiaridade técnica</th><td>Média — confortável com planilhas e Trello no dia a dia, mas não é técnico; espera que filtro/busca/ordenação se comportem como em qualquer app comum (Trello, Google Sheets), sem tutorial</td></tr>
       </tbody>
     </table>
 
     <h3>Objetivos</h3>
     <ul>
-      <li>Ao abrir a tela, ver rápido quais editais — de qualquer um dos 3 clientes — já venceram ou vencem essa semana, para não perder prazo nem precisar dar explicação ruim depois.</li>
-      <li>Confirmar visualmente que um edital que acabou de finalizar de preparar está corretamente marcado como concluído, antes de reportar isso ao cliente.</li>
-      <li>Abrir rápido a chamada oficial de um edital específico que um cliente perguntou sobre, sem precisar procurar em abas de planilha separadas.</li>
+      <li>Ver, sem contar na mão, quantos editais já avançou para cada estágio — principalmente Validação, porque é o número que reporta para a diretoria toda sexta.</li>
+      <li>Separar rapidamente "o que vence essa semana" de "o que vence esse mês", para decidir em que edital focar hoje.</li>
+      <li>Encontrar um edital específico pelo nome, quando alguém da equipe pergunta sobre ele, sem abrir a planilha.</li>
+      <li>Ver só os editais de uma fundação específica, quando precisa preparar um relatório de relacionamento com aquele financiador.</li>
     </ul>
     <h3>Frustrações atuais (antes de testar o protótipo)</h3>
     <ul>
-      <li>Cada cliente tem uma aba de planilha diferente — ela mantém prazo e status manualmente em cada uma, e já aconteceu de atualizar uma aba e esquecer de replicar em outra.</li>
-      <li>A planilha não avisa sozinha quando um prazo vence — depende de lembrete manual no Calendar, que ela às vezes esquece de criar ao cadastrar um edital novo.</li>
-      <li>Não existe visão consolidada entre os três clientes num único lugar — para saber, no total, quantos editais estão "quase prontos" ela precisa abrir as 3 planilhas e somar de cabeça.</li>
+      <li>Planilha e Trello divergem: já aconteceu de mover um card no Trello e esquecer de atualizar a planilha (ou vice-versa), e só perceber a divergência quando alguém pergunta o número errado.</li>
+      <li>Contar quantos editais estão em cada estágio do Trello é manual — ele conta os cards de cabeça antes de cada reunião de sexta.</li>
+      <li>A planilha tem uma coluna de "dias até o prazo" com fórmula, mas ele só olha isso quando lembra de abrir a planilha — não há alerta automático nem visual óbvio de "isso está próximo".</li>
     </ul>
 
     <h2 id="tarefas">Tarefas testadas</h2>
     <ol>
-      <li>Olhar a tabela e identificar, pela coluna Fechamento, quais editais já venceram — para saber se precisa avisar algum cliente ainda hoje.</li>
-      <li>Conferir se o mesmo alerta de prazo vencido aparece também no quadro Kanban, na coluna onde ela guarda os editais já enviados — importante porque, mesmo "Concluído", a data de fechamento real ainda importa para explicar ao cliente o que aconteceu.</li>
-      <li>A partir do card "Programa de Fomento a Startups de Impacto" (coluna Validação), localizar o link da chamada oficial direto no Kanban — um cliente perguntou um detalhe específico do edital e ela não quer trocar de visão para achar a mesma linha na tabela.</li>
-      <li>Mover esse mesmo edital de Validação para Concluído, depois de confirmar que a proposta foi enviada, e verificar que ele se reagrupa corretamente na coluna certa.</li>
-      <li>Simular a janela de trabalho que ela usa entre reuniões com clientes — notebook pequeno, tela não maximizada — e ver se a tabela e o quadro continuam legíveis.</li>
+      <li>Filtrar a lista para ver só os editais de uma instituição específica (ex.: só os do BNDES), tanto na tabela quanto no quadro.</li>
+      <li>Diferenciar, olhando os badges, o que vence essa semana do que vence esse mês, sem precisar calcular datas de cabeça.</li>
+      <li>Buscar um edital digitando parte do nome, para confirmar rapidamente se ele já está cadastrado, sem abrir a planilha.</li>
+      <li>Saber quantos editais já estão na coluna Validação sem contar os cards manualmente — o número que reporta toda sexta.</li>
+      <li>Combinar busca e filtro para achar um edital, depois limpar tudo e voltar a ver a lista completa, sem ficar em dúvida sobre o que está sendo exibido.</li>
     </ol>
 
     <h2 id="dores">Parecer — dores identificadas</h2>
 
     <section class="story" id="dor-1">
       <div class="story-head">
-        <span class="badge badge-low">🟢 baixa — não verificável ao vivo (3ª tentativa)</span>
-        <h3>Comportamento em viewport estreita (~440px) segue sem confirmação ao vivo</h3>
+        <span class="badge badge-medium">🟡 média</span>
+        <h3>Busca não reconhece o termo digitado sem acento — falha silenciosa em português</h3>
       </div>
-      <p><strong>O que aconteceu:</strong> a Tarefa 5 (janela estreita, o cenário real de quando Fernanda trabalha no notebook pequeno entre um cliente e outro) foi tentada pela <strong>3ª vez consecutiva</strong> nas três rodadas de teste deste protótipo, e novamente não pôde ser confirmada de forma confiável: o redimensionamento do browser produziu, momentaneamente, um Kanban com menos colunas visíveis e sem indicação de rolagem — mas ao rolar/interagir a página voltou sozinha ao layout largo (~1568px), o que indica falha da ferramenta de automação de redimensionamento neste ambiente, não um estado real da página. Por leitura de código, a regra <code>@media (max-width: 640px)</code> em <code>style.css</code> continua presente e correta (empilha a tabela em cards com <code>data-label</code>, esconde o <code>&lt;thead&gt;</code>).</p>
-      <p><strong>Por que é um problema:</strong> não é uma dor confirmada, nem uma confirmação de que está resolvido — é uma lacuna de confiança que já persiste por três rodadas seguidas. É justamente o cenário mais comum do dia a dia de Fernanda (ela raramente trabalha com a janela maximizada), então é o item de maior risco não verificado do protótipo, mesmo estando classificado como baixa severidade por não haver evidência de quebra.</p>
-      <p><strong>Recomendação:</strong> como o mesmo método de verificação falhou 3 vezes seguidas, vale trocar de abordagem na próxima rodada (dispositivo físico, emulação de tela estável, ou captura de screenshot direto sem resize dinâmico) em vez de repetir a mesma tentativa; não é indício de bug, é limitação do processo de teste até aqui.</p>
+      <p><strong>O que aconteceu:</strong> por leitura de código, o campo de busca compara o termo digitado com o nome da chamada usando <code>e.chamada.toLowerCase().includes(termo)</code> — uma comparação literal, sem normalizar acentos. O edital mockado "Chamada Pública Inovação Social 2026" só aparece se Tarcísio digitar "inovação" com o acento certo; digitar "inovacao" (sem cedilha/til, muito comum ao digitar rápido ou num teclado que não corrige automaticamente) não encontra nada, e a tela mostra "Nenhum edital encontrado com esses critérios" — como se o edital não existisse.</p>
+      <p><strong>Por que é um problema:</strong> Tarcísio está testando exatamente essa tarefa (Tarefa 3: confirmar rápido se um edital já está cadastrado) sob pressão, entre outras tarefas — uma busca que falha por acidente ortográfico o leva a concluir erroneamente "não está cadastrado" e recadastrar, ou perder tempo abrindo a planilha para confirmar, anulando o ganho de ter a busca. É um problema típico de aplicações em português que não tratam acentuação, não um capricho.</p>
+      <p><strong>Recomendação:</strong> normalizar (remover acentos, ex. via <code>String.prototype.normalize("NFD")</code> + regex) tanto o termo digitado quanto o nome da chamada antes de comparar — mudança pequena e sem novas dependências.</p>
     </section>
 
     <section class="story" id="dor-2">
       <div class="story-head">
         <span class="badge badge-medium">🟡 média</span>
-        <h3>Sem busca, filtro ou ordenação em nenhuma das duas visões</h3>
+        <h3>Nenhum sinal de que um filtro/busca está ativo — números podem ser lidos como totais por engano</h3>
       </div>
-      <p><strong>O que aconteceu:</strong> nem a tabela nem o Kanban oferecem ordenar por prazo, filtrar por instituição ou buscar por nome. Com os 5 editais mockados isso não incomoda, mas Fernanda acompanha cerca de 15 editais reais, espalhados entre três clientes diferentes.</p>
-      <p><strong>Por que é um problema:</strong> sem ordenação por fechamento, "o que vence primeiro entre os três clientes" ainda exige ler linha por linha — o mesmo trabalho manual que hoje ela já faz somando de cabeça três planilhas separadas, sem ganho real de tempo. Este gap já foi formalizado como User Story 4 (P4, FR-018 a FR-021) em <code>spec.md</code>, mas ainda não tem protótipo nem implementação — permanece uma lacuna real para quem tem volume de editais acima do dataset de demonstração.</p>
-      <p><strong>Recomendação:</strong> não bloqueante para o escopo atual (US1); já está corretamente registrado como US4 no <code>product-owner</code> — só reforço aqui que, do ponto de vista de quem acompanha muitos editais de vários clientes, essa é a lacuna que mais pesa no dia a dia, mais até do que qualquer detalhe visual.</p>
+      <p><strong>O que aconteceu:</strong> quando Tarcísio filtra por uma instituição (Tarefa 1) e, na sequência, olha o contador "Validação (N)" no cabeçalho da coluna do Kanban (Tarefa 4) sem lembrar de limpar o filtro antes, o número mostrado é o total <em>filtrado</em>, não o total geral de editais em Validação — por leitura de código, tanto <code>renderKanban</code> quanto a contagem por coluna (A009) partem de <code>getFiltered()</code>, e não há nenhum texto na tela ("mostrando 3 de 12", chip de filtro ativo, etc.) indicando que um filtro está aplicado.</p>
+      <p><strong>Por que é um problema:</strong> a Tarefa 4 é justamente o número que Tarcísio repassa à diretoria toda sexta — se ele fez a Tarefa 1 minutos antes e esqueceu o filtro ligado, o número que reporta está sub-contado, e nada na tela avisa isso. É o mesmo tipo de erro silencioso que hoje já acontece entre a planilha e o Trello dele (divergência sem aviso), então o protótipo reproduz um problema que ele já tem, em vez de resolvê-lo.</p>
+      <p><strong>Recomendação:</strong> um indicador simples e sempre visível quando busca/filtro estão ativos (ex.: "Filtrando por: BNDES · Limpar filtros", perto dos controles) resolveria a maior parte do risco, sem exigir “X de Y” em cada contador individual.</p>
     </section>
 
     <section class="story" id="dor-3">
       <div class="story-head">
         <span class="badge badge-low">🟢 baixa</span>
-        <h3>Cabeçalho das colunas do Kanban não mostra quantos editais há em cada estágio</h3>
+        <h3>Coluna do Kanban vazia por causa do filtro é visualmente idêntica a uma coluna genuinamente vazia</h3>
       </div>
-      <p><strong>O que aconteceu:</strong> cada coluna do quadro (Backlog, Em andamento, Validação, Concluído) mostra só o nome do estágio — nenhum contador de quantos cards existem ali. Para saber "quantos editais estão em Validação agora", Fernanda precisaria contar os cards visualmente.</p>
-      <p><strong>Por que é um problema:</strong> hoje, na planilha, ela já monta um resumo por status (mesmo que manual, com fórmula simples) para reportar aos clientes quantos editais estão avançando. Com 5 cards por coluna, contar de olho é trivial; com 15 editais reais espalhados de forma desigual entre 4 colunas, um contador no cabeçalho pouparia a mesma contagem manual que ela já faz hoje na planilha — sem isso, o Kanban não entrega, nesse ponto específico, mais do que o que ela já tem.</p>
-      <p><strong>Recomendação:</strong> não bloqueante — candidato a pequeno ajuste de requisito, a critério do <code>product-owner</code> (não é uma questão de estilo visual, é informação ausente).</p>
+      <p><strong>O que aconteceu:</strong> ao filtrar por uma instituição que não tem nenhum edital numa determinada coluna (ex.: nenhum edital do BNDES em Backlog), a coluna some para "(0)" e fica em branco — sem nenhuma mensagem tipo "nenhum edital corresponde ao filtro nesta coluna". A visão de Tabela já tem essa mensagem (<code>"Nenhum edital encontrado com esses critérios"</code>), mas o Kanban não tem equivalente por coluna.</p>
+      <p><strong>Por que é um problema:</strong> é um gap pequeno, mas assimétrico entre as duas visões — na Tabela fica claro que o filtro zerou o resultado, no Kanban a coluna vazia pode ser lida como "ainda não comecei nada nesse estágio para essa instituição" (verdade) ou "não tenho nada cadastrado nesse estágio, ponto" (pode ser falso, se for só o filtro). Com o contador "(0)" já visível (A009), o risco de confusão é pequeno, mas existe.</p>
+      <p><strong>Recomendação:</strong> opcional — mensagem discreta por coluna quando o filtro zera o resultado ali; não bloqueante.</p>
+    </section>
+
+    <section class="story" id="dor-4">
+      <div class="story-head">
+        <span class="badge badge-low">🟢 baixa — nota estrutural, não bug do protótipo</span>
+        <h3>Filtro por instituição depende de o nome ter sido digitado de forma consistente no cadastro</h3>
+      </div>
+      <p><strong>O que aconteceu:</strong> por leitura de código, as opções do filtro de instituição vêm direto dos valores já cadastrados (<code>[...new Set(editais.map(e =&gt; e.instituicao))]</code>), sem normalização nem lista pré-definida. Nos dados mockados isso não aparece porque cada instituição tem grafia única, mas a User Story 2 (cadastro, ainda não implementada) trata "instituição responsável" como texto livre, sem indicar em <code>spec.md</code> se haverá autocomplete a partir de instituições já usadas.</p>
+      <p><strong>Por que é um problema:</strong> Tarcísio já cadastra os mesmos financiadores repetidamente ao longo do ano (mesma fundação, editais diferentes). Se ele digitar "Fundação X" numa vez e "Fundação X Ltda" ou só "Fundação X" com espaço a mais em outra, o filtro por instituição (Tarefa 1) vai tratá-los como instituições diferentes, fragmentando exatamente o agrupamento que ele quer usar para preparar relatório por financiador. Isso não é um bug deste protótipo (que só lê dados já mockados) — é um risco estrutural que nasce em como a User Story 2 (cadastro) vai tratar esse campo.</p>
+      <p><strong>Recomendação:</strong> não é ação para este protótipo; sinalizar ao <code>product-owner</code> para considerar, ao especificar a US2, se "instituição responsável" deveria oferecer autocomplete/sugestão a partir de instituições já cadastradas pelo mesmo captador, para não fragmentar o filtro da US4.</p>
+    </section>
+
+    <section class="story" id="dor-5">
+      <div class="story-head">
+        <span class="badge badge-low">🟢 baixa — não verificável com o ferramental atual</span>
+        <h3>Comportamento em viewport estreita (~440px) permanece impossível de confirmar ao vivo neste ambiente</h3>
+      </div>
+      <p><strong>O que aconteceu:</strong> nesta sessão, a 4ª tentativa consecutiva de confirmar a Tarefa "viewport estreita" foi feita de forma mais rigorosa que nas anteriores — lendo <code>window.innerWidth</code> diretamente via ferramenta de execução de JavaScript, antes e depois de <code>resize_window</code>. O valor ficou em 2556px nos dois momentos: o redimensionamento não teve efeito algum sobre <code>window.innerWidth</code> nesta configuração de ambiente. Isso não é mais "ainda sem confirmar, tentar de novo depois" — é uma limitação comprovada do ferramental de teste disponível nesta sessão, não um sinal sobre o estado da página.</p>
+      <p><strong>Por que é um problema:</strong> continua sendo o cenário mais próximo do dia a dia real de muita gente que acompanha editais em notebook pequeno ou janela dividida, mas a limitação agora está documentada como fato do ambiente, não como pendência de re-teste. Por leitura de código, a regra <code>@media (max-width: 640px)</code> em <code>style.css</code> segue presente e correta (empilha a tabela em cards com <code>data-label</code>, esconde o <code>&lt;thead&gt;</code>) — não há indício de regressão, só ausência de confirmação ao vivo.</p>
+      <p><strong>Recomendação:</strong> não repetir o mesmo método numa 5ª rodada — ele já provou não funcionar. Se uma verificação ao vivo for necessária, requer um método diferente (dispositivo físico, emulação de tela fixa desde a carga da página, ou screenshot de uma janela de browser real já aberta em tamanho estreito) fora do escopo desta sessão.</p>
     </section>
 
     <h2 id="bem">O que funcionou bem</h2>
     <ul>
-      <li><strong>Badge "Vencido" confirmado ao vivo na tabela — pela 1ª vez nas 3 rodadas:</strong> a linha "Chamada de Extensão Universitária Comunitária" (fechamento 15/06/2026, já passado) mostra o badge vermelho "Vencido" ao lado da data. Nas rodadas anteriores essa correção (A006) só tinha sido confirmada por leitura de código — nesta rodada foi vista funcionando de verdade.</li>
-      <li><strong>Badge "Vencido" também confirmado ao vivo no card do Kanban:</strong> o mesmo edital, na coluna Concluído, mostra o badge ao lado do link "Ver chamada" — confirma que o alerta de prazo aparece nas duas visões, não só na tabela. Isso responde diretamente à Tarefa 2 de Fernanda: mesmo um edital já "Concluído" continua sinalizando visualmente que o prazo real já passou.</li>
-      <li><strong>Ordem das colunas da tabela (A002) segue correta em desktop:</strong> Chamada, Fechamento, Abertura, Link, Instituição, Descrição — as três colunas decisivas para priorizar vêm logo após o identificador.</li>
-      <li><strong>Quatro colunas do Kanban cabem sem rolagem em desktop (A003):</strong> em ~1568px, Backlog, Em andamento, Validação e Concluído aparecem lado a lado, sem coluna cortada.</li>
-      <li><strong>Mover um edital funciona e reagrupa corretamente:</strong> o clique em "→" no card "Programa de Fomento a Startups de Impacto" moveu-o de Validação para Concluído instantaneamente, reagrupando junto do outro card da coluna — exatamente a Tarefa 4 de Fernanda, sem travamento nem diálogo extra.</li>
-      <li><strong>Link "Ver chamada" presente e visível no card, ao lado do badge:</strong> observado ao vivo nesta rodada (posição e rótulo corretos); o clique-through em si já havia sido confirmado na 2ª rodada (A004) e a auditoria A008 confirmou que não regrediu — não foi re-clicado nesta sessão, mas nada indica quebra.</li>
+      <li><strong>Busca e filtro por instituição são compartilhados entre Tabela e Kanban:</strong> os controles ficam acima das duas visões e continuam aplicados ao trocar de aba — Tarcísio não precisa refazer o filtro toda vez que alterna entre as visões, exatamente o que a Tarefa 1/5 esperava.</li>
+      <li><strong>Ordenação por fechamento na tabela reflete a urgência real:</strong> com "Mais próximo primeiro" selecionado, a ordem observada foi 15/06 (Vencido), 05/08 (até 7 dias), 19/08 (até 21 dias), 15/09, 01/10 — exatamente a hierarquia que a Tarefa 2 pede, sem precisar calcular nada de cabeça.</li>
+      <li><strong>Os quatro níveis de alerta de prazo (FR-022) aparecem corretos e sem sobreposição:</strong> cada edital mostra só o nível mais urgente aplicável (nunca "até 7 dias" e "até 21 dias" ao mesmo tempo), com cor amarela nitidamente distinta do vermelho de vencido — resolve diretamente a Tarefa 2.</li>
+      <li><strong>Contador por coluna do Kanban (A009) existe e atualiza sozinho:</strong> "Validação (1)" no cabeçalho responde de cara à Tarefa 4, sem contar cards manualmente — é exatamente o número que hoje Tarcísio conta de cabeça toda sexta antes da reunião (a ressalva de que esse número pode estar filtrado sem aviso está na dor-2, mas a existência do contador em si é um ganho real).</li>
+      <li><strong>Quatro colunas do Kanban continuam cabendo sem rolagem em desktop (A003, reconfirmado):</strong> nenhuma regressão desde a 3ª rodada.</li>
+      <li><strong>Link "Ver chamada ↗" no card do Kanban (A004, reconfirmado):</strong> presente e junto dos badges de prazo, sem precisar trocar para a tabela.</li>
     </ul>
 
     <h2 id="resolver">Para quem resolver</h2>
     <ul>
-      <li><strong>Dor 1</strong> (viewport estreito, 3ª tentativa sem confirmação) → nenhuma ação de correção ainda; trocar método de verificação numa próxima rodada antes de decidir se é achado real para o <code>designer</code>.</li>
-      <li><strong>Dor 2</strong> (sem busca/filtro/ordenação) → <code>product-owner</code> — já formalizado como US4 em <code>spec.md</code>, reforço de prioridade do ponto de vista de quem acompanha muitos editais.</li>
-      <li><strong>Dor 3</strong> (Kanban sem contador por coluna) → <code>product-owner</code> (informação ausente, não é questão de estilo).</li>
+      <li><strong>Dor 1</strong> (busca sem normalizar acento) → <code>product-owner</code>/<code>dev</code> — lacuna de requisito de busca em português; FR-018 não especifica normalização de acento, vale considerar antes da implementação real da US4.</li>
+      <li><strong>Dor 2</strong> (nenhum sinal de filtro ativo) → <code>designer</code> — é uma questão de apresentação de estado (indicador visual), não de requisito de negócio em si.</li>
+      <li><strong>Dor 3</strong> (coluna vazia por filtro sem mensagem) → <code>designer</code> — mesma família da dor-2, apresentação de estado vazio.</li>
+      <li><strong>Dor 4</strong> (instituição como texto livre sem normalização) → <code>product-owner</code> — nota estrutural para quando a User Story 2 (cadastro) for especificada em detalhe.</li>
+      <li><strong>Dor 5</strong> (viewport estreito não verificável) → nenhuma ação de correção; registrar como limitação de ferramental de teste, não repetir o mesmo método numa 5ª rodada.</li>
     </ul>
 
     <p class="page-footer">Este documento não corrige nada — é insumo para o <code>product-owner</code>/<code>designer</code> agirem sobre o parecer, via <code>/quick-task</code> ou ajuste de <code>spec.md</code>, a critério de quem revisa.</p>
