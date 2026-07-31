@@ -77,6 +77,7 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 - [ ] T013 [US1] `TestCase` em `app/editais/tests.py`: `POST /<id>/mover/` avança e retrocede o `estagio` corretamente, e é no-op nas bordas (Backlog não retrocede, Concluído não avança) (FR-009, FR-010)
 - [ ] T014 [US1] `TestCase` em `app/editais/tests.py`: listagem e kanban de um captador nunca exibem editais de outro captador (FR-015, FR-016)
 - [ ] T015 [US1] `TestCase` em `app/editais/tests.py`: edital com `data_fechamento` no passado é marcado como vencido na resposta (via `prazo_vencido`/contexto do template) (FR-011)
+- [ ] T050 [US1] `TestCase` em `app/editais/tests.py`: `GET /kanban/` exibe, no cabeçalho de cada coluna, a quantidade de editais atualmente naquele estágio (ex.: "Validação (2)"), e a contagem atualiza imediatamente após um `POST /<id>/mover/` (FR-024, Acceptance Scenario 6)
 
 ### Implementation for User Story 1
 
@@ -84,6 +85,7 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 - [ ] T017 [US1] Criar template `app/editais/templates/editais/edital_list.html` (tabela: chamada, descrição, instituição, abertura, fechamento, link clicável, indicação visual de prazo vencido) — alinhar estilo final com `designer`
 - [ ] T018 [US1] Implementar `EditalKanbanView` em `app/editais/views.py`, agrupando o queryset do captador pelas 4 colunas de `Estagio`
 - [ ] T019 [US1] Criar template `app/editais/templates/editais/edital_kanban.html` (4 colunas, cards com botões acessíveis "mover para trás/frente", desabilitados nas bordas) — alinhar estilo final com `designer`; interação de referência em `prototype/avulsa-A001/`
+- [ ] T051 [US1] Incluir a contagem de editais por coluna (ex.: "Validação (2)") no contexto de `EditalKanbanView` e no cabeçalho de cada coluna em `edital_kanban.html` (FR-024; depende de T018, T019)
 - [ ] T020 [US1] Implementar view `mover_estagio` (POST-only, `direcao=anterior|proxima`, 404 se o edital não pertence ao `request.user`, no-op nas bordas, redireciona para `next`/`kanban`) em `app/editais/views.py`
 - [ ] T021 [US1] Adicionar rotas `''`, `'kanban/'` e `'<int:pk>/mover/'` em `app/editais/urls.py` (depende de T016, T018, T020)
 
@@ -100,8 +102,9 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 ### Tests for User Story 2
 
 - [ ] T022 [US2] `TestCase` em `app/editais/tests.py`: `POST /novo/` com todos os campos obrigatórios válidos cria o `Edital` com `captador=request.user` e `estagio=Estagio.BACKLOG`, e ele aparece na listagem (Acceptance Scenario 1)
-- [ ] T023 [US2] `TestCase` em `app/editais/tests.py`: `POST /novo/` sem `nome_chamada`, `instituicao`, `link` ou `data_fechamento` não salva e retorna erro por campo faltando (FR-005, Acceptance Scenario 2)
+- [ ] T023 [US2] `TestCase` em `app/editais/tests.py`: `POST /novo/` sem `nome_chamada`, `instituicao`, `descricao` ou `data_fechamento` não salva e retorna erro por campo faltando (FR-005, Acceptance Scenario 2)
 - [ ] T024 [US2] `TestCase` em `app/editais/tests.py`: `documentacao_exigida` e `criterios_avaliacao` são salvos como texto livre e recuperáveis integralmente depois (FR-006, FR-007, FR-017, Acceptance Scenario 3)
+- [ ] T049 [US2] `TestCase` em `app/editais/tests.py`: `POST /novo/` sem `link` salva o `Edital` com sucesso (campo opcional) e o edital aparece na listagem sem link (FR-003, Acceptance Scenario 2 revisado)
 
 ### Implementation for User Story 2
 
@@ -161,12 +164,17 @@ prazo, sem mudar de coluna.
 - [ ] T043 [US4] `TestCase` em `app/editais/tests.py`: `GET /?ordenar=fechamento` (e `-fechamento`) ordena a tabela por proximidade do prazo de fechamento, crescente/decrescente (FR-020, Acceptance Scenario 3)
 - [ ] T044 [US4] `TestCase` em `app/editais/tests.py`: `GET /kanban/` exibe, dentro de uma mesma coluna com múltiplos editais, os cards ordenados por `data_fechamento` (mais próximo primeiro) sem alterar o agrupamento por estágio (FR-021, Acceptance Scenario 4)
 - [ ] T045 [US4] `TestCase` em `app/editais/tests.py`: `GET /` e `GET /kanban/` sem parâmetros de busca/filtro exibem todos os editais do captador (Acceptance Scenario 5 — limpar busca/filtro volta ao estado completo)
+- [ ] T052 [US4] `TestCase` em `app/editais/tests.py`: `GET /` e `GET /kanban/` exibem, próximo ao título/controles, o total geral de editais sem filtro ativo, e o total já filtrado (não o geral) quando `busca` e/ou `instituicao` estão aplicados (FR-023, Acceptance Scenario 6)
+- [ ] T053 [US4] `TestCase` em `app/editais/tests.py`: com `busca` e/ou `instituicao` ativos, `GET /` e `GET /kanban/` exibem um indicador ("Filtrando por: ... · Limpar filtros") próximo aos controles; acionar "Limpar filtros" reseta busca e instituição juntos, em uma ação, sem alterar `ordenar` (FR-025, Acceptance Scenario 7)
+- [ ] T054 [US4] `TestCase` em `app/editais/tests.py`: (a) `GET /kanban/` com `busca`/`instituicao` que esvazia uma coluna exibe "Nenhum edital encontrado com esses critérios." nessa coluna e a contagem do cabeçalho mostra 0 (FR-026, Acceptance Scenario 8); (b) caso negativo — uma coluna genuinamente sem editais naquele estágio, sem nenhum filtro ativo, permanece em branco, sem essa mensagem (Edge Case, FR-026)
 
 ### Implementation for User Story 4
 
 - [ ] T046 [US4] Implementar busca (`busca`, contra `nome_chamada`) e filtro (`instituicao`) via querystring no `get_queryset` de `EditalListView` e `EditalKanbanView` em `app/editais/views.py` (FR-018, FR-019; depende de T016, T018)
 - [ ] T047 [US4] Implementar ordenação por `data_fechamento` via querystring `ordenar` em `EditalListView` (critério principal) e ordenação secundária por `data_fechamento` dentro de cada coluna em `EditalKanbanView` (agrupamento por estágio preservado) em `app/editais/views.py` (FR-020, FR-021; depende de T046)
 - [ ] T048 [US4] [P] Adicionar campos de busca/filtro/ordenação (form `GET` simples, sem JS) em `edital_list.html` e `edital_kanban.html`, preservando os parâmetros ao mover/paginar — alinhar com `designer` (depende de T046, T047)
+- [ ] T055 [US4] Adicionar ao contexto de `EditalListView`/`EditalKanbanView` o total de editais exibidos (geral ou filtrado, FR-023) e um indicador de filtro ativo (`busca`/`instituicao` aplicados, FR-025); exibir ambos em `edital_list.html` e `edital_kanban.html`, com ação "Limpar filtros" que reseta `busca`/`instituicao` preservando `ordenar` (depende de T046)
+- [ ] T056 [US4] Em `edital_kanban.html`, exibir "Nenhum edital encontrado com esses critérios." apenas na coluna que ficou sem cartões por causa de `busca`/`instituicao` ativos (contagem 0 no cabeçalho, FR-024/FR-026); uma coluna sem filtro ativo e sem editais naquele estágio permanece em branco, sem mensagem (Edge Case) (depende de T046, T051)
 
 **Checkpoint**: US4 completo e testável de forma independente — não bloqueia nem é bloqueada por US1/US2/US3.
 
@@ -176,7 +184,7 @@ prazo, sem mudar de coluna.
 
 **Purpose**: Fechar a feature — documentação viva e validação de ponta a ponta.
 
-- [ ] T037 Rodar `uv run manage.py test editais` e garantir que toda a suíte (T011-T015, T022-T024, T029-T031, T041-T045) passa
+- [ ] T037 Rodar `uv run manage.py test editais` e garantir que toda a suíte (T011-T015, T050, T022-T024, T049, T029-T031, T041-T045, T052-T054) passa
 - [ ] T038 Executar o roteiro de `specs/001-manage-call-for-proposals/quickstart.md` manualmente (via `docker compose up`), confirmando os 5 passos (login, US2, US1, US3, isolamento por captador)
 - [ ] T039 [P] Atualizar `/home/lm/repos/frameworkfomento/CLAUDE.md` com os comandos reais de build/lint/test (`uv run manage.py runserver`, `uv run manage.py test`, `uv run manage.py migrate`) e a arquitetura de alto nível (app `editais`, model `Edital`, auth via `django.contrib.auth`)
 - [ ] T040 [P] Atualizar `docs/architecture-and-tech.md` e `docs/class-diagram.md` refletindo o app `editais`, o model `Edital` e o fluxo de autenticação mínima
@@ -202,6 +210,9 @@ prazo, sem mudar de coluna.
 - Entre user stories: US1, US2, US3 podem ser trabalhadas em paralelo por pessoas diferentes após Foundational (US4 depende de US1 estar pronta); a ordem de prioridade recomendada é P1 → P2 → P3 → P4 (ver Implementation Strategy)
 - US4: T048 é `[P]` em relação a nada dentro da própria phase (depende de T046/T047, que são sequenciais entre si)
 - Polish: T039 e T040 são `[P]` entre si
+- T050/T051 (contagem por coluna do kanban, FR-024) ficam dentro da Phase 3 (US1): T050 depende de T012 (kanban básico já existir para testar a contagem); T051 depende de T018/T019
+- T049 (cadastro sem `link`, FR-003) fica dentro da Phase 4 (US2), mesma dependência de T022-T024: depende de T025 (`EditalCreateView`)
+- T052-T054 (testes de FR-023/FR-025/FR-026) e T055-T056 (implementação) ficam dentro da Phase 6 (US4): T055 depende de T046 (busca/filtro já implementados); T056 depende de T046 e de T051 (contagem por coluna, para exibir 0 junto da mensagem de FR-026)
 
 ---
 
@@ -228,7 +239,8 @@ prazo, sem mudar de coluna.
 
 - `[P]` = arquivos diferentes, sem dependência de task incompleta
 - Toda task de template (`T004, T005, T017, T019, T026, T034, T028, T036, T048`) usa markup Django simples e funcional; a forma final (CSS, disposição visual) é responsabilidade do `designer` e deve ser revisada com ele antes de considerar a feature pronta para release, por regra de handoff do `dev`
-- `link` continua obrigatório no cadastro (FR-003/FR-005) — ver `research.md` para a justificativa de não afrouxar esse requisito nesta rodada
+- `link` é opcional no cadastro (`URLField(blank=True)`, FR-003 revisado pelo clarify de 2026-07-31) — ver `research.md` para a decisão atualizada; T023 testa os campos obrigatórios restantes e T049 cobre o caso positivo de cadastro sem `link`
 - Remoção de edital (US3) é exclusão definitiva (hard delete) — ver `research.md`
 - US4 (T041-T048) foi adicionada depois das demais, a partir de uma dor real encontrada via `/fundraiser-test` (`docs/persona/avulsa-A001.html#dor-2`), formalizada em `spec.md` como FR-018 a FR-021
+- T052-T056 (FR-023/FR-025/FR-026 — total exibido, indicador de filtro ativo, mensagem de coluna vazia por filtro) e T050-T051 (FR-024 — contagem por coluna) formalizam comportamentos já implementados no protótipo `prototype/avulsa-A001/` (tasks A009/A013/A014 do quadro do projeto) que não tinham task correspondente em `tasks.md`; adicionadas por `speckit-analyze` (achados F7-F9)
 - Commitar após cada task ou grupo lógico de tasks

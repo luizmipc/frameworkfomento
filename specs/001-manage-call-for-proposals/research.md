@@ -72,21 +72,22 @@ sinalizadas nos checklists da spec, não de ambiguidade de negócio).
   resultado funcional; pode ser adicionado depois como progressive
   enhancement se o `designer` pedir, sem quebrar o fluxo de formulário.
 
-## Decisão: Link do edital continua obrigatório no cadastro (FR-003/FR-005)
+## Decisão: Link do edital é opcional no cadastro (FR-003 revisado)
 
-- **Decision**: O campo `link` é `URLField` obrigatório no formulário de
-  cadastro, seguindo FR-003/FR-005 ao pé da letra.
-- **Rationale**: O checklist `business-rules.md` (CHK020) levanta a tensão
-  com o Edge Case "edital sem link ainda disponível", mas o gate já passou
-  com essa exceção documentada como não bloqueante, e a spec (FR-003,
-  FR-005) é explícita ao listar `link` como um dos campos obrigatórios cuja
-  ausência deve ser bloqueada. Não cabe ao `dev` afrouxar um requisito
-  funcional explícito por conta própria — se o comportamento precisar
-  mudar (ex.: permitir salvar sem link com aviso), isso é uma decisão de
-  negócio que volta ao `product-owner` via `speckit-clarify`/spec update.
-- **Alternatives considered**: Tornar `link` opcional para acomodar o Edge
-  Case — rejeitado nesta rodada por não ser uma decisão técnica; é mudança
-  de requisito de negócio, fora do mandato do `dev`.
+- **Decision**: O campo `link` é `URLField(blank=True)`, opcional no
+  formulário de cadastro.
+- **Rationale**: O checklist `business-rules.md` (CHK020) havia levantado a
+  tensão entre exigir `link` no cadastro e o Edge Case "edital sem link
+  ainda disponível" (chamada anunciada, edital completo ainda não
+  publicado). Essa tensão foi resolvida formalmente pelo `product-owner` via
+  `speckit-clarify` (ver `## Clarifications` → `### Session 2026-07-31` em
+  `spec.md`): o link deixou de ser obrigatório no cadastro; o captador pode
+  cadastrar sem link e adicioná-lo depois via edição (FR-013). Nome da
+  chamada, instituição, descrição e data de fechamento continuam
+  obrigatórios.
+- **Alternatives considered**: Manter `link` obrigatório — descartado, pois
+  contradiria diretamente o FR-003 vigente e o Edge Case que ele agora
+  cobre explicitamente.
 
 ## Decisão: Remoção de edital é exclusão definitiva (hard delete)
 
