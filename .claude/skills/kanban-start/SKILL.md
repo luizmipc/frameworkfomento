@@ -36,37 +36,35 @@ tarefa avulsa via `/kanban-sync`)." e pare.
 ## Passo 2 — Selecionar a tarefa
 
 Leia a seção `## To Do` de `KANBAN.md` (inclui tasks `T\d{3}` com feature e
-`A\d{3}` avulsas), preservando a ordem em que aparecem.
+`A\d{3}` avulsas), preservando a ordem em que aparecem — essa ordem já
+reflete prioridade/dependência (features ordenadas por diretório, tasks na
+ordem de `tasks.md` dentro de cada uma) e serve de base para a lista plana
+abaixo. **Não pergunte por feature/bucket antes de mostrar tasks** — vá
+direto às tasks reais.
 
 Rode `find docs/persona -maxdepth 1 -name '*.html'`. Se houver pelo menos um
 arquivo, reserve uma vaga para a opção fixa **"Criar tarefa a partir de
-dores de persona"** na **primeira** `AskUserQuestion` deste passo (seja ela
-a pergunta de feature/bucket abaixo, ou, se só havia um bucket com
-pendências, a própria pergunta de tarefa) — conta contra o limite de 4
-opções (ex.: com 2 features + avulsas, ainda cabem todas + a opção de
-persona; com 4 features, mostre as 3 primeiras + a opção de persona,
-adiando o resto para depois, igual à paginação de "Ver mais" abaixo). Se
-escolhida, vá para a sub-rotina **Origem: persona** (abaixo) em vez de
-continuar a seleção normal.
+dores de persona"** na `AskUserQuestion` abaixo — conta contra o limite de 4
+opções junto das tasks. Se escolhida, vá para a sub-rotina **Origem:
+persona** (abaixo) em vez de continuar a seleção normal.
 
 Respeite o limite de 4 opções por chamada de `AskUserQuestion` (mais o
 "Other" de texto livre, sempre disponível para o usuário digitar qualquer
-Task ID fora das opções mostradas):
+Task ID fora das opções mostradas, de qualquer bucket):
 
-- **Se houver mais de uma feature/bucket com tasks em To Do E o total passar
-  de 4**: pergunte primeiro por feature via `AskUserQuestion` (até 4 opções,
-  rotuladas com o slug ou "avulsas", descrição "N tarefas pendentes —
-  próxima: T0xx/A0xx `<descrição curta>`"). Filtre a lista para a
-  feature/bucket escolhido.
-- **Com a lista já filtrada** (ou desde o início, se só havia uma
-  feature/bucket com pendências):
-  - Até 4 tasks: ofereça todas como opções diretas (rótulo
-    `T0xx/A0xx — <descrição curta>`, descrição com a fase/story ou "avulsa").
-  - Mais de 4: ofereça as 3 primeiras (ordem de prioridade/dependência) + uma
-    4ª opção literal **"Ver mais tarefas desta feature"**; se escolhida,
-    repita com o próximo lote até acabarem.
+- Monte a lista plana de todas as tasks em To Do, na ordem lida (todas as
+  features seguidas de `(avulsas)`, cada uma internamente já ordenada).
+- Reserve 1 vaga para a opção de persona (se aplicável) e, se a lista
+  plana tiver mais itens do que as vagas restantes, 1 vaga para **"Ver mais
+  tarefas"** (a última das 4).
+- Preencha o resto das vagas com as primeiras tasks da lista plana, na
+  ordem. Rótulo: `T0xx/A0xx — <descrição curta>`; descrição: bucket de
+  origem (slug da feature, ou "avulsa") + fase/story quando houver (ex.:
+  "001-manage-call-for-proposals · Setup" ou "avulsa").
+- Se "Ver mais tarefas" for escolhida, repita a pergunta com o próximo
+  lote da lista plana (mesma regra de vagas) até acabarem.
 - Se o usuário usar "Other" para digitar um ID fora das opções mostradas,
-  valide que existe e está em To Do no escopo atual antes de aceitar.
+  valide que existe e está em To Do (em qualquer bucket) antes de aceitar.
 
 ## Origem: persona
 
