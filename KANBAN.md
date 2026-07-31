@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T01:27Z
+**Última sincronização**: 2026-07-31T01:55Z
 
 ## To Do
 
@@ -67,14 +67,37 @@ todas as colunas.
 - [ ] A007 Confirmar visualmente, ao vivo, o comportamento responsivo em
   janela estreita (~463px): o CSS de `prototype/avulsa-A001/` já parece
   correto por leitura de código (`@media (max-width: 640px)` empilha a
-  tabela em cards com `data-label`), mas não foi clicado/visto de fato
-  nesta nem na rodada anterior de `/fundraiser-test` — a ferramenta de
-  resize do browser se comportou de forma inconsistente nas duas
-  tentativas. Não é uma task de correção — é um lembrete para confirmar
-  numa próxima rodada de teste (browser real redimensionado, ou emulação
-  de dispositivo) antes de considerar o dor-1 original encerrado.
+  tabela em cards com `data-label`), mas segue sem confirmação ao vivo
+  depois de 4 tentativas em `/fundraiser-test`. Confirmado nesta sessão,
+  via `javascript_tool` lendo `window.innerWidth` antes/depois de
+  `resize_window`, que a ferramenta de resize do browser **não muda o
+  viewport real desta aba neste ambiente** (ficou em 2556px nos dois
+  momentos) — não é mais "tentar de novo do mesmo jeito", é limitação de
+  ferramental confirmada e documentada (memória do projeto
+  `env_browser_resize_unreliable.md`). Não é uma task de correção — segue
+  como lembrete, mas só fecha com um método de verificação diferente
+  (resize manual, ou emulação de dispositivo real). Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-1` (rodada 1) /
+  `#dor-5` (rodada 4).
+- [ ] A012 Busca da tabela/quadro não reconhece o termo digitado sem
+  acento ("inovacao" não encontra "Inovação") — comparação de texto
+  literal, sem normalização. Falha silenciosa real em português.
   Protótipo: `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1`.
+- [ ] A013 Adicionar indicador visível quando busca/filtro estão ativos
+  (ex.: "Filtrando por: BNDES · Limpar filtros") — hoje os contadores por
+  coluna do Kanban (A009) refletem o total filtrado sem nenhum aviso,
+  risco real de sub-contagem em quem lê o número achando que é o total
+  geral. Protótipo: `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-2`.
+- [ ] A014 Mensagem discreta por coluna do Kanban quando o filtro zera o
+  resultado ali (equivalente à mensagem "Nenhum edital encontrado com
+  esses critérios" que a Tabela já tem) — hoje uma coluna vazia por
+  filtro é visualmente idêntica a uma coluna genuinamente sem editais
+  naquele estágio. Protótipo: `prototype/avulsa-A001/`. Via teste de
+  persona `docs/persona/avulsa-A001.html#dor-3`.
+
 ### (avulsas)
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento

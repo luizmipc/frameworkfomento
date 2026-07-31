@@ -35,6 +35,14 @@
     </div>
   </div>
 
+  <!-- Indicador de busca/filtro ativo (A013) — junto da barra de controles
+       porque ela é compartilhada pelas duas visões (US4). Escondido por
+       completo (via .hidden) quando nada está filtrado; ver script.js. -->
+  <div class="filter-indicator hidden" id="filter-indicator" aria-live="polite">
+    <span id="filter-summary"></span>
+    <button type="button" id="clear-filters">Limpar filtros</button>
+  </div>
+
   <!-- Visão em tabela -->
   <section id="view-tabela" role="tabpanel" aria-labelledby="tab-tabela" class="view">
     <div class="table-toolbar">

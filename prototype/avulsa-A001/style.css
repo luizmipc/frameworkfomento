@@ -133,6 +133,45 @@ main {
   text-align: center;
 }
 
+/* Mensagem de coluna vazia por filtro (A014) — mesma classe .empty-state da
+   tabela, só um pouco mais compacta para caber na largura de uma coluna. */
+.card-list .empty-state {
+  padding: 0.5rem 0.25rem;
+  font-size: 0.8rem;
+}
+
+/* Indicador de busca/filtro ativo (A013) — visível nas duas visões, já que
+   a barra de controles é compartilhada (US4). Some por completo (via
+   .hidden) quando nem busca nem instituição estão filtrando. */
+.filter-indicator {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin: -0.5rem 0 1.25rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+}
+
+.filter-indicator button {
+  border: none;
+  background: none;
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+
+.filter-indicator button:hover,
+.filter-indicator button:focus-visible {
+  color: var(--text);
+}
+
 /* Utilitário genérico — usado tanto para esconder a view inativa quanto os
    badges de "Vencido" (FR-011) e de prazo próximo (FR-022) no card do
    kanban quando eles não se aplicam. !important porque .badge-vencido/

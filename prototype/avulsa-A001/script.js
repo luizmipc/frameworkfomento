@@ -93,10 +93,21 @@ function nivelProximidade(fechamentoISO) {
   return NIVEIS_PROXIMIDADE.find((limite) => diasRestantes <= limite) ?? null;
 }
 
+// A012: remove acentos antes de comparar, para que "inovacao" encontre
+// "Inovação". NFD separa a letra do diacrítico (combining mark); o regex
+// remove só os diacríticos (faixa Unicode U+0300 a U+036F), sem depender
+// de nenhuma biblioteca.
+function normalizeText(str) {
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 // --- Busca + filtro compartilhados (US4 / FR-018, FR-019) ---
 const searchInput = document.getElementById("search-input");
 const instFilter = document.getElementById("inst-filter");
 const sortFechamento = document.getElementById("sort-fechamento");
+const filterIndicator = document.getElementById("filter-indicator");
+const filterSummary = document.getElementById("filter-summary");
+const clearFiltersBtn = document.getElementById("clear-filters");
 
 // Opções do filtro de instituição vêm dos dados mockados — sem lista fixa.
 [...new Set(editais.map((e) => e.instituicao))].sort().forEach((inst) => {
@@ -107,26 +118,52 @@ const sortFechamento = document.getElementById("sort-fechamento");
 });
 
 function getFiltered() {
-  const termo = searchInput.value.trim().toLowerCase();
+  const termo = normalizeText(searchInput.value.trim());
   const inst = instFilter.value;
   return editais.filter(
     (e) =>
-      (!termo || e.chamada.toLowerCase().includes(termo)) &&
+      (!termo || normalizeText(e.chamada).includes(termo)) &&
       (!inst || e.instituicao === inst)
   );
+}
+
+// A013: existe busca e/ou filtro de instituição em uso agora? Usado tanto
+// pelo indicador quanto pela mensagem de coluna vazia do kanban (A014).
+function isFilterActive() {
+  return Boolean(searchInput.value.trim() || instFilter.value);
+}
+
+// A013: atualiza a linha "Filtrando por: … · Limpar filtros", escondendo-a
+// por completo (.hidden) quando não há busca nem filtro de instituição.
+function updateFilterIndicator() {
+  const termo = searchInput.value.trim();
+  const inst = instFilter.value;
+  const partes = [];
+  if (termo) partes.push(`busca "${termo}"`);
+  if (inst) partes.push(`instituição "${inst}"`);
+  filterIndicator.classList.toggle("hidden", partes.length === 0);
+  filterSummary.textContent = partes.length ? `Filtrando por: ${partes.join(" e ")}` : "";
 }
 
 function byFechamento(a, b) {
   return a.fechamento < b.fechamento ? -1 : a.fechamento > b.fechamento ? 1 : 0;
 }
 
-[searchInput, instFilter].forEach((el) =>
-  el.addEventListener("input", () => {
-    renderTabela();
-    renderKanban();
-  })
-);
+// Reaplica busca/filtro nas duas visões + no indicador de cima, sempre juntos
+// (US4): tabela e kanban compartilham a mesma barra de controles.
+function applyFilters() {
+  updateFilterIndicator();
+  renderTabela();
+  renderKanban();
+}
+
+[searchInput, instFilter].forEach((el) => el.addEventListener("input", applyFilters));
 sortFechamento.addEventListener("change", renderTabela);
+clearFiltersBtn.addEventListener("click", () => {
+  searchInput.value = "";
+  instFilter.value = "";
+  applyFilters();
+});
 
 // --- Visão tabela ---
 function renderTabela() {
@@ -181,6 +218,13 @@ function renderKanban() {
 
     // A009: contador de editais por coluna, recalculado a cada render.
     document.querySelector(`.col-count[data-status="${status}"]`).textContent = `(${doStatus.length})`;
+
+    // A014: coluna vazia por causa do filtro atual (não por não ter nenhum
+    // edital nesse estágio) — mesma mensagem da visão Tabela (A010), para
+    // não parecer que a coluna sumiu ou quebrou.
+    if (doStatus.length === 0 && isFilterActive()) {
+      list.innerHTML = '<p class="empty-state">Nenhum edital encontrado com esses critérios.</p>';
+    }
 
     doStatus.forEach((edital) => {
       const node = cardTemplate.content.cloneNode(true);
@@ -278,5 +322,6 @@ document.querySelectorAll(".view-btn").forEach((btn) => {
   });
 });
 
+updateFilterIndicator();
 renderTabela();
 renderKanban();
