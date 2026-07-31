@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T07:47Z
+**Última sincronização**: 2026-07-31T08:31Z
 
 ## To Do
 
@@ -32,10 +32,12 @@ todas as colunas.
 - [ ] T014 [US1] `TestCase` em `app/editais/tests.py`: listagem e kanban de um captador nunca exibem editais de outro captador (FR-015, FR-016)
 - [ ] T015 [US1] `TestCase` em `app/editais/tests.py`: edital com `data_fechamento` no passado é marcado como vencido (FR-011)
 - [ ] T050 [US1] `TestCase` em `app/editais/tests.py`: `GET /kanban/` exibe, no cabeçalho de cada coluna, a quantidade de editais atualmente naquele estágio, atualizada imediatamente após mover um card (FR-024, Acceptance Scenario 6)
+- [ ] T057 [US1] Nota (não `TestCase`): apresentação responsiva (FR-031) é validada por revisão visual manual do `designer`/QA, não por teste de Django (CSS/layout não é server-testável)
 - [ ] T016 [US1] Implementar `EditalListView` (`LoginRequiredMixin`, filtrado por `captador=request.user`) em `app/editais/views.py`
 - [ ] T017 [US1] Criar template `app/editais/templates/editais/edital_list.html` (tabela: chamada, descrição, instituição, abertura, fechamento, link, indicação de prazo vencido) — alinhar com `designer`
 - [ ] T018 [US1] Implementar `EditalKanbanView` em `app/editais/views.py`, agrupando o queryset do captador pelas 4 colunas de `Estagio`
 - [ ] T019 [US1] Criar template `app/editais/templates/editais/edital_kanban.html` (4 colunas, botões "mover para trás/frente") — alinhar com `designer`; interação de referência em `prototype/avulsa-A001/`
+- [ ] T058 [P] [US1] CSS responsivo (FR-031) para `edital_list.html` (empilha em cards, `@media (max-width: 640px)`) e `edital_kanban.html` (4 colunas sem rolagem) — referência: `prototype/avulsa-A001/style.css` (depende de T017, T019)
 - [ ] T051 [US1] Incluir a contagem de editais por coluna no contexto de `EditalKanbanView` e no cabeçalho de cada coluna em `edital_kanban.html` (FR-024; depende de T018, T019)
 - [ ] T020 [US1] Implementar view `mover_estagio` (POST-only, `direcao=anterior|proxima`, 404 fora do dono, no-op nas bordas) em `app/editais/views.py`
 - [ ] T021 [US1] Adicionar rotas `''`, `'kanban/'` e `'<int:pk>/mover/'` em `app/editais/urls.py` (depende de T016, T018, T020)
@@ -50,12 +52,23 @@ todas as colunas.
 - [ ] T029 [US3] `TestCase` em `app/editais/tests.py`: `POST /<id>/editar/` atualiza um campo e reflete imediatamente em listagem/kanban (Acceptance Scenario 1, SC-006)
 - [ ] T030 [US3] `TestCase` em `app/editais/tests.py`: `POST /<id>/remover/` remove o edital, que deixa de aparecer (Acceptance Scenario 2)
 - [ ] T031 [US3] `TestCase` em `app/editais/tests.py`: captador não consegue acessar `editar`/`remover` de um edital de outro captador (404) (FR-016)
+- [ ] T060 [US3] `TestCase`: `POST /<id>/ignorar/` marca `ignorado=True` sem alterar `estagio` (FR-027, Acceptance Scenario 3)
+- [ ] T061 [US3] `TestCase`: edital ignorado não aparece em `/` nem `/kanban/` por padrão, nem é contado (FR-023/FR-024) (FR-028)
+- [ ] T062 [US3] `TestCase`: `GET /?ignorados=1` exibe só os editais ignorados do captador (FR-029, Acceptance Scenario 4)
+- [ ] T063 [US3] `TestCase`: desmarcar um edital ignorado o traz de volta, no mesmo `estagio` de antes (FR-030, Acceptance Scenario 4)
 - [ ] T032 [US3] Implementar `EditalUpdateView` (`LoginRequiredMixin`, queryset restrito ao dono, reaproveita `EditalForm`/`edital_form.html`) em `app/editais/views.py`
 - [ ] T033 [US3] Implementar `EditalDeleteView` (`LoginRequiredMixin`, queryset restrito ao dono) em `app/editais/views.py`
 - [ ] T034 [US3] Criar template `app/editais/templates/editais/edital_confirm_delete.html` (confirmação simples) — alinhar com `designer`
 - [ ] T035 [US3] Adicionar rotas `'<int:pk>/editar/'` e `'<int:pk>/remover/'` em `app/editais/urls.py` (depende de T032, T033)
 - [ ] T036 [US3] Adicionar links "Editar"/"Remover" por edital em `edital_list.html` e `edital_kanban.html` — alinhar com `designer`
+- [ ] T064 [US3] Adicionar campo `ignorado` (`BooleanField(default=False)`) ao model `Edital` (FR-027)
+- [ ] T065 [US3] Gerar migration incremental `0002_edital_ignorado.py` (depende de T064)
+- [ ] T066 [US3] Implementar view `toggle_ignorado` (POST-only, 404 fora do dono) (FR-027, FR-030; depende de T064)
+- [ ] T067 [US3] Adicionar rota `'<int:pk>/ignorar/'` (depende de T066)
+- [ ] T068 [US3] Filtrar `ignorado=True` por padrão (inverte com `?ignorados=1`) em `EditalListView`/`EditalKanbanView`, refletindo nas contagens FR-023/FR-024 (FR-028, FR-029; depende de T064, T046, T051, T055)
+- [ ] T069 [P] [US3] Segmented control `‹ Ativos` / `Ignorados ›` com botão Ignorar/Reverter em `edital_list.html`/`edital_kanban.html` — alinhar com `designer`; referência em `prototype/avulsa-A001/` (depende de T067, T068)
 - [ ] T041 [US4] `TestCase`: `GET /?busca=<termo>` filtra a tabela por nome da chamada (parcial, case-insensitive) (FR-018)
+- [ ] T059 [US4] `TestCase`: `GET /?busca=inovacao` (sem acento) encontra edital com "Inovação" — busca ignora acentuação (FR-018 estendido; depende de T046)
 - [ ] T042 [US4] `TestCase`: `GET /?instituicao=<nome>` filtra a tabela por instituição responsável (FR-019)
 - [ ] T043 [US4] `TestCase`: `GET /?ordenar=fechamento` ordena a tabela por proximidade do prazo de fechamento (FR-020)
 - [ ] T044 [US4] `TestCase`: cards de uma mesma coluna do quadro aparecem ordenados por `data_fechamento`, sem alterar o agrupamento por estágio (FR-021)
@@ -68,7 +81,7 @@ todas as colunas.
 - [ ] T048 [P] [US4] Adicionar campos de busca/filtro/ordenação em `edital_list.html` e `edital_kanban.html` — alinhar com `designer` (depende de T046, T047)
 - [ ] T055 [US4] Adicionar total de editais (FR-023) e indicador de filtro ativo com "Limpar filtros" (FR-025) ao contexto e templates de `EditalListView`/`EditalKanbanView` (depende de T046)
 - [ ] T056 [US4] Em `edital_kanban.html`, exibir "Nenhum edital encontrado com esses critérios." só na coluna esvaziada por filtro (FR-026; depende de T046, T051)
-- [ ] T037 [Polish] Rodar `uv run manage.py test editais` e garantir que toda a suíte (T011-T015, T050, T022-T024, T049, T029-T031, T041-T045, T052-T054) passa
+- [ ] T037 [Polish] Rodar `uv run manage.py test editais` e garantir que toda a suíte (T011-T015, T050, T057, T022-T024, T049, T029-T031, T060-T063, T041-T045, T052-T054, T059) passa
 - [ ] T038 [Polish] Executar o roteiro de `specs/001-manage-call-for-proposals/quickstart.md` manualmente (via `docker compose up`)
 - [ ] T039 [P] [Polish] Atualizar `/home/lm/repos/frameworkfomento/CLAUDE.md` com os comandos reais de build/lint/test e a arquitetura de alto nível
 - [ ] T040 [P] [Polish] Atualizar `docs/architecture-and-tech.md` e `docs/class-diagram.md` refletindo o app `editais`, o model `Edital` e o fluxo de autenticação mínima
