@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T00:35Z
+**Última sincronização**: 2026-07-31T00:44Z
 
 ## To Do
 
@@ -103,7 +103,6 @@ todas as colunas.
   de dispositivo) antes de considerar o dor-1 original encerrado.
   Protótipo: `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1`.
-
 ### (avulsas)
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento
@@ -121,4 +120,11 @@ _Nenhuma tarefa em progresso._
 
 ## Done
 
-_Nenhuma tarefa concluída ainda._
+### 001-manage-call-for-proposals
+
+- [x] A008 Designer audita `prototype/avulsa-A001/` contra todas as tasks
+  do KANBAN.md que o referenciam (A002-A007) e reconcilia qualquer gap —
+  garante que o protótipo reflete de fato o que cada task descreve, sem
+  depender de lembrete manual a cada nova task avulsa criada. Auditoria
+  rodada em 2026-07-31: A002-A006 já corretas no código, nenhum ajuste
+  necessário; A007 fora de escopo (não é task de código).
