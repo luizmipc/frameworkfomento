@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T07:18Z
+**Última sincronização**: 2026-07-31T07:31Z
 
 ## To Do
 
@@ -97,6 +97,17 @@ todas as colunas.
   antes de US2 (cadastro) ser implementada de verdade. Protótipo:
   `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1`.
+- [ ] A017 Mesmo tratamento do A016, agora para `data_abertura` ausente —
+  é o único outro campo que a spec já declara opcional (FR-004:
+  "O sistema DEVE permitir que o captador registre... a data de abertura,
+  além da data de fechamento"; Assumptions: "a data de abertura é
+  desejável mas pode não estar disponível em todos os casos"). Hoje
+  `formatDate()` em `script.js` não trata `abertura` ausente/vazia — um
+  edital real sem ela quebraria a formatação de data em vez de mostrar um
+  texto neutro. Os demais campos (`nome_chamada`, `instituicao`,
+  `descricao`, `data_fechamento`) são obrigatórios por FR-003/FR-005 e
+  não precisam desse tratamento. Protótipo: `prototype/avulsa-A001/`.
+  Pedido direto do usuário, não via teste de persona.
 
 ### (avulsas)
 

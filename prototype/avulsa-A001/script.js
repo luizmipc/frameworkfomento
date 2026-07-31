@@ -20,7 +20,12 @@ const editais = [
     chamada: "Edital Pesquisa Aplicada em Sustentabilidade",
     descricao: "Financiamento de pesquisas aplicadas com foco em transição energética e sustentabilidade.",
     instituicao: "FAPESP (fictício)",
-    abertura: "2026-05-15",
+    // A017 / FR-004 + Assumptions: data de abertura é opcional no cadastro —
+    // este edital mockado fica sem ela de propósito, para demonstrar o
+    // fallback. "" (em vez de omitir a chave) mantém o mesmo formato de
+    // objeto em todos os itens da lista, mesmo raciocínio do link vazio do
+    // e5 (A016). Fechamento continua obrigatório (FR-005), não muda.
+    abertura: "",
     fechamento: "2026-09-15",
     link: "https://exemplo.org/editais/sustentabilidade",
     status: "andamento",
@@ -203,17 +208,24 @@ function renderTabela() {
     else if (nivel !== null) badgePrazo = ` <span class="badge-proximo">Vence em até ${nivel} dias</span>`;
     // A016 / FR-003: link é opcional (cadastro pode não ter link) — sem ele,
     // nada de <a href> apontando para lugar nenhum, só um texto neutro.
+    // A017 / FR-004: mesmo raciocínio para abertura, o único outro campo que
+    // a spec declara opcional (Assumptions) — .field-missing é o mesmo
+    // estado visual "campo ausente" usado pelos dois casos.
     // Ordem prioriza as colunas decisivas para priorização (Fechamento, Abertura, Link)
     // logo após o identificador (Chamada); Instituição/Descrição, menos decisivas, ficam por
     // último. Os data-label alimentam o layout empilhado em telas estreitas (ver style.css).
     tr.innerHTML = `
       <td data-label="Chamada">${edital.chamada}</td>
       <td data-label="Fechamento">${formatDate(edital.fechamento)}${badgePrazo}</td>
-      <td data-label="Abertura">${formatDate(edital.abertura)}</td>
+      <td data-label="Abertura">${
+        edital.abertura
+          ? formatDate(edital.abertura)
+          : '<span class="field-missing">Abertura não informada</span>'
+      }</td>
       <td data-label="Link">${
         edital.link
           ? `<a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a>`
-          : '<span class="link-missing">Link não informado</span>'
+          : '<span class="field-missing">Link não informado</span>'
       }</td>
       <td data-label="Instituição">${edital.instituicao}</td>
       <td data-label="Descrição">${edital.descricao}</td>
@@ -253,8 +265,13 @@ function renderKanban() {
       card.dataset.id = edital.id;
       card.querySelector(".card-title").textContent = edital.chamada;
       card.querySelector(".card-inst").textContent = edital.instituicao;
-      card.querySelector(".card-dates").textContent =
-        `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`;
+      // A017 / FR-004: mesmo fallback da tabela para abertura ausente — usa
+      // innerHTML (em vez de textContent) só aqui para poder aplicar
+      // .field-missing na parte do texto que falta, mesma classe do estado
+      // "campo ausente" já usado para link (A016).
+      card.querySelector(".card-dates").innerHTML = edital.abertura
+        ? `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`
+        : `<span class="field-missing">Abertura não informada</span> — ${formatDate(edital.fechamento)}`;
       const vencido = isVencido(edital.fechamento);
       // FR-022: mesma precedência da tabela — só calcula nível se não vencido.
       const nivel = vencido ? null : nivelProximidade(edital.fechamento);

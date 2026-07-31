@@ -241,9 +241,10 @@ td a {
   color: var(--accent);
 }
 
-/* A016 / FR-003: link ausente no cadastro — texto neutro, sem sublinhado nem
-   cor de link, para não parecer clicável. */
-.link-missing {
+/* A016/A017 / FR-003/FR-004: estado "campo ausente" (link ou abertura) —
+   texto neutro em itálico, sem sublinhado nem cor de link, para não parecer
+   clicável. Classe genérica reaproveitada nos dois casos, tabela e kanban. */
+.field-missing {
   color: var(--text-muted);
   font-style: italic;
 }
@@ -448,8 +449,10 @@ tr.proximo td:first-child {
   text-decoration: underline;
 }
 
-/* A016 / FR-003: mesmo texto de fallback da tabela (.link-missing), sem
-   sublinhado nem cor de link — não é clicável. */
+/* A016 / FR-003: mesmo texto de fallback da tabela (.field-missing), sem
+   sublinhado nem cor de link — não é clicável. Classe própria (em vez de
+   .field-missing) porque aqui precisa de display/margin de bloco, para
+   ocupar o lugar do link "Ver chamada" no card. */
 .card-link-missing {
   display: inline-block;
   margin-top: 0.35rem;
