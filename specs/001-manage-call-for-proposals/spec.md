@@ -57,6 +57,13 @@ valor sozinho, mesmo sem as demais user stories implementadas.
    **When** o captador decide que errou o estágio, **Then** ele consegue
    mover o edital de volta para uma coluna anterior (o fluxo não é somente de
    avanço).
+5. **Given** um edital tem data de fechamento dentro de um dos quatro níveis
+   de proximidade (até 7, até 14, até 21 ou até 30 dias), **When** o captador
+   acessa a listagem ou o quadro de progresso, **Then** o sistema destaca
+   esse edital em amarelo, mostrando apenas o nível mais urgente aplicável
+   (ex.: um edital que vence em 5 dias — portanto dentro dos quatro limiares
+   ao mesmo tempo — mostra somente o destaque de "até 7 dias", não os quatro
+   destaques simultaneamente).
 
 ---
 
@@ -278,6 +285,19 @@ ordenados pela proximidade da data de fechamento.
   mais distante), como critério de ordenação secundário ao agrupamento por
   estágio — a ordenação por data de fechamento não reorganiza os editais
   entre colunas.
+- **FR-022**: O sistema DEVE indicar visualmente, na listagem e/ou no quadro
+  de progresso, editais cujo prazo de fechamento está se aproximando (mas
+  ainda não venceu), em quatro níveis de proximidade — até 7 dias, até 14
+  dias, até 21 dias e até 30 dias antes do fechamento — destacados em cor
+  amarela, distinta da cor vermelha usada em FR-011 para prazo já vencido.
+  Um edital cujo prazo se encaixa em mais de um nível (ex.: vence em 5 dias,
+  simultaneamente dentro dos quatro limiares) DEVE exibir apenas o destaque
+  do nível mais urgente aplicável, nunca mais de um destaque ao mesmo tempo.
+  Este requisito é tratado como um FR separado de FR-011 (e não uma reescrita
+  dele) porque cobre um sinal distinto — alerta gradual de proximidade, não
+  prazo vencido — com cor, limiares e regra de "só o nível mais urgente"
+  próprios, o que mantém FR-011 estável e cada requisito testável de forma
+  independente.
 
 ### Key Entities
 

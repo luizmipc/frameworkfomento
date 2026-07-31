@@ -19,8 +19,31 @@
 </nav>
 
 <main>
+  <!-- Barra de controles compartilhada (busca + filtro por instituição): fica
+       acima das duas visões porque ambas trocam via toggle Tabela/Kanban e
+       precisam do mesmo filtro (US4, FR-018/FR-019). -->
+  <div class="controls" id="controls">
+    <div class="control-field">
+      <label for="search-input">Buscar por chamada</label>
+      <input type="search" id="search-input" placeholder="Ex.: inovação, sustentabilidade…">
+    </div>
+    <div class="control-field">
+      <label for="inst-filter">Instituição</label>
+      <select id="inst-filter">
+        <option value="">Todas as instituições</option>
+      </select>
+    </div>
+  </div>
+
   <!-- Visão em tabela -->
   <section id="view-tabela" role="tabpanel" aria-labelledby="tab-tabela" class="view">
+    <div class="table-toolbar">
+      <label for="sort-fechamento">Ordenar por fechamento</label>
+      <select id="sort-fechamento">
+        <option value="asc">Mais próximo primeiro</option>
+        <option value="desc">Mais distante primeiro</option>
+      </select>
+    </div>
     <div class="table-wrap">
       <table>
         <thead>
@@ -44,19 +67,19 @@
   <section id="view-kanban" role="tabpanel" aria-labelledby="tab-kanban" class="view hidden">
     <div class="board" id="board">
       <div class="column" data-status="backlog">
-        <h2>Backlog</h2>
+        <h2>Backlog <span class="col-count" data-status="backlog">0</span></h2>
         <div class="card-list" data-status="backlog"></div>
       </div>
       <div class="column" data-status="andamento">
-        <h2>Em andamento</h2>
+        <h2>Em andamento <span class="col-count" data-status="andamento">0</span></h2>
         <div class="card-list" data-status="andamento"></div>
       </div>
       <div class="column" data-status="validacao">
-        <h2>Validação</h2>
+        <h2>Validação <span class="col-count" data-status="validacao">0</span></h2>
         <div class="card-list" data-status="validacao"></div>
       </div>
       <div class="column" data-status="concluido">
-        <h2>Concluído</h2>
+        <h2>Concluído <span class="col-count" data-status="concluido">0</span></h2>
         <div class="card-list" data-status="concluido"></div>
       </div>
     </div>
@@ -69,6 +92,7 @@
     <p class="card-inst"></p>
     <p class="card-dates"></p>
     <p class="card-vencido-badge badge-vencido hidden">Vencido</p>
+    <p class="card-proximo-badge badge-proximo hidden"></p>
     <a class="card-link" target="_blank" rel="noopener">Ver chamada &#8599;</a>
     <div class="card-actions">
       <button type="button" class="move-btn" data-dir="-1" aria-label="Mover para coluna anterior">&larr;</button>

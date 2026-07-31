@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T00:44Z
+**Última sincronização**: 2026-07-31T01:10Z
 
 ## To Do
 
@@ -103,6 +103,25 @@ todas as colunas.
   de dispositivo) antes de considerar o dor-1 original encerrado.
   Protótipo: `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1`.
+- [ ] A009 Mostrar, no cabeçalho de cada coluna do quadro Kanban, quantos
+  editais existem naquele estágio (ex.: "Validação (2)") — hoje é preciso
+  contar os cards visualmente; um captador com volume real de editais já
+  monta esse resumo por status manualmente hoje (planilha). Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-3`.
+- [ ] A010 Adicionar ao protótipo `prototype/avulsa-A001/` uma referência
+  visual de busca, filtro por instituição e ordenação por data de
+  fechamento (User Story 4, FR-018 a FR-021 em `spec.md`) — diferente de
+  US1-US3, essa user story ainda não tem protótipo, só a implementação
+  real planejada em T041-T048 de `specs/001-manage-call-for-proposals/tasks.md`.
+  Via teste de persona `docs/persona/avulsa-A001.html#dor-2`.
+- [ ] A011 Adicionar ao protótipo `prototype/avulsa-A001/` a indicação de
+  prazo próximo em níveis (FR-022 em `spec.md`): destaque amarelo para
+  editais que vencem em até 7, 14, 21 ou 30 dias (mostrando só o nível
+  mais urgente aplicável), distinto do destaque vermelho já existente
+  (A006) para prazo já vencido. Pedido direto do usuário após revisão do
+  quadro, não via teste de persona.
+
 ### (avulsas)
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento

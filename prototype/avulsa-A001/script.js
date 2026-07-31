@@ -10,7 +10,8 @@ const editais = [
     descricao: "Apoio a projetos de inovação social voltados à redução de desigualdades regionais.",
     instituicao: "CNPq (fictício)",
     abertura: "2026-06-01",
-    fechamento: "2026-08-30",
+    // A011: ajustado para cair no nível de proximidade "até 7 dias" (FR-022).
+    fechamento: "2026-08-05",
     link: "https://exemplo.gov.br/chamadas/inovacao-social-2026",
     status: "backlog",
   },
@@ -50,7 +51,8 @@ const editais = [
     descricao: "Recursos para digitalização e preservação de acervos culturais e patrimônio histórico.",
     instituicao: "Fundação Cultural Exemplo (fictício)",
     abertura: "2026-06-20",
-    fechamento: "2026-08-20",
+    // A011: ajustado para cair no nível de proximidade "até 21 dias" (FR-022).
+    fechamento: "2026-08-19",
     link: "https://exemplo.cultura.gov.br/patrimonio-digital",
     status: "backlog",
   },
@@ -76,20 +78,83 @@ function isVencido(fechamentoISO) {
   return fechamentoISO < hojeISO;
 }
 
+// FR-022 / A011: prazo próximo (mas não vencido), em quatro níveis — até 7,
+// 14, 21 ou 30 dias. Retorna o nível mais urgente aplicável (o menor limiar
+// que ainda comporta os dias restantes), ou null se vencido ou fora de todos
+// os níveis. Precisa da diferença em dias (não só comparação lexicográfica
+// como em isVencido), então usa Date aqui.
+const NIVEIS_PROXIMIDADE = [7, 14, 21, 30];
+
+function nivelProximidade(fechamentoISO) {
+  if (isVencido(fechamentoISO)) return null;
+  const hoje = new Date(new Date().toISOString().slice(0, 10));
+  const fechamento = new Date(fechamentoISO);
+  const diasRestantes = Math.round((fechamento - hoje) / 86400000);
+  return NIVEIS_PROXIMIDADE.find((limite) => diasRestantes <= limite) ?? null;
+}
+
+// --- Busca + filtro compartilhados (US4 / FR-018, FR-019) ---
+const searchInput = document.getElementById("search-input");
+const instFilter = document.getElementById("inst-filter");
+const sortFechamento = document.getElementById("sort-fechamento");
+
+// Opções do filtro de instituição vêm dos dados mockados — sem lista fixa.
+[...new Set(editais.map((e) => e.instituicao))].sort().forEach((inst) => {
+  const opt = document.createElement("option");
+  opt.value = inst;
+  opt.textContent = inst;
+  instFilter.appendChild(opt);
+});
+
+function getFiltered() {
+  const termo = searchInput.value.trim().toLowerCase();
+  const inst = instFilter.value;
+  return editais.filter(
+    (e) =>
+      (!termo || e.chamada.toLowerCase().includes(termo)) &&
+      (!inst || e.instituicao === inst)
+  );
+}
+
+function byFechamento(a, b) {
+  return a.fechamento < b.fechamento ? -1 : a.fechamento > b.fechamento ? 1 : 0;
+}
+
+[searchInput, instFilter].forEach((el) =>
+  el.addEventListener("input", () => {
+    renderTabela();
+    renderKanban();
+  })
+);
+sortFechamento.addEventListener("change", renderTabela);
+
 // --- Visão tabela ---
 function renderTabela() {
   const corpo = document.getElementById("tabela-corpo");
   corpo.innerHTML = "";
-  editais.forEach((edital) => {
+  const lista = getFiltered().sort(byFechamento);
+  if (sortFechamento.value === "desc") lista.reverse();
+  if (lista.length === 0) {
+    corpo.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhum edital encontrado com esses critérios.</td></tr>';
+    return;
+  }
+  lista.forEach((edital) => {
     const tr = document.createElement("tr");
     const vencido = isVencido(edital.fechamento);
+    // FR-022: badge de prazo próximo só se aplica a editais ainda não vencidos
+    // — vencido (FR-011) tem precedência e exclui o cálculo de nível.
+    const nivel = vencido ? null : nivelProximidade(edital.fechamento);
     tr.classList.toggle("vencido", vencido);
+    tr.classList.toggle("proximo", !vencido && nivel !== null);
+    let badgePrazo = "";
+    if (vencido) badgePrazo = ' <span class="badge-vencido">Vencido</span>';
+    else if (nivel !== null) badgePrazo = ` <span class="badge-proximo">Vence em até ${nivel} dias</span>`;
     // Ordem prioriza as colunas decisivas para priorização (Fechamento, Abertura, Link)
     // logo após o identificador (Chamada); Instituição/Descrição, menos decisivas, ficam por
     // último. Os data-label alimentam o layout empilhado em telas estreitas (ver style.css).
     tr.innerHTML = `
       <td data-label="Chamada">${edital.chamada}</td>
-      <td data-label="Fechamento">${formatDate(edital.fechamento)}${vencido ? ' <span class="badge-vencido">Vencido</span>' : ""}</td>
+      <td data-label="Fechamento">${formatDate(edital.fechamento)}${badgePrazo}</td>
       <td data-label="Abertura">${formatDate(edital.abertura)}</td>
       <td data-label="Link"><a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a></td>
       <td data-label="Instituição">${edital.instituicao}</td>
@@ -103,25 +168,40 @@ function renderTabela() {
 const cardTemplate = document.getElementById("card-template");
 
 function renderKanban() {
+  const filtrados = getFiltered();
+
   STATUSES.forEach((status) => {
     const list = document.querySelector(`.card-list[data-status="${status}"]`);
     list.innerHTML = "";
-  });
 
-  editais.forEach((edital) => {
-    const list = document.querySelector(`.card-list[data-status="${edital.status}"]`);
-    const node = cardTemplate.content.cloneNode(true);
-    const card = node.querySelector(".card");
-    card.dataset.id = edital.id;
-    card.querySelector(".card-title").textContent = edital.chamada;
-    card.querySelector(".card-inst").textContent = edital.instituicao;
-    card.querySelector(".card-dates").textContent =
-      `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`;
-    const vencido = isVencido(edital.fechamento);
-    card.classList.toggle("vencido", vencido);
-    card.querySelector(".card-vencido-badge").classList.toggle("hidden", !vencido);
-    card.querySelector(".card-link").href = edital.link;
-    list.appendChild(node);
+    // FR-021: dentro da coluna, ordenação automática por proximidade do
+    // fechamento — critério secundário ao agrupamento por estágio, sem
+    // controle visível (não usa o toggle de ordenação da visão Tabela).
+    const doStatus = filtrados.filter((e) => e.status === status).sort(byFechamento);
+
+    // A009: contador de editais por coluna, recalculado a cada render.
+    document.querySelector(`.col-count[data-status="${status}"]`).textContent = `(${doStatus.length})`;
+
+    doStatus.forEach((edital) => {
+      const node = cardTemplate.content.cloneNode(true);
+      const card = node.querySelector(".card");
+      card.dataset.id = edital.id;
+      card.querySelector(".card-title").textContent = edital.chamada;
+      card.querySelector(".card-inst").textContent = edital.instituicao;
+      card.querySelector(".card-dates").textContent =
+        `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`;
+      const vencido = isVencido(edital.fechamento);
+      // FR-022: mesma precedência da tabela — só calcula nível se não vencido.
+      const nivel = vencido ? null : nivelProximidade(edital.fechamento);
+      card.classList.toggle("vencido", vencido);
+      card.classList.toggle("proximo", !vencido && nivel !== null);
+      card.querySelector(".card-vencido-badge").classList.toggle("hidden", !vencido);
+      const badgeProximo = card.querySelector(".card-proximo-badge");
+      badgeProximo.classList.toggle("hidden", nivel === null);
+      if (nivel !== null) badgeProximo.textContent = `Vence em até ${nivel} dias`;
+      card.querySelector(".card-link").href = edital.link;
+      list.appendChild(node);
+    });
   });
 
   updateMoveButtons();

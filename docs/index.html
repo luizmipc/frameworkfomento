@@ -56,6 +56,7 @@
       <li><code>FR-010</code> O estágio fica sincronizado entre a tabela e o quadro de progresso — mudar em uma reflete imediatamente na outra.</li>
       <li><code>FR-011</code> Indicação visual de editais com data de fechamento já vencida.</li>
       <li><code>FR-012</code> O link para a chamada é acessível diretamente a partir da tabela e do quadro.</li>
+      <li><code>FR-022</code> Indicação visual em amarelo, distinta do vermelho de FR-011, para editais com prazo se aproximando em quatro níveis (até 7, 14, 21 ou 30 dias antes do fechamento) — mostrando apenas o nível mais urgente aplicável quando o edital se encaixa em mais de um.</li>
     </ul>
 
     <h4 id="fr-cadastro">Cadastro de edital (User Story 2 — P2)</h4>
@@ -400,13 +401,14 @@
       <div class="story-head">
         <p class="kicker">User Story 1 · P1</p>
         <h3>Acompanhar editais em um quadro de progresso</h3>
-        <span class="badge badge-untested">não verificado — 0/4</span>
+        <span class="badge badge-untested">não verificado — 0/5</span>
       </div>
       <ol class="scenarios">
         <li><span>Dado editais cadastrados, ao acessar a listagem, o captador vê uma tabela com nome da chamada, descrição, instituição responsável, link e datas (abertura/fechamento).</span><code>FR-001</code></li>
         <li><span>Dado editais cadastrados, ao acessar o quadro de progresso, cada edital aparece como cartão em uma das quatro colunas (Backlog, Em andamento, Validação, Concluído).</span><code>FR-002, FR-008</code></li>
         <li><span>Dado um edital em "Em andamento", ao movê-lo para "Validação", o novo estágio reflete tanto no quadro quanto na tabela.</span><code>FR-009, FR-010</code></li>
         <li><span>Dado um edital em qualquer coluna que não a primeira, o captador consegue movê-lo de volta a uma coluna anterior.</span><code>FR-009</code></li>
+        <li><span>Dado um edital com prazo de fechamento dentro de até 7, 14, 21 ou 30 dias, ao acessar a listagem ou o quadro, o sistema destaca esse edital em amarelo mostrando apenas o nível mais urgente aplicável.</span><code>FR-022</code></li>
       </ol>
       <p class="related">Success criteria relacionados: <code>SC-001</code>, <code>SC-003</code></p>
     </section>
@@ -443,6 +445,7 @@
       <h3>Sem cenário Given/When/Then dedicado, mas testáveis por si</h3>
       <ul class="cross-list">
         <li><code>FR-011</code> Indicação visual de editais com prazo vencido (tabela e/ou quadro). <span class="ref">&rarr; SC-005</span></li>
+        <li><code>FR-022</code> Indicação visual em amarelo de editais com prazo se aproximando, em quatro níveis (até 7/14/21/30 dias), distinta da indicação vermelha de FR-011. Coberto por cenário dedicado em <code>ac-us1</code>.</li>
         <li><code>FR-012</code> Link da chamada acessível diretamente a partir da tabela e do quadro.</li>
         <li><code>FR-015</code> Cada edital pertence à lista de um único captador — sem base compartilhada nesta feature.</li>
         <li><code>FR-016</code> Visualização e edição restritas ao captador que cadastrou o edital.</li>

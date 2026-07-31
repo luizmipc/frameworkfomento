@@ -10,6 +10,8 @@
   --accent-soft: #e4efe9;
   --danger: #b3261e;
   --danger-soft: #fbe8e6;
+  --warning: #8a6100;
+  --warning-soft: #fff3cd;
   --radius: 8px;
   font-size: 16px;
 }
@@ -70,11 +72,73 @@ main {
   padding: 1.5rem;
 }
 
-/* Utilitário genérico — usado tanto para esconder a view inativa quanto o
-   badge de "Vencido" no card do kanban quando o edital não está vencido.
-   !important porque .badge-vencido (definido mais abaixo) também fixa
-   `display`; um utilitário "hidden" precisa vencer qualquer outra regra de
-   mesma especificidade, independente da ordem no arquivo. */
+/* Barra de controles compartilhada (busca + filtro por instituição) — US4 */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.control-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.control-field input,
+.control-field select {
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--surface);
+  min-width: 220px;
+}
+
+.control-field input:focus-visible,
+.control-field select:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Ordenação por fechamento — só existe na visão Tabela (FR-020); no Kanban
+   a ordenação por proximidade do prazo dentro da coluna é automática, sem
+   controle visível (FR-021). */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.table-toolbar select {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--surface);
+}
+
+.empty-state {
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Utilitário genérico — usado tanto para esconder a view inativa quanto os
+   badges de "Vencido" (FR-011) e de prazo próximo (FR-022) no card do
+   kanban quando eles não se aplicam. !important porque .badge-vencido/
+   .badge-proximo (definidos mais abaixo) também fixam `display`; um
+   utilitário "hidden" precisa vencer qualquer outra regra de mesma
+   especificidade, independente da ordem no arquivo. */
 .hidden {
   display: none !important;
 }
@@ -135,15 +199,32 @@ tr.vencido td:first-child {
   border-left: 3px solid var(--danger);
 }
 
-.badge-vencido {
+/* Prazo próximo (FR-022 / A011): mesmo padrão visual do vencido acima, cor
+   amarela em vez de vermelha. Só se aplica quando a linha NÃO está vencida
+   — vencido tem precedência (ver isVencido/nivelProximidade em script.js) —
+   por isso nunca há tr.vencido.proximo ao mesmo tempo. */
+tr.proximo td:first-child {
+  border-left: 3px solid var(--warning);
+}
+
+.badge-vencido,
+.badge-proximo {
   display: inline-block;
   padding: 0.05rem 0.45rem;
   border-radius: 999px;
-  background: var(--danger-soft);
-  color: var(--danger);
   font-size: 0.72rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.badge-vencido {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.badge-proximo {
+  background: var(--warning-soft);
+  color: var(--warning);
 }
 
 /* Abaixo de 640px (ex.: split-screen com e-mail/planilha ao lado, ~463px) a
@@ -224,6 +305,20 @@ tr.vencido td:first-child {
   letter-spacing: 0.03em;
 }
 
+/* Contador de editais por coluna (A009) — recalculado a cada renderKanban() */
+.col-count {
+  display: inline-block;
+  padding: 0.05rem 0.4rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  vertical-align: middle;
+}
+
 .card-list {
   display: flex;
   flex-direction: column;
@@ -258,7 +353,15 @@ tr.vencido td:first-child {
   border-left: 3px solid var(--danger);
 }
 
-.card-vencido-badge {
+/* FR-022 / A011: mesma regra de precedência da tabela — .card.vencido e
+   .card.proximo nunca coexistem, pois nivelProximidade() só é calculado
+   para editais que já não estão vencidos. */
+.card.proximo {
+  border-left: 3px solid var(--warning);
+}
+
+.card-vencido-badge,
+.card-proximo-badge {
   margin: 0.35rem 0 0;
 }
 
