@@ -129,15 +129,38 @@ a organização desistiu de concorrer). Ele precisa poder corrigir os dados ou
 remover o edital da sua lista ativa sem perder o histórico do que já havia
 sido feito.
 
+Há ainda um terceiro caso, distinto dos dois anteriores: o captador cadastrou
+um edital como candidato antes de avaliá-lo a fundo e, depois de avaliar,
+concluiu que ele não tem a ver com a área de atuação da sua organização — mas
+não quer excluí-lo, porque isso apagaria o registro de que já avaliou e
+descartou aquele edital especificamente (e ele poderia acabar reavaliando o
+mesmo edital do zero se ele ressurgir depois, ex.: divulgado de novo por outro
+canal). Diferente de "não é mais relevante" (que é definitivo, cobre edital
+cancelado ou desistência — FR-014), este caso é sobre deixar de ver um edital
+na visão ativa sem perder o registro de que ele já foi avaliado, podendo
+reverter a qualquer momento. Ele precisa poder marcar esse edital como
+"Ignorado" para tirá-lo da sua visão principal sem excluí-lo, e consultar ou
+reverter essa marcação depois.
+
 **Why this priority**: É importante para manter a confiabilidade dos dados ao
 longo do tempo, mas o gerenciamento básico (User Stories 1 e 2) já entrega
 valor sem esta capacidade — na ausência dela, o captador apenas conviveria
-com dados desatualizados até uma correção manual futura.
+com dados desatualizados até uma correção manual futura. Marcar um edital
+como "Ignorado" segue essa mesma lógica de prioridade: é uma forma adicional
+de manter a visão ativa do captador confiável ao longo do tempo (removendo do
+seu radar o que não é relevante para a área dele), mas sem valor até que
+existam editais suficientes cadastrados para a visão ativa começar a ficar
+poluída com itens fora de escopo — por isso permanece dentro de US3, não vira
+User Story própria com prioridade mais alta.
 
 **Independent Test**: Pode ser testado editando um campo de um edital já
 cadastrado (ex.: data de fechamento) e confirmando que a mudança aparece
-imediatamente na tabela e no quadro de progresso; e, separadamente, removendo
-um edital e confirmando que ele deixa de aparecer nas duas visões.
+imediatamente na tabela e no quadro de progresso; separadamente, removendo um
+edital e confirmando que ele deixa de aparecer nas duas visões; e,
+separadamente, marcando um edital como "Ignorado" e confirmando que ele some
+da tabela e do quadro de progresso padrão (mas não é excluído, continua
+acessível pela visão de editais ignorados e pode ser desmarcado a qualquer
+momento, voltando a aparecer no estágio em que já estava).
 
 **Acceptance Scenarios**:
 
@@ -148,6 +171,16 @@ um edital e confirmando que ele deixa de aparecer nas duas visões.
 2. **Given** um edital que não é mais relevante para o captador, **When** ele
    opta por remover esse edital da sua lista, **Then** o sistema deixa de
    exibi-lo na tabela e no quadro de progresso.
+3. **Given** um edital que o captador avaliou e concluiu não ter a ver com a
+   área de atuação da sua organização, **When** ele marca esse edital como
+   "Ignorado", **Then** o sistema deixa de exibi-lo na tabela e no quadro de
+   progresso padrão, sem excluí-lo (distinto do Acceptance Scenario 2) e sem
+   alterar o estágio de acompanhamento em que ele já se encontrava.
+4. **Given** existem editais marcados como "Ignorado", **When** o captador
+   acessa a visão/filtro de editais ignorados, **Then** ele vê a lista desses
+   editais e consegue desmarcar qualquer um deles, fazendo-o voltar a
+   aparecer imediatamente na tabela e no quadro de progresso, no mesmo
+   estágio em que já estava antes de ser ignorado.
 
 ---
 
@@ -253,6 +286,15 @@ ordenados pela proximidade da data de fechamento.
   "Fundação X" em um edital e "Fundação X Ltda" em outro)? Achado de teste de
   usabilidade sobre a User Story 2 (ainda não implementada — o campo é texto
   livre, FR-003); ver nota de decisão em Assumptions.
+- O que acontece quando o captador cadastra um edital como candidato, avalia
+  a fundo e conclui que ele não tem a ver com a área de atuação da sua
+  organização, mas não quer excluí-lo (para não perder o registro de que já
+  avaliou e descartou aquele edital, evitando reavaliá-lo do zero se ele
+  ressurgir)? Resolução: FR-027 a FR-030 (User Story 3) formalizam a marcação
+  "Ignorado" como um atributo de visibilidade independente do estágio de
+  acompanhamento — o edital some da visão ativa (tabela e quadro) sem ser
+  excluído (distinto de FR-014) e sem perder o estágio em que já estava,
+  podendo ser revertido a qualquer momento.
 - Como uma coluna do quadro de progresso se comporta quando não há nenhuma
   busca ou filtro ativo e simplesmente não existe nenhum edital cadastrado
   naquele estágio (ausência não causada por filtro)? Resolução: a coluna
@@ -412,6 +454,35 @@ ordenados pela proximidade da data de fechamento.
   mensagem, é ambígua — pode ser lida como "nenhum edital cadastrado nesse
   estágio"). Formalização de um comportamento já implementado e confirmado
   ao vivo no protótipo `prototype/avulsa-A001/` (task A014).
+- **FR-027**: O sistema DEVE permitir que o captador marque um edital já
+  cadastrado como "Ignorado", sem excluí-lo (distinto da remoção definitiva,
+  FR-014). Esta marcação é um atributo de visibilidade ortogonal ao Estágio
+  de Acompanhamento — não é um quinto estágio do quadro de progresso, que
+  continua com exatamente quatro colunas (FR-002 permanece inalterado).
+  Justificativa de produto: cobre o caso de um edital que o captador
+  cadastrou como candidato antes de avaliá-lo a fundo e, após avaliar,
+  concluiu que não tem a ver com a área de atuação da sua organização — ele
+  quer registrar que já avaliou e descartou aquele edital especificamente,
+  para não precisar reavaliá-lo do zero caso ele ressurja (ex.: divulgado de
+  novo por outro canal), o que a exclusão definitiva (FR-014) não permite
+  preservar. Uma quinta coluna foi considerada e descartada porque
+  "ignorado" não é um estágio do processo de captação (o edital não avança
+  nem retrocede por ser ignorado) — é sobre o captador não querer ver aquele
+  item agora, o que é melhor modelado como um estado de visibilidade
+  reversível do que como posição no funil.
+- **FR-028**: O sistema DEVE ocultar, por padrão, editais marcados como
+  "Ignorado" tanto da tabela quanto do quadro de progresso — inclusive das
+  contagens exibidas (total geral de FR-023 e contagem por coluna de
+  FR-024) — mantendo inalterado o estágio de acompanhamento que o edital já
+  tinha antes de ser ignorado.
+- **FR-029**: O sistema DEVE oferecer ao captador uma forma de visualizar os
+  editais marcados como "Ignorado", separada da visão padrão (tabela e
+  quadro de progresso), para que ele possa revisá-los sem precisar lembrar
+  manualmente de cada um.
+- **FR-030**: O sistema DEVE permitir que o captador desmarque um edital
+  como "Ignorado" a partir da visão de ignorados (FR-029), fazendo-o voltar
+  a aparecer na tabela e no quadro de progresso, no mesmo estágio de
+  acompanhamento em que já estava antes de ser ignorado.
 
 ### Key Entities
 
@@ -420,7 +491,10 @@ ordenados pela proximidade da data de fechamento.
   responsável, data de fechamento (prazo de submissão). Atributos opcionais:
   link para a chamada, data de abertura, documentação exigida e critérios de
   avaliação. Relaciona-se com um estágio de acompanhamento (ver Estágio de
-  Acompanhamento).
+  Acompanhamento). Tem ainda um atributo de visibilidade independente do
+  estágio — ignorado (sim/não, padrão não) — que, quando ativo, oculta o
+  edital das visões padrão (tabela e quadro de progresso) sem alterar seu
+  estágio de acompanhamento nem excluir seus dados (ver FR-027 a FR-030).
 - **Captador de Recursos**: pessoa responsável por identificar, avaliar e
   submeter propostas a editais de fomento em nome de uma organização
   proponente. É quem cadastra, acompanha e move os editais entre estágios.
@@ -454,6 +528,11 @@ ordenados pela proximidade da data de fechamento.
 - **SC-006**: Um captador consegue corrigir um dado desatualizado de um
   edital (ex.: prazo prorrogado) e ver essa correção refletida
   imediatamente em ambas as visões (tabela e quadro de progresso).
+- **SC-007**: Um captador consegue marcar como "Ignorado" um edital fora da
+  área de atuação da sua organização, deixar de vê-lo na tabela e no quadro
+  de progresso, e depois localizá-lo e desmarcá-lo, recuperando-o
+  integralmente (dados e estágio) sem ter perdido nenhuma informação
+  previamente registrada.
 
 ## Assumptions
 

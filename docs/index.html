@@ -70,10 +70,14 @@
       <li><code>FR-008</code> Todo edital recém-cadastrado nasce no estágio "Backlog".</li>
     </ul>
 
-    <h4 id="fr-edicao">Edição e remoção (User Story 3 — P3)</h4>
+    <h4 id="fr-edicao">Edição, remoção e visibilidade (User Story 3 — P3)</h4>
     <ul>
       <li><code>FR-013</code> Edição de qualquer dado de um edital já cadastrado.</li>
-      <li><code>FR-014</code> Remoção de um edital da lista de acompanhamento ativo.</li>
+      <li><code>FR-014</code> Remoção definitiva de um edital da lista de acompanhamento ativo.</li>
+      <li><code>FR-027</code> Marcação de um edital como "Ignorado" — atributo de visibilidade ortogonal ao estágio de acompanhamento, distinto da remoção (FR-014) e não um quinto estágio do quadro (FR-002 permanece com quatro colunas). Cobre o caso de um edital avaliado e descartado por não ter a ver com a área de atuação do captador, sem perder o registro de que já foi avaliado.</li>
+      <li><code>FR-028</code> Editais "Ignorado" ficam ocultos por padrão da tabela, do quadro de progresso e das contagens (FR-023/FR-024), mantendo o estágio de acompanhamento inalterado.</li>
+      <li><code>FR-029</code> Visão/filtro dedicado para o captador consultar os editais marcados como "Ignorado".</li>
+      <li><code>FR-030</code> Reversão da marcação "Ignorado", devolvendo o edital à tabela e ao quadro de progresso no estágio em que já estava.</li>
     </ul>
 
     <h4 id="fr-escopo-individual">Escopo individual do captador</h4>
@@ -134,6 +138,13 @@
       <li>Remover um edital o retira das visões ativas (tabela e quadro). Se isso implica exclusão definitiva ou apenas arquivamento fica a critério do planejamento técnico, desde que o edital removido deixe de aparecer nas listas ativas.</li>
     </ul>
 
+    <h4 id="br-ignorado">Visibilidade: ignorar sem remover</h4>
+    <ul>
+      <li>Marcar um edital como "Ignorado" é uma ação distinta de removê-lo (FR-014): não exclui o edital, apenas oculta-o por padrão da tabela e do quadro de progresso, preservando seu estágio de acompanhamento e todos os dados cadastrados.</li>
+      <li>"Ignorado" não é um estágio do quadro de progresso — o quadro continua com exatamente quatro colunas (Backlog, Em andamento, Validação, Concluído); é um atributo de visibilidade que existe em paralelo ao estágio.</li>
+      <li>Um edital ignorado pode ser desmarcado a qualquer momento, voltando a aparecer nas visões padrão no mesmo estágio em que estava antes de ser ignorado.</li>
+    </ul>
+
     <div class="callout">
       Nenhuma outra feature foi especificada até o momento além de "Gerenciamento de Editais de Fomento". Esta seção será expandida conforme novas specs forem criadas e clarificadas.
     </div>
@@ -150,7 +161,8 @@
       <li>Listagem em tabela de todos os editais do captador.</li>
       <li>Quadro de progresso (kanban) com quatro colunas fixas e movimentação livre entre elas.</li>
       <li>Edição de qualquer dado de um edital já cadastrado.</li>
-      <li>Remoção de um edital da lista de acompanhamento ativo.</li>
+      <li>Remoção definitiva de um edital da lista de acompanhamento ativo.</li>
+      <li>Marcação/desmarcação de um edital como "Ignorado" — oculta-o por padrão da tabela e do quadro sem excluí-lo nem alterar seu estágio; visão dedicada para consultar e reverter editais ignorados.</li>
       <li>Indicação visual de prazo de fechamento vencido.</li>
       <li>Gerenciamento individual: cada captador só cadastra, acompanha e edita os próprios editais.</li>
       <li>Busca por nome da chamada e filtro por instituição responsável, na tabela e no quadro de progresso; ordenação por data de fechamento na tabela e, dentro de cada coluna, no quadro de progresso.</li>
