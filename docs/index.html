@@ -57,6 +57,7 @@
       <li><code>FR-011</code> Indicação visual de editais com data de fechamento já vencida.</li>
       <li><code>FR-012</code> O link para a chamada é acessível diretamente a partir da tabela e do quadro.</li>
       <li><code>FR-022</code> Indicação visual em amarelo, distinta do vermelho de FR-011, para editais com prazo se aproximando em quatro níveis (até 7, 14, 21 ou 30 dias antes do fechamento) — mostrando apenas o nível mais urgente aplicável quando o edital se encaixa em mais de um.</li>
+      <li><code>FR-024</code> Cabeçalho de cada coluna do quadro de progresso exibe a quantidade de editais naquela coluna, atualizada dinamicamente ao entrar/sair/mover um edital.</li>
     </ul>
 
     <h4 id="fr-cadastro">Cadastro de edital (User Story 2 — P2)</h4>
@@ -89,6 +90,8 @@
       <li><code>FR-020</code> Ordenação da tabela por data de fechamento (crescente ou decrescente).</li>
       <li><code>FR-021</code> Dentro de cada coluna do quadro de progresso, cartões ordenados por data de fechamento (mais próximo primeiro), como critério secundário ao agrupamento por estágio.</li>
       <li><code>FR-023</code> Número total de editais sendo exibidos, próximo ao título da tela ou aos controles de busca/filtro — total geral sem busca/filtro ativo, total já filtrado quando busca e/ou filtro por instituição estão aplicados.</li>
+      <li><code>FR-025</code> Indicador visível de busca/filtro ativo próximo aos controles ("Filtrando por: ... · Limpar filtros"), nas duas visões, com ação "Limpar filtros" que reseta busca e filtro por instituição juntos, sem alterar a ordenação.</li>
+      <li><code>FR-026</code> Mensagem de estado vazio ("Nenhum edital encontrado com esses critérios.") em qualquer coluna do quadro de progresso que fique sem editais por causa de busca/filtro ativo.</li>
     </ul>
 
     <div class="callout">
@@ -402,7 +405,7 @@
       <div class="story-head">
         <p class="kicker">User Story 1 · P1</p>
         <h3>Acompanhar editais em um quadro de progresso</h3>
-        <span class="badge badge-untested">não verificado — 0/5</span>
+        <span class="badge badge-untested">não verificado — 0/6</span>
       </div>
       <ol class="scenarios">
         <li><span>Dado editais cadastrados, ao acessar a listagem, o captador vê uma tabela com nome da chamada, descrição, instituição responsável, link e datas (abertura/fechamento).</span><code>FR-001</code></li>
@@ -410,6 +413,7 @@
         <li><span>Dado um edital em "Em andamento", ao movê-lo para "Validação", o novo estágio reflete tanto no quadro quanto na tabela.</span><code>FR-009, FR-010</code></li>
         <li><span>Dado um edital em qualquer coluna que não a primeira, o captador consegue movê-lo de volta a uma coluna anterior.</span><code>FR-009</code></li>
         <li><span>Dado um edital com prazo de fechamento dentro de até 7, 14, 21 ou 30 dias, ao acessar a listagem ou o quadro, o sistema destaca esse edital em amarelo mostrando apenas o nível mais urgente aplicável.</span><code>FR-022</code></li>
+        <li><span>Dado o captador na visão de quadro de progresso, ao mover um edital entre colunas, o cabeçalho de cada coluna afetada atualiza imediatamente a quantidade de editais exibida.</span><code>FR-024</code></li>
       </ol>
       <p class="related">Success criteria relacionados: <code>SC-001</code>, <code>SC-003</code></p>
     </section>
@@ -439,6 +443,25 @@
         <li><span>Ao remover um edital que não é mais relevante, o sistema deixa de exibi-lo na tabela e no quadro.</span><code>FR-014</code></li>
       </ol>
       <p class="related">Success criteria relacionados: <code>SC-006</code></p>
+    </section>
+
+    <section class="story" id="ac-us4">
+      <div class="story-head">
+        <p class="kicker">User Story 4 · P4</p>
+        <h3>Localizar um edital específico entre muitos</h3>
+        <span class="badge badge-untested">não verificado — 0/8</span>
+      </div>
+      <ol class="scenarios">
+        <li><span>Dados editais com nomes de chamada diferentes, ao digitar um termo de busca, a tabela passa a exibir apenas os editais cujo nome contém esse termo.</span><code>FR-018</code></li>
+        <li><span>Dados editais de instituições diferentes, ao selecionar um filtro por instituição responsável, a tabela passa a exibir apenas os editais daquela instituição.</span><code>FR-019</code></li>
+        <li><span>Dados editais com datas de fechamento diferentes, ao ordenar a tabela por data de fechamento, os editais passam a aparecer ordenados por proximidade do prazo.</span><code>FR-020</code></li>
+        <li><span>Dados múltiplos editais em uma mesma coluna do quadro, os cartões aparecem ordenados por data de fechamento, do mais próximo ao mais distante, sem alterar o agrupamento por estágio.</span><code>FR-021</code></li>
+        <li><span>Dado o captador com busca e/ou filtro por instituição aplicados, ao limpá-los, a listagem volta a exibir todos os editais cadastrados.</span><code>FR-018, FR-019</code></li>
+        <li><span>Dados editais cadastrados, ao acessar a listagem ou o quadro, o sistema exibe o número total de editais exibidos — total geral sem busca/filtro ativo, total já filtrado quando há busca e/ou filtro por instituição.</span><code>FR-023</code></li>
+        <li><span>Dado o captador com busca e/ou filtro por instituição aplicados, um indicador visível ("Filtrando por: ... · Limpar filtros") aparece próximo aos controles, nas duas visões; "Limpar filtros" reseta busca e filtro por instituição juntos, sem alterar a ordenação.</span><code>FR-025</code></li>
+        <li><span>Dados busca e/ou filtro que deixam uma coluna do quadro sem nenhum edital correspondente, a coluna exibe "Nenhum edital encontrado com esses critérios." em vez de ficar em branco.</span><code>FR-026</code></li>
+      </ol>
+      <p class="related">Success criteria relacionados: <code>SC-001</code></p>
     </section>
 
     <section class="cross" id="ac-cross">

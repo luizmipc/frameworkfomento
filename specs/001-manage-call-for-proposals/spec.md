@@ -64,6 +64,10 @@ valor sozinho, mesmo sem as demais user stories implementadas.
    (ex.: um edital que vence em 5 dias — portanto dentro dos quatro limiares
    ao mesmo tempo — mostra somente o destaque de "até 7 dias", não os quatro
    destaques simultaneamente).
+6. **Given** o captador está na visão de quadro de progresso, **When** ele
+   move um edital de uma coluna para outra, **Then** o cabeçalho de cada
+   coluna afetada (origem e destino) atualiza imediatamente a quantidade de
+   editais exibida naquela coluna, refletindo o novo total.
 
 ---
 
@@ -199,6 +203,18 @@ ordenados pela proximidade da data de fechamento.
    editais sendo exibidos no momento — mostrando o total geral quando
    nenhuma busca ou filtro está ativo, e o total já filtrado quando o
    captador aplicou busca e/ou filtro por instituição responsável.
+7. **Given** o captador aplicou uma busca por nome e/ou um filtro por
+   instituição responsável, **When** ele visualiza a tabela ou o quadro de
+   progresso, **Then** um indicador visível (ex.: "Filtrando por: ... ·
+   Limpar filtros") aparece próximo aos controles de busca/filtro, e, ao
+   clicar em "Limpar filtros", a busca e o filtro por instituição são
+   resetados juntos, em uma única ação, sem alterar a ordenação aplicada.
+8. **Given** uma busca e/ou um filtro por instituição deixam uma coluna do
+   quadro de progresso sem nenhum edital correspondente, **When** o captador
+   visualiza essa coluna, **Then** o sistema exibe, no lugar da coluna em
+   branco, uma mensagem (ex.: "Nenhum edital encontrado com esses
+   critérios.") indicando que a ausência de cartões é resultado do filtro
+   aplicado, não da falta de editais cadastrados naquele estágio.
 
 ---
 
@@ -219,6 +235,11 @@ ordenados pela proximidade da data de fechamento.
   50) em termos de conseguir localizar um edital específico? Este é
   exatamente o problema que a User Story 4 (busca, filtro e ordenação —
   FR-018 a FR-021) endereça.
+- Como o filtro por instituição responsável (FR-019) trata o mesmo
+  financiador digitado de formas diferentes em cadastros diferentes (ex.:
+  "Fundação X" em um edital e "Fundação X Ltda" em outro)? Achado de teste de
+  usabilidade sobre a User Story 2 (ainda não implementada — o campo é texto
+  livre, FR-003); ver nota de decisão em Assumptions.
 
 ## Requirements *(mandatory)*
 
@@ -320,6 +341,43 @@ ordenados pela proximidade da data de fechamento.
   por coluna do quadro de progresso (FR-021) ou contar linhas na tabela para
   saber quantos editais está acompanhando — a mesma conta manual que a
   ferramenta deveria eliminar.
+- **FR-024**: O sistema DEVE exibir, no cabeçalho de cada coluna do quadro de
+  progresso, a quantidade de editais atualmente naquela coluna (ex.:
+  "Validação (2)"), atualizada dinamicamente conforme editais entram, saem ou
+  são movidos entre colunas — inclusive imediatamente após o captador mover
+  um cartão (FR-009). Este requisito permanece dentro da User Story 1 (não
+  vira User Story própria) porque é um refinamento de visibilidade sobre a
+  mesma visão de quadro de progresso já coberta por FR-002 e FR-009 — ver
+  Acceptance Scenario 6. Formalização de um comportamento já implementado e
+  confirmado ao vivo no protótipo `prototype/avulsa-A001/` (task A009 do
+  quadro do projeto), que nunca havia sido registrado como requisito.
+- **FR-025**: O sistema DEVE exibir, próximo aos controles de busca/filtro,
+  tanto na visão de tabela quanto na de quadro de progresso, um indicador
+  visível de que uma busca por nome e/ou um filtro por instituição
+  responsável está ativo (ex.: "Filtrando por: ... · Limpar filtros"), com
+  uma ação "Limpar filtros" que reseta busca e filtro por instituição
+  simultaneamente, em uma única ação, sem alterar a ordenação vigente (ver
+  Acceptance Scenario 7 de User Story 4). Este requisito é tratado como FR
+  separado de FR-018/FR-019 (e não uma reescrita deles) porque cobre um sinal
+  distinto — visibilidade de que um filtro está ativo, não a capacidade de
+  buscar/filtrar em si. Origem: teste de usabilidade com persona, severidade
+  média — sem esse indicador, um captador que filtra e esquece de limpar
+  pode ler uma contagem já filtrada (ex.: a contagem por coluna de FR-024 ou
+  o total de FR-023) como se fosse o total geral, e reportar um número
+  incorreto a terceiros. Formalização de um comportamento já implementado e
+  confirmado ao vivo no protótipo `prototype/avulsa-A001/` (task A013).
+- **FR-026**: O sistema DEVE exibir, em qualquer coluna do quadro de
+  progresso que fique sem nenhum edital correspondente por causa de uma
+  busca e/ou filtro ativo, uma mensagem indicando que não há resultado para
+  os critérios aplicados (ex.: "Nenhum edital encontrado com esses
+  critérios."), em vez de deixar a coluna em branco (ver Acceptance Scenario
+  8 de User Story 4). Este requisito estende ao quadro de progresso um
+  comportamento que a visão de tabela já entrega implicitamente ao aplicar
+  FR-018/FR-019 (uma tabela sem linhas já comunica "nenhum resultado" pela
+  ausência natural de conteúdo tabular; uma coluna de quadro vazia, sem
+  mensagem, é ambígua — pode ser lida como "nenhum edital cadastrado nesse
+  estágio"). Formalização de um comportamento já implementado e confirmado
+  ao vivo no protótipo `prototype/avulsa-A001/` (task A014).
 
 ### Key Entities
 
@@ -379,3 +437,18 @@ ordenados pela proximidade da data de fechamento.
   permanente de dados — o comportamento exato de exclusão vs. arquivamento
   fica a critério da fase de planejamento técnico, desde que o resultado
   visível ao captador (edital some das listas ativas) seja preservado.
+- Assume-se que a consistência de grafia do campo instituição responsável
+  entre cadastros diferentes do mesmo captador é responsabilidade de quem
+  cadastra (texto livre, FR-003); esta rodada da spec não introduz um FR de
+  autocomplete/normalização de instituição. Risco identificado em teste de
+  usabilidade: se o mesmo financiador for digitado de formas diferentes em
+  cadastros diferentes (ex.: "Fundação X" vs. "Fundação X Ltda"), o filtro
+  por instituição (FR-019) os trata como instituições distintas,
+  fragmentando o agrupamento que o filtro deveria oferecer. Decisão de
+  produto: não é um bug do protótipo atual (que só lê dados mockados já
+  digitados de forma consistente) nem um requisito desta feature agora — é
+  um risco estrutural de como a User Story 2 (ainda não implementada) vai
+  tratar esse campo. Fica registrado aqui para reavaliação quando a User
+  Story 2 for implementada (candidato natural: autocomplete a partir das
+  instituições já cadastradas pelo mesmo captador), sem bloquear o
+  fechamento desta spec nem virar FR condicional nesta rodada.
