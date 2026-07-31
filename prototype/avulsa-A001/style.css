@@ -114,6 +114,62 @@ main {
   outline-offset: 1px;
 }
 
+/* A018 / FR-029: segmented control "Ativos" / "Ignorados" — troca entre dois
+   conjuntos nomeados, não uma propriedade liga/desliga, por isso não é um
+   checkbox (ver .claude/agents/designer.md, lição 2026-07-31). Empurrado
+   para a direita da barra de controles compartilhada. */
+.control-toggle {
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex: 1 1 auto;
+}
+
+.control-toggle-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Mesmo padrão visual de .view-btn/.view-switch (par de botões, um ativo em
+   cor sólida), reaproveitado aqui num componente menor — mesma lógica de
+   alternância, contexto diferente (conjunto de dados, não painel de visão). */
+.segmented {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.segment-btn {
+  border: none;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.segment-btn + .segment-btn {
+  border-left: 1px solid var(--border);
+}
+
+.segment-btn:hover {
+  color: var(--accent);
+}
+
+.segment-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.segment-btn.active .col-count {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
 /* Ordenação por fechamento — só existe na visão Tabela (FR-020); no Kanban
    a ordenação por proximidade do prazo dentro da coluna é automática, sem
    controle visível (FR-021). */
@@ -239,6 +295,14 @@ tbody tr:hover {
 
 td a {
   color: var(--accent);
+}
+
+/* A016/A017 / FR-003/FR-004: estado "campo ausente" (link ou abertura) —
+   texto neutro em itálico, sem sublinhado nem cor de link, para não parecer
+   clicável. Classe genérica reaproveitada nos dois casos, tabela e kanban. */
+.field-missing {
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 /* Prazo vencido (FR-011): borda de destaque na linha + badge junto do
@@ -441,13 +505,32 @@ tr.proximo td:first-child {
   text-decoration: underline;
 }
 
+/* A016 / FR-003: mesmo texto de fallback da tabela (.field-missing), sem
+   sublinhado nem cor de link — não é clicável. Classe própria (em vez de
+   .field-missing) porque aqui precisa de display/margin de bloco, para
+   ocupar o lugar do link "Ver chamada" no card. */
+.card-link-missing {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .card-actions {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-top: 0.5rem;
 }
 
-.move-btn {
+.card-move-group {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.move-btn,
+.ignore-btn {
   border: 1px solid var(--border);
   background: var(--surface);
   border-radius: 4px;
@@ -456,9 +539,18 @@ tr.proximo td:first-child {
   font-size: 0.85rem;
 }
 
-.move-btn:hover {
+.move-btn:hover,
+.ignore-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* A018 / FR-027..FR-030: edital ignorado — mesmo tratamento visual nas duas
+   visões (opacidade reduzida), só aparece quando "Mostrar somente
+   ignorados" está marcado (ver getFiltered() em script.js). */
+tr.ignorado,
+.card.ignorado {
+  opacity: 0.7;
 }
 
 @media (max-width: 800px) {

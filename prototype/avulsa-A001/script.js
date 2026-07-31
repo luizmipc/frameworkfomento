@@ -20,7 +20,12 @@ const editais = [
     chamada: "Edital Pesquisa Aplicada em Sustentabilidade",
     descricao: "Financiamento de pesquisas aplicadas com foco em transição energética e sustentabilidade.",
     instituicao: "FAPESP (fictício)",
-    abertura: "2026-05-15",
+    // A017 / FR-004 + Assumptions: data de abertura é opcional no cadastro —
+    // este edital mockado fica sem ela de propósito, para demonstrar o
+    // fallback. "" (em vez de omitir a chave) mantém o mesmo formato de
+    // objeto em todos os itens da lista, mesmo raciocínio do link vazio do
+    // e5 (A016). Fechamento continua obrigatório (FR-005), não muda.
+    abertura: "",
     fechamento: "2026-09-15",
     link: "https://exemplo.org/editais/sustentabilidade",
     status: "andamento",
@@ -53,8 +58,17 @@ const editais = [
     abertura: "2026-06-20",
     // A011: ajustado para cair no nível de proximidade "até 21 dias" (FR-022).
     fechamento: "2026-08-19",
-    link: "https://exemplo.cultura.gov.br/patrimonio-digital",
+    // A016 / FR-003: link agora é opcional no cadastro — este edital mockado
+    // fica sem link de propósito, para demonstrar o fallback. "" (em vez de
+    // omitir a chave) mantém o mesmo formato de objeto em todos os itens da
+    // lista, mais fácil de escanear.
+    link: "",
     status: "backlog",
+    // A018 / FR-027: mockado como ignorado de propósito — fora da área de
+    // atuação do captador — para demonstrar a visão "somente ignorados"
+    // (FR-029) já com um item nela, sem precisar clicar em nada primeiro.
+    // O estágio ("backlog") não muda por estar ignorado (FR-030).
+    ignorado: true,
   },
 ];
 
@@ -109,6 +123,29 @@ const filterIndicator = document.getElementById("filter-indicator");
 const filterSummary = document.getElementById("filter-summary");
 const clearFiltersBtn = document.getElementById("clear-filters");
 const editalCount = document.getElementById("edital-count");
+// A018 / FR-027..FR-030: segmented control "Ativos" / "Ignorados" — troca o
+// universo exibido nas duas visões entre os dois conjuntos nomeados
+// (padrão "ativos"), reaproveitando o mesmo pipeline de busca/filtro/
+// contagem do US4 em vez de uma tela/rota separada. Estado vive em
+// `mostrarIgnorados` (não num checkbox) porque é uma troca de contexto
+// entre dois conjuntos, não uma propriedade liga/desliga — ver lição em
+// .claude/agents/designer.md (2026-07-31).
+const segmentAtivos = document.getElementById("segment-ativos");
+const segmentIgnorados = document.getElementById("segment-ignorados");
+const ignoradosCount = document.getElementById("ignorados-count");
+let mostrarIgnorados = false;
+
+function setMostrarIgnorados(valor) {
+  mostrarIgnorados = valor;
+  segmentAtivos.classList.toggle("active", !valor);
+  segmentAtivos.setAttribute("aria-pressed", String(!valor));
+  segmentIgnorados.classList.toggle("active", valor);
+  segmentIgnorados.setAttribute("aria-pressed", String(valor));
+  applyFilters();
+}
+
+segmentAtivos.addEventListener("click", () => setMostrarIgnorados(false));
+segmentIgnorados.addEventListener("click", () => setMostrarIgnorados(true));
 
 // Opções do filtro de instituição vêm dos dados mockados — sem lista fixa.
 [...new Set(editais.map((e) => e.instituicao))].sort().forEach((inst) => {
@@ -118,32 +155,48 @@ const editalCount = document.getElementById("edital-count");
   instFilter.appendChild(opt);
 });
 
+// A018 / FR-028: por padrão (toggle desmarcado) só editais NÃO ignorados
+// entram no universo filtrado — de tabela, kanban e das contagens, todas
+// derivadas de getFiltered(). Marcar o toggle inverte para "somente
+// ignorados" (FR-029), sem precisar de uma lista/estado separado.
 function getFiltered() {
   const termo = normalizeText(searchInput.value.trim());
   const inst = instFilter.value;
+  const wantIgnorados = mostrarIgnorados;
   return editais.filter(
     (e) =>
+      Boolean(e.ignorado) === wantIgnorados &&
       (!termo || normalizeText(e.chamada).includes(termo)) &&
       (!inst || e.instituicao === inst)
   );
 }
 
-// A013: existe busca e/ou filtro de instituição em uso agora? Usado tanto
-// pelo indicador quanto pela mensagem de coluna vazia do kanban (A014).
+// A013: existe busca, filtro de instituição e/ou a visão "Ignorados" em
+// uso agora? Usado tanto pelo indicador quanto pela mensagem de coluna
+// vazia do kanban (A014).
 function isFilterActive() {
-  return Boolean(searchInput.value.trim() || instFilter.value);
+  return Boolean(searchInput.value.trim() || instFilter.value || mostrarIgnorados);
 }
 
-// A013: atualiza a linha "Filtrando por: … · Limpar filtros", escondendo-a
-// por completo (.hidden) quando não há busca nem filtro de instituição.
+// A013/A018: atualiza a linha "Filtrando por: … · Limpar filtros",
+// escondendo-a por completo (.hidden) quando não há busca, filtro de
+// instituição nem a visão "Ignorados" ativa.
 function updateFilterIndicator() {
   const termo = searchInput.value.trim();
   const inst = instFilter.value;
   const partes = [];
+  if (mostrarIgnorados) partes.push("somente ignorados");
   if (termo) partes.push(`busca "${termo}"`);
   if (inst) partes.push(`instituição "${inst}"`);
   filterIndicator.classList.toggle("hidden", partes.length === 0);
   filterSummary.textContent = partes.length ? `Filtrando por: ${partes.join(" e ")}` : "";
+}
+
+// A018: contagem de editais ignorados, sempre visível junto do toggle
+// (mesmo padrão do contador por coluna do kanban, A009), para o captador
+// saber que há algo para ver ali antes mesmo de marcar a caixa.
+function updateIgnoradosCount() {
+  ignoradosCount.textContent = `(${editais.filter((e) => e.ignorado).length})`;
 }
 
 function byFechamento(a, b) {
@@ -164,6 +217,7 @@ function updateEditalCount() {
 function applyFilters() {
   updateFilterIndicator();
   updateEditalCount();
+  updateIgnoradosCount();
   renderTabela();
   renderKanban();
 }
@@ -173,8 +227,22 @@ sortFechamento.addEventListener("change", renderTabela);
 clearFiltersBtn.addEventListener("click", () => {
   searchInput.value = "";
   instFilter.value = "";
-  applyFilters();
+  // "Limpar filtros" volta para a visão padrão "Ativos" (FR-028) — chama
+  // setMostrarIgnorados em vez de applyFilters direto, senão os botões do
+  // segmented control ficam com o estado visual desatualizado.
+  setMostrarIgnorados(false);
 });
+
+// A018 / FR-027/FR-030: marca/desmarca um edital como ignorado — o estágio
+// (edital.status) não é tocado, só o atributo ortogonal `ignorado`.
+// applyFilters() reaplica o mesmo pipeline de getFiltered(), então o item
+// some da visão atual (e reaparece na outra) sem lógica extra de remoção.
+function toggleIgnorado(id) {
+  const edital = editais.find((e) => e.id === id);
+  if (!edital) return;
+  edital.ignorado = !edital.ignorado;
+  applyFilters();
+}
 
 // --- Visão tabela ---
 function renderTabela() {
@@ -183,7 +251,7 @@ function renderTabela() {
   const lista = getFiltered().sort(byFechamento);
   if (sortFechamento.value === "desc") lista.reverse();
   if (lista.length === 0) {
-    corpo.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhum edital encontrado com esses critérios.</td></tr>';
+    corpo.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum edital encontrado com esses critérios.</td></tr>';
     return;
   }
   lista.forEach((edital) => {
@@ -194,23 +262,53 @@ function renderTabela() {
     const nivel = vencido ? null : nivelProximidade(edital.fechamento);
     tr.classList.toggle("vencido", vencido);
     tr.classList.toggle("proximo", !vencido && nivel !== null);
+    // A018: linha só existe na visão "somente ignorados" ou "ativos" nunca as
+    // duas ao mesmo tempo (getFiltered() já separa por edital.ignorado), mas
+    // marca a classe a partir do dado em si, não do estado do toggle.
+    tr.classList.toggle("ignorado", Boolean(edital.ignorado));
     let badgePrazo = "";
     if (vencido) badgePrazo = ' <span class="badge-vencido">Vencido</span>';
     else if (nivel !== null) badgePrazo = ` <span class="badge-proximo">Vence em até ${nivel} dias</span>`;
+    // A016 / FR-003: link é opcional (cadastro pode não ter link) — sem ele,
+    // nada de <a href> apontando para lugar nenhum, só um texto neutro.
+    // A017 / FR-004: mesmo raciocínio para abertura, o único outro campo que
+    // a spec declara opcional (Assumptions) — .field-missing é o mesmo
+    // estado visual "campo ausente" usado pelos dois casos.
     // Ordem prioriza as colunas decisivas para priorização (Fechamento, Abertura, Link)
     // logo após o identificador (Chamada); Instituição/Descrição, menos decisivas, ficam por
     // último. Os data-label alimentam o layout empilhado em telas estreitas (ver style.css).
     tr.innerHTML = `
       <td data-label="Chamada">${edital.chamada}</td>
       <td data-label="Fechamento">${formatDate(edital.fechamento)}${badgePrazo}</td>
-      <td data-label="Abertura">${formatDate(edital.abertura)}</td>
-      <td data-label="Link"><a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a></td>
+      <td data-label="Abertura">${
+        edital.abertura
+          ? formatDate(edital.abertura)
+          : '<span class="field-missing">Abertura não informada</span>'
+      }</td>
+      <td data-label="Link">${
+        edital.link
+          ? `<a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a>`
+          : '<span class="field-missing">Link não informado</span>'
+      }</td>
       <td data-label="Instituição">${edital.instituicao}</td>
       <td data-label="Descrição">${edital.descricao}</td>
+      <td data-label="Ações">
+        <button type="button" class="ignore-btn" data-id="${edital.id}">${
+          edital.ignorado ? "Reverter" : "Ignorar"
+        }</button>
+      </td>
     `;
     corpo.appendChild(tr);
   });
 }
+
+// A018 / FR-027: delegação de clique no corpo da tabela — mesmo padrão já
+// usado para os botões de mover no board (ver listener de #board abaixo).
+document.getElementById("tabela-corpo").addEventListener("click", (event) => {
+  const btn = event.target.closest(".ignore-btn");
+  if (!btn) return;
+  toggleIgnorado(btn.dataset.id);
+});
 
 // --- Visão kanban ---
 const cardTemplate = document.getElementById("card-template");
@@ -243,8 +341,13 @@ function renderKanban() {
       card.dataset.id = edital.id;
       card.querySelector(".card-title").textContent = edital.chamada;
       card.querySelector(".card-inst").textContent = edital.instituicao;
-      card.querySelector(".card-dates").textContent =
-        `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`;
+      // A017 / FR-004: mesmo fallback da tabela para abertura ausente — usa
+      // innerHTML (em vez de textContent) só aqui para poder aplicar
+      // .field-missing na parte do texto que falta, mesma classe do estado
+      // "campo ausente" já usado para link (A016).
+      card.querySelector(".card-dates").innerHTML = edital.abertura
+        ? `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`
+        : `<span class="field-missing">Abertura não informada</span> — ${formatDate(edital.fechamento)}`;
       const vencido = isVencido(edital.fechamento);
       // FR-022: mesma precedência da tabela — só calcula nível se não vencido.
       const nivel = vencido ? null : nivelProximidade(edital.fechamento);
@@ -254,7 +357,16 @@ function renderKanban() {
       const badgeProximo = card.querySelector(".card-proximo-badge");
       badgeProximo.classList.toggle("hidden", nivel === null);
       if (nivel !== null) badgeProximo.textContent = `Vence em até ${nivel} dias`;
-      card.querySelector(".card-link").href = edital.link;
+      // A016 / FR-003: mesma regra da tabela — sem link, esconde a âncora
+      // "Ver chamada" e mostra o texto de fallback no lugar dela.
+      const cardLink = card.querySelector(".card-link");
+      const cardLinkMissing = card.querySelector(".card-link-missing");
+      cardLink.classList.toggle("hidden", !edital.link);
+      cardLinkMissing.classList.toggle("hidden", Boolean(edital.link));
+      if (edital.link) cardLink.href = edital.link;
+      // A018 / FR-027/FR-030: mesma ação/rótulo da tabela.
+      card.classList.toggle("ignorado", Boolean(edital.ignorado));
+      card.querySelector(".ignore-btn").textContent = edital.ignorado ? "Reverter" : "Ignorar";
       list.appendChild(node);
     });
   });
@@ -280,14 +392,22 @@ function moveEdital(id, newStatus) {
 
 // Clique nos botões de mover (acessível, sem depender de drag-and-drop)
 document.getElementById("board").addEventListener("click", (event) => {
-  const btn = event.target.closest(".move-btn");
-  if (!btn) return;
-  const card = btn.closest(".card");
-  const edital = editais.find((e) => e.id === card.dataset.id);
-  const idx = STATUSES.indexOf(edital.status);
-  const newIdx = idx + Number(btn.dataset.dir);
-  if (newIdx >= 0 && newIdx < STATUSES.length) {
-    moveEdital(edital.id, STATUSES[newIdx]);
+  const moveBtn = event.target.closest(".move-btn");
+  if (moveBtn) {
+    const card = moveBtn.closest(".card");
+    const edital = editais.find((e) => e.id === card.dataset.id);
+    const idx = STATUSES.indexOf(edital.status);
+    const newIdx = idx + Number(moveBtn.dataset.dir);
+    if (newIdx >= 0 && newIdx < STATUSES.length) {
+      moveEdital(edital.id, STATUSES[newIdx]);
+    }
+    return;
+  }
+  // A018 / FR-027: mesma ação do botão "Ignorar"/"Reverter" da tabela.
+  const ignoreBtn = event.target.closest(".ignore-btn");
+  if (ignoreBtn) {
+    const card = ignoreBtn.closest(".card");
+    toggleIgnorado(card.dataset.id);
   }
 });
 
@@ -335,5 +455,6 @@ document.querySelectorAll(".view-btn").forEach((btn) => {
 
 updateFilterIndicator();
 updateEditalCount();
+updateIgnoradosCount();
 renderTabela();
 renderKanban();

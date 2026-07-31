@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T06:56Z
+**Última sincronização**: 2026-07-31T07:47Z
 
 ## To Do
 
@@ -95,6 +95,36 @@ todas as colunas.
   na tabela (FR-023 em `spec.md`, User Story 4). Protótipo:
   `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1`.
+- [ ] A016 Definir e implementar o que a Tabela/Kanban exibem quando um
+  edital não tem `link` (agora opcional no cadastro, FR-003) — hoje
+  `renderTabela()`/`renderKanban()` atribuem `href = edital.link` sem
+  checar se existe; um edital real sem link produziria um "Ver chamada"
+  clicável apontando para `href="undefined"`, pior que não mostrar link
+  nenhum, pois parece funcional. Não é bug do protótipo hoje (nenhum dos
+  5 editais mockados tem link vazio) — é lacuna de requisito a fechar
+  antes de US2 (cadastro) ser implementada de verdade. Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-1`.
+- [ ] A017 Mesmo tratamento do A016, agora para `data_abertura` ausente —
+  é o único outro campo que a spec já declara opcional (FR-004:
+  "O sistema DEVE permitir que o captador registre... a data de abertura,
+  além da data de fechamento"; Assumptions: "a data de abertura é
+  desejável mas pode não estar disponível em todos os casos"). Hoje
+  `formatDate()` em `script.js` não trata `abertura` ausente/vazia — um
+  edital real sem ela quebraria a formatação de data em vez de mostrar um
+  texto neutro. Os demais campos (`nome_chamada`, `instituicao`,
+  `descricao`, `data_fechamento`) são obrigatórios por FR-003/FR-005 e
+  não precisam desse tratamento. Protótipo: `prototype/avulsa-A001/`.
+  Pedido direto do usuário, não via teste de persona.
+- [ ] A018 Implementar no protótipo o "ignorar edital" formalizado em
+  FR-027 a FR-030: alternar um edital como Ignorado (sem removê-lo,
+  distinto de FR-014/A030-remover), ocultá-lo por padrão da
+  tabela/quadro/contagens (FR-023/FR-024), oferecer uma visão/filtro
+  dedicado para localizar os ignorados, e permitir reverter a marcação.
+  Não é uma 5ª coluna do Kanban — é um atributo `ignorado` ortogonal ao
+  `estagio` (ver "Key Entities" em `spec.md`). Protótipo:
+  `prototype/avulsa-A001/`. Pedido direto do usuário, formalizado via
+  `/kanban-sync` → "Atualizar spec" em 2026-07-31.
 
 ### (avulsas)
 
