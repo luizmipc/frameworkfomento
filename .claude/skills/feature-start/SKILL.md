@@ -40,20 +40,27 @@ limpa (clarify sem pendências, checklist passando ou com exceções
 documentadas). Se ele reportar bloqueio, repasse ao usuário em vez de seguir
 para o Passo 3.
 
-## Passo 3 — Plano e tasks (dev)
+## Passo 3 — Branch da feature
+
+Rode o procedimento canônico **Branch da feature** definido em
+`kanban-start/SKILL.md` (seção "Branch da feature (canônico)"), com alvo o
+slug gerado no Passo 2 — cria o branch (ainda não existe para uma feature
+nova) e troca para ele, sem perguntar confirmação.
+
+## Passo 4 — Plano e tasks (dev)
 
 Invoque o subagente `dev` (`subagent_type: "dev"`) com o caminho exato de
 `specs/<slug>/spec.md` gerado no Passo 2, pedindo que rode em sequência:
 1. `speckit-plan` — produz `plan.md`.
 2. `speckit-tasks` — produz `tasks.md`.
 
-## Passo 4 — Carregar no quadro
+## Passo 5 — Carregar no quadro
 
 Rode **apenas a sub-rotina "Sincronização"** de `kanban-sync/SKILL.md` (a
 seção `## Sincronização`, sem perguntas nem Retrospectiva própria — essa vem
 só ao final deste comando) para carregar as tasks novas em `KANBAN.md`.
 
-## Passo 5 — Retrospectiva
+## Passo 6 — Retrospectiva
 
 Rode o procedimento canônico descrito em `kanban-start/SKILL.md` (seção
 "Retrospectiva"): pergunte se algo deu errado neste fluxo e, se sim, registre
@@ -65,6 +72,7 @@ a lição aprendida no arquivo de agente/skill responsável.
 ## Feature iniciada via /feature-start
 
 - Feature: specs/<slug>/ (spec.md, plan.md, tasks.md)
+- Branch: <slug>
 - Tasks geradas: N (agora em To Do no KANBAN.md)
 
 Rode /kanban-start para começar a implementar a primeira tarefa.
@@ -73,6 +81,7 @@ Rode /kanban-start para começar a implementar a primeira tarefa.
 ## Done When
 
 - [ ] `specs/<slug>/spec.md` existe, limpo em clarify/checklist
+- [ ] Branch `<slug>` criado e ativo antes de gerar plan.md/tasks.md
 - [ ] `plan.md` e `tasks.md` existem
 - [ ] `KANBAN.md` reflete as tasks novas em To Do
 - [ ] Retrospectiva rodou ao final

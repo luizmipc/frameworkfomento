@@ -1,6 +1,6 @@
 ---
 name: "kanban-start"
-description: "Apresenta as tarefas To Do do KANBAN.md como opções selecionáveis no chat (com atalho para criar tarefas novas a partir das dores de um teste de persona em docs/persona/, sem precisar rodar /kanban-sync à parte), deixa escolher o fluxo do Spec Kit (manual ou decidido pelo dev), delega a implementação ao dev, aciona o QA como gate obrigatório, e roda uma retrospectiva de feedback ao final."
+description: "Apresenta as tarefas To Do do KANBAN.md como opções selecionáveis no chat (com atalho para criar tarefas novas a partir das dores de um teste de persona em docs/persona/, sem precisar rodar /kanban-sync à parte), garante a branch certa da feature antes de implementar (main para tasks avulsas), deixa escolher o fluxo do Spec Kit (manual ou decidido pelo dev), delega a implementação ao dev, aciona o QA como gate obrigatório, oferece abrir PR quando a feature terminar, e roda uma retrospectiva de feedback ao final."
 argument-hint: "Opcional: um Task ID (ex. T012 ou A001), com ou sem prefixo de slug, para pular a navegação por perguntas"
 compatibility: "Requires KANBAN.md (gerado por kanban-sync) e os subagentes dev/qa/designer/product-owner/scrum-master em .claude/agents/"
 metadata:
@@ -76,10 +76,10 @@ de persona" — evita ter que rodar `/kanban-sync` à parte antes de
    (escolha do arquivo de persona, extração das dores, seleção via
    `AskUserQuestion` com `multiSelect: true`) para obter uma lista de uma ou
    mais descrições de tarefa.
-2. Para cada descrição da lista, rode os passos 2 a 6 do **Modo "Criar nova
-   tarefa"** de `kanban-sync/SKILL.md` (checagem de escopo, alocação em
-   feature/avulsa, geração do próximo ID avulso, adição em `KANBAN.md`,
-   pergunta sobre protótipo) — **pare antes do passo 7 dele**
+2. Para cada descrição da lista, rode os passos 2 a 7 do **Modo "Criar nova
+   tarefa"** de `kanban-sync/SKILL.md` (branch para `main`, checagem de
+   escopo, alocação em feature/avulsa, geração do próximo ID avulso, adição
+   em `KANBAN.md`, pergunta sobre protótipo) — **pare antes do passo 8 dele**
    (Sincronização); quem sincroniza este fluxo combinado é o próprio
    `/kanban-start` (Passo 1 já rodou antes de chegar aqui, e o Passo 7 roda
    depois do ciclo dev/QA).
@@ -108,14 +108,41 @@ prosseguir com essa tarefa?"**
   (via `Skill`, ou delegando ao agente dono — `product-owner` para clarify,
   `scrum-master` para analyze) e só então vá ao Passo 4.
 
-## Passo 4 — Mover para In Progress
+## Passo 4 — Branch e mover para In Progress
 
-Edite `KANBAN.md`: mova a linha da task escolhida de `## To Do` para
+Rode o procedimento canônico **Branch da feature** (seção abaixo) antes de
+tocar em `KANBAN.md` — troque para o branch alvo primeiro, depois edite o
+quadro já no branch certo: alvo é o slug da feature para tasks `T\d{3}`
+(mesmo nome do diretório em `specs/`), ou `main` para tasks `A\d{3}`
+(avulsas), independente do bucket em que a task apareça no `KANBAN.md`.
+
+Depois, edite `KANBAN.md`: mova a linha da task escolhida de `## To Do` para
 `## In Progress` (remova o cabeçalho da feature em To Do se ficar vazio),
 adicionando o sufixo de proveniência (`feature`, caminho de `tasks.md` — ou
 "avulsa" — timestamp via `date -u +"%Y-%m-%dT%H:%MZ"`, `via /kanban-start`).
 **Não edite `specs/<slug>/tasks.md`** — o checkbox lá continua `[ ]` até o
 `dev` de fato terminar e marcar `[x]`.
+
+## Branch da feature (canônico)
+
+Procedimento usado por este comando (Passo 4) e referenciado por
+`feature-start/SKILL.md` e pelos modos "Atualizar spec" e "Criar nova tarefa"
+de `kanban-sync/SKILL.md` — troca automaticamente para o branch da feature (ou
+`main`, para trabalho avulso/sem feature), sem perguntar confirmação a cada
+troca; a troca em si aparece só como uma linha no relato da etapa que a
+chamou, nunca como uma `AskUserQuestion` própria.
+
+Recebe um branch alvo (`<slug>` da feature, ou `main`).
+
+1. `git branch --show-current` — se já for o alvo, não faça nada (idempotente).
+2. Senão, `git show-ref --verify --quiet refs/heads/<alvo>`: se existir,
+   `git checkout <alvo>`; se não existir, `git checkout -b <alvo>`.
+3. Se o próprio `git checkout` recusar (mudança local não commitada seria
+   sobrescrita), pare e mostre a mensagem do git ao usuário, pedindo para
+   commitar ou resolver manualmente antes de repetir a etapa que chamou este
+   procedimento — não force (nunca `-f`, stash ou descarte automático).
+4. Em caso de sucesso, relate a troca em uma linha (`Branch: <anterior> →
+   <novo>`) como parte da saída da etapa que chamou este procedimento.
 
 ## Passo 5 — Delegar ao dev
 
@@ -230,7 +257,8 @@ referencia esta seção em vez de repeti-la.
 Ao final da Retrospectiva (nos dois ramos — "Sem problemas" e depois de
 registrar a lição aprendida em "Encontrei um problema"), siga para o Passo
 10. **Exceção**: se o fluxo parou antes por bloqueio de QA (Passo 6, retry
-esgotado), a Retrospectiva nem chega a rodar — não há Passo 10 nesse caso.
+esgotado), a Retrospectiva nem chega a rodar — não há Passo 10 nem Passo 11
+nesse caso.
 
 ## Passo 10 — Commit
 
@@ -253,7 +281,32 @@ Se "Commit e push" ou "Só commit":
    tomadas durante a implementação, e o resultado do QA. Errar para mais
    detalhe, não para menos.
 3. `git add` só os arquivos relevantes (nunca `-A`/`.`), depois `git commit`.
-4. Se "Commit e push", rode `git push` na sequência.
+4. Se "Commit e push", rode `git push -u origin HEAD` na sequência
+   (idempotente — define upstream no primeiro push de um branch novo, e se
+   comporta como push normal depois disso).
+
+## Passo 11 — Abrir PR se a feature estiver completa
+
+Só roda para tasks `T\d{3}` cujo Passo 10 terminou em "Commit e push" — pule
+silenciosamente para o Completion Report em qualquer outro caso (task
+`A\d{3}`, ou Passo 10 resultou em "Só commit"/"Não commitar agora": não há
+como abrir PR de um branch sem push).
+
+1. Releia `specs/<slug>/tasks.md`. Se não houver nenhuma linha `T\d{3}`, ou
+   se houver pelo menos uma ainda `[ ]`, a feature não está completa — pule
+   para o Completion Report sem perguntar nada.
+2. Se todas as `T\d{3}` estiverem `[x]`, pergunte via `AskUserQuestion`
+   (2 opções): **"Todas as tasks de `<slug>` estão Done. Abrir PR para
+   `main`?"**
+   - **"Sim"** — rode `gh pr create --base main --head <slug> --title "<título
+     de spec.md>" --body "<resumo curto do que foi entregue>"` (título: o
+     texto após "Feature Specification:" em `specs/<slug>/spec.md`; corpo:
+     2-3 linhas resumindo o que foi implementado, mais o rodapé padrão de PR
+     das instruções gerais deste agente). Se o comando falhar (`gh` não
+     autenticado, PR já existe, etc.), deixe o erro aparecer normalmente —
+     não tente contornar.
+   - **"Não"** — não cria PR agora; reporte como pendente no Completion
+     Report.
 
 ## Completion Report
 
@@ -261,12 +314,14 @@ Se "Commit e push" ou "Só commit":
 ## Tarefa iniciada via /kanban-start
 
 - Selecionada: <slug-ou-avulsa>#<TaskID> — <descrição>
+- Branch: <branch atual, ex. "001-manage-call-for-proposals" ou "main">
 - Fluxo escolhido: <deixar o dev decidir | etapa do Spec Kit: <nome>>
 - Delegada ao subagente dev
 - Resultado do QA: <aprovado | reprovado (retry usado) | reprovado (bloqueado)>
 - Estado no KANBAN.md: <In Progress | Done>
 - docs/ atualizado: <arquivo(s) ou "nenhum">
 - Commit: <hash curto + resumo do título | "só commit, sem push" | "não commitado">
+- PR: <URL do PR criado | "não oferecido (task avulsa ou feature incompleta)" | "oferecido, recusado">
 
 Rode /kanban-start de novo para a próxima tarefa, ou /kanban-sync só para
 olhar o quadro.
@@ -276,6 +331,8 @@ olhar o quadro.
 
 - [ ] Uma única task foi selecionada (via `AskUserQuestion`, `$ARGUMENTS`
       validado, ou criada na hora via "Origem: persona")
+- [ ] Branch trocado automaticamente no Passo 4 (slug da feature para
+      `T\d{3}`, `main` para `A\d{3}`), sem perguntar confirmação
 - [ ] `KANBAN.md` foi atualizado (In Progress → Done ou nota de bloqueio)
 - [ ] `specs/<slug>/tasks.md` só foi tocado pelo `dev` (nunca por este
       comando diretamente)
@@ -287,4 +344,7 @@ olhar o quadro.
 - [ ] `kanban-sync` rodou de novo após o ciclo dev/qa
 - [ ] Retrospectiva rodou ao final (quando não houve bloqueio de QA)
 - [ ] Depois da Retrospectiva, perguntou-se sobre commit/push e, se aceito,
-      o commit seguiu Conventional Commits com corpo detalhado
+      o commit seguiu Conventional Commits com corpo detalhado, e o push
+      usou `git push -u origin HEAD`
+- [ ] Se a task era `T\d{3}` e terminou com commit+push, checou se a feature
+      ficou 100% Done e, se sim, perguntou sobre abrir PR

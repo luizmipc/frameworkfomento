@@ -36,7 +36,7 @@ verdade atual — não se cria uma seção de "correção" separada.
 
 Rode o **"Modo Criar nova tarefa"** de `kanban-sync/SKILL.md` com a descrição
 de `$ARGUMENTS` (ou peça a descrição no chat primeiro, se vazio) — **mas pare
-ao final do passo 7 dele (Sincronização); não execute o passo 8 (Retrospectiva)
+ao final do passo 8 dele (Sincronização); não execute o passo 9 (Retrospectiva)
 dele**. A retrospectiva deste fluxo combinado é só a do `kanban-start`, no
 final (Passo 3 abaixo) — evita perguntar feedback duas vezes.
 

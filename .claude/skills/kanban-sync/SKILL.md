@@ -77,7 +77,10 @@ do `/kanban-sync` em vez de uma ação avulsa.
    - Uma: use-a direto.
    - Mais de uma: pergunte via `AskUserQuestion` (até 4 opções, rotuladas
      pelo slug) qual `spec.md` atualizar.
-3. Acione o subagente `product-owner` (`subagent_type: "product-owner"`)
+3. Rode o procedimento canônico **Branch da feature** de
+   `kanban-start/SKILL.md` (seção "Branch da feature (canônico)"), com alvo
+   o slug resolvido no passo anterior — troca automática, sem perguntar.
+4. Acione o subagente `product-owner` (`subagent_type: "product-owner"`)
    com: a descrição do gap, o caminho exato de `spec.md` e `docs/index.html`,
    e instrução para decidir a forma certa de formalizar — novo FR isolado,
    extensão de um FR existente, ou nova User Story, critério dele, mas
@@ -85,16 +88,18 @@ do `/kanban-sync` em vez de uma ação avulsa.
    o padrão de numeração/estilo já usado no arquivo, e sincronizando
    `docs/index.html`. Reforce explicitamente: **não** deve tocar
    `tasks.md`/`KANBAN.md`/`plan.md` nem nada em `prototype/`/`app/` — isso é
-   decisão separada, do passo 4 abaixo.
-4. Quando o `product-owner` terminar, pergunte via `AskUserQuestion`
+   decisão separada, do passo 5 abaixo.
+5. Quando o `product-owner` terminar, pergunte via `AskUserQuestion`
    (2 opções): **"Requisito formalizado em spec.md. Criar já uma tarefa
    avulsa para isso (protótipo e/ou lembrete de implementação)?"**
    - **"Sim"** — vá para o **Modo "Criar nova tarefa"**, a partir do passo 2
      (a origem já está resolvida: "manual", com uma descrição que referencia
-     o FR/User Story recém-formalizado). Ao terminar aquele modo, não rode a
-     Retrospectiva de novo — ela já roda uma vez só, no passo 5 abaixo.
-   - **"Não"** — siga direto ao passo 5.
-5. Rode a **Retrospectiva**.
+     o FR/User Story recém-formalizado; o passo 2 de lá já troca de volta
+     para `main` automaticamente, mesmo que este modo tenha deixado o branch
+     na feature no passo 3 acima). Ao terminar aquele modo, não rode a
+     Retrospectiva de novo — ela já roda uma vez só, no passo 6 abaixo.
+   - **"Não"** — siga direto ao passo 6.
+6. Rode a **Retrospectiva**.
 
 ## Modo "Criar nova tarefa"
 
@@ -109,31 +114,38 @@ do `/kanban-sync` em vez de uma ação avulsa.
      - **"A partir de um teste de persona (docs/persona/)"** — rode a
        sub-rotina **Origem: docs/persona/** (abaixo); ela devolve uma lista
        de uma ou mais descrições (uma por dor escolhida).
-   - Repita os passos 2 a 6 abaixo **para cada descrição** da lista resultante,
-     na ordem, antes de seguir ao passo 7 (uma única Sincronização/Retrospectiva
+   - Repita os passos 3 a 7 abaixo **para cada descrição** da lista resultante,
+     na ordem, antes de seguir ao passo 8 (uma única Sincronização/Retrospectiva
      no final, mesmo que várias tarefas tenham sido criadas).
-2. **Checagem de escopo**: releia as seções `#sl` e `#fr` de
+2. Rode o procedimento canônico **Branch da feature** de
+   `kanban-start/SKILL.md` (seção "Branch da feature (canônico)"), com alvo
+   `main` — tarefas avulsas (`A\d{3}`) sempre rodam em `main`, mesmo quando
+   alocadas sob o bucket de uma feature no `KANBAN.md` só para organização
+   visual. Troca automática, sem perguntar; cobre quem entra direto neste
+   modo, quem chega via Modo "Atualizar spec", e quem chega via "Origem:
+   persona" de `kanban-start/SKILL.md`.
+3. **Checagem de escopo**: releia as seções `#sl` e `#fr` de
    `docs/index.html`. Se ainda estiverem no texto inicial ("A preencher"),
    siga sem checagem. Caso contrário, avalie se a descrição parece não bater
    com o que está documentado (ex.: menciona um tipo de integração, edital ou
    funcionalidade que os docs listam como fora de escopo). Se sim, rode a
    **Checagem de escopo** (abaixo) antes de prosseguir.
-3. Descubra as features existentes: `find specs -mindepth 1 -maxdepth 1 -type d`
+4. Descubra as features existentes: `find specs -mindepth 1 -maxdepth 1 -type d`
    (pode não existir nenhuma ainda). Pergunte via `AskUserQuestion` (até 4
    opções): **"Onde alocar essa tarefa?"** — uma opção por feature existente
    (rotulada com o slug), mais uma opção fixa **"Tarefa avulsa (sem
    feature)"**. Se houver mais de 3 features, mostre as 3 primeiras + a opção
    fixa de avulsa (o usuário pode digitar outro slug via "Other").
-4. Gere o próximo ID avulso: leia `KANBAN.md` (se existir), encontre o maior
+5. Gere o próximo ID avulso: leia `KANBAN.md` (se existir), encontre o maior
    `A\d{3}` já usado, e use o próximo (`A001` se nenhum existir). IDs `A\d{3}`
    nunca colidem com `T\d{3}` (gerados por `speckit-tasks`) — são namespaces
    diferentes.
-5. Adicione a tarefa à seção `## To Do` de `KANBAN.md`, sob a feature
+6. Adicione a tarefa à seção `## To Do` de `KANBAN.md`, sob a feature
    escolhida (ou sob `### (avulsas)` se "sem feature"). Tarefas `A\d{3}` não
    têm `tasks.md` correspondente — existem só em `KANBAN.md` (ver formato em
    `KANBAN.md` — Formato, e nota em `docs/index.html` (seção `#arch`) se
    relevante).
-6. Antes de perguntar, cheque se a task já se refere a um protótipo
+7. Antes de perguntar, cheque se a task já se refere a um protótipo
    **existente** — o caso comum é uma task originada da sub-rotina "Origem:
    docs/persona/": o protótipo correspondente é sempre
    `prototype/<mesmo-nome-do-arquivo-de-persona>/` (ex.:
@@ -156,9 +168,9 @@ do `/kanban-sync` em vez de uma ação avulsa.
        descrição da tarefa. Registre o caminho do protótipo junto da linha
        da task em `KANBAN.md`.
      - **"Não"** — pule esta etapa.
-7. Rode a **Sincronização** (para também atualizar as tasks reais de
+8. Rode a **Sincronização** (para também atualizar as tasks reais de
    `specs/*/tasks.md`, preservando a(s) tarefa(s) avulsa(s) recém-criada(s)).
-8. Rode a **Retrospectiva**.
+9. Rode a **Retrospectiva**.
 
 ## Origem: docs/persona/
 
@@ -267,10 +279,12 @@ registre a lição aprendida no arquivo correto (um agente em
 
 - [ ] Tipo de reunião determinado (acompanhamento, criar tarefa, ou
       atualizar spec)
-- [ ] Se "criar tarefa": origem escolhida (manual ou docs/persona/) e
+- [ ] Se "criar tarefa": branch trocado para `main` (passo 2) antes de
+      qualquer edição, origem escolhida (manual ou docs/persona/), e
       `KANBAN.md` reflete o estado atual com a(s) tarefa(s) nova(s)
       adicionada(s)
-- [ ] Se "atualizar spec": `product-owner` formalizou o requisito em
+- [ ] Se "atualizar spec": branch trocado para a feature (passo 3) antes de
+      acionar o `product-owner`, requisito formalizado em
       `spec.md`/`docs/index.html`, e a task avulsa (se aceita) seguiu o
       Modo "Criar nova tarefa" a partir do passo 2
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
