@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T02:24Z
+**Última sincronização**: 2026-07-31T07:18Z
 
 ## To Do
 
@@ -85,6 +85,16 @@ todas as colunas.
   controles de busca/filtro — hoje só existe contagem por coluna do
   Kanban (A009); saber o total exige somar de cabeça ou contar linhas
   na tabela (FR-023 em `spec.md`, User Story 4). Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-1`.
+- [ ] A016 Definir e implementar o que a Tabela/Kanban exibem quando um
+  edital não tem `link` (agora opcional no cadastro, FR-003) — hoje
+  `renderTabela()`/`renderKanban()` atribuem `href = edital.link` sem
+  checar se existe; um edital real sem link produziria um "Ver chamada"
+  clicável apontando para `href="undefined"`, pior que não mostrar link
+  nenhum, pois parece funcional. Não é bug do protótipo hoje (nenhum dos
+  5 editais mockados tem link vazio) — é lacuna de requisito a fechar
+  antes de US2 (cadastro) ser implementada de verdade. Protótipo:
   `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1`.
 

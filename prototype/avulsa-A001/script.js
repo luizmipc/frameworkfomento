@@ -53,7 +53,11 @@ const editais = [
     abertura: "2026-06-20",
     // A011: ajustado para cair no nível de proximidade "até 21 dias" (FR-022).
     fechamento: "2026-08-19",
-    link: "https://exemplo.cultura.gov.br/patrimonio-digital",
+    // A016 / FR-003: link agora é opcional no cadastro — este edital mockado
+    // fica sem link de propósito, para demonstrar o fallback. "" (em vez de
+    // omitir a chave) mantém o mesmo formato de objeto em todos os itens da
+    // lista, mais fácil de escanear.
+    link: "",
     status: "backlog",
   },
 ];
@@ -197,6 +201,8 @@ function renderTabela() {
     let badgePrazo = "";
     if (vencido) badgePrazo = ' <span class="badge-vencido">Vencido</span>';
     else if (nivel !== null) badgePrazo = ` <span class="badge-proximo">Vence em até ${nivel} dias</span>`;
+    // A016 / FR-003: link é opcional (cadastro pode não ter link) — sem ele,
+    // nada de <a href> apontando para lugar nenhum, só um texto neutro.
     // Ordem prioriza as colunas decisivas para priorização (Fechamento, Abertura, Link)
     // logo após o identificador (Chamada); Instituição/Descrição, menos decisivas, ficam por
     // último. Os data-label alimentam o layout empilhado em telas estreitas (ver style.css).
@@ -204,7 +210,11 @@ function renderTabela() {
       <td data-label="Chamada">${edital.chamada}</td>
       <td data-label="Fechamento">${formatDate(edital.fechamento)}${badgePrazo}</td>
       <td data-label="Abertura">${formatDate(edital.abertura)}</td>
-      <td data-label="Link"><a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a></td>
+      <td data-label="Link">${
+        edital.link
+          ? `<a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a>`
+          : '<span class="link-missing">Link não informado</span>'
+      }</td>
       <td data-label="Instituição">${edital.instituicao}</td>
       <td data-label="Descrição">${edital.descricao}</td>
     `;
@@ -254,7 +264,13 @@ function renderKanban() {
       const badgeProximo = card.querySelector(".card-proximo-badge");
       badgeProximo.classList.toggle("hidden", nivel === null);
       if (nivel !== null) badgeProximo.textContent = `Vence em até ${nivel} dias`;
-      card.querySelector(".card-link").href = edital.link;
+      // A016 / FR-003: mesma regra da tabela — sem link, esconde a âncora
+      // "Ver chamada" e mostra o texto de fallback no lugar dela.
+      const cardLink = card.querySelector(".card-link");
+      const cardLinkMissing = card.querySelector(".card-link-missing");
+      cardLink.classList.toggle("hidden", !edital.link);
+      cardLinkMissing.classList.toggle("hidden", Boolean(edital.link));
+      if (edital.link) cardLink.href = edital.link;
       list.appendChild(node);
     });
   });

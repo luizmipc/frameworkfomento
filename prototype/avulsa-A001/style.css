@@ -241,6 +241,13 @@ td a {
   color: var(--accent);
 }
 
+/* A016 / FR-003: link ausente no cadastro — texto neutro, sem sublinhado nem
+   cor de link, para não parecer clicável. */
+.link-missing {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 /* Prazo vencido (FR-011): borda de destaque na linha + badge junto do
    Fechamento. Compartilhado com o card do kanban abaixo. */
 tr.vencido td:first-child {
@@ -439,6 +446,16 @@ tr.proximo td:first-child {
 .card-link:hover,
 .card-link:focus-visible {
   text-decoration: underline;
+}
+
+/* A016 / FR-003: mesmo texto de fallback da tabela (.link-missing), sem
+   sublinhado nem cor de link — não é clicável. */
+.card-link-missing {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 .card-actions {
