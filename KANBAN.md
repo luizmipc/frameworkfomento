@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T00:05Z
+**Última sincronização**: 2026-07-31T00:32Z
 
 ## To Do
 
@@ -56,6 +56,14 @@ todas as colunas.
 - [ ] T038 [Polish] Executar o roteiro de `specs/001-manage-call-for-proposals/quickstart.md` manualmente (via `docker compose up`)
 - [ ] T039 [P] [Polish] Atualizar `/home/lm/repos/frameworkfomento/CLAUDE.md` com os comandos reais de build/lint/test e a arquitetura de alto nível
 - [ ] T040 [P] [Polish] Atualizar `docs/architecture-and-tech.md` e `docs/class-diagram.md` refletindo o app `editais`, o model `Edital` e o fluxo de autenticação mínima
+- [ ] T041 [US4] `TestCase`: `GET /?busca=<termo>` filtra a tabela por nome da chamada (parcial, case-insensitive) (FR-018)
+- [ ] T042 [US4] `TestCase`: `GET /?instituicao=<nome>` filtra a tabela por instituição responsável (FR-019)
+- [ ] T043 [US4] `TestCase`: `GET /?ordenar=fechamento` ordena a tabela por proximidade do prazo de fechamento (FR-020)
+- [ ] T044 [US4] `TestCase`: cards de uma mesma coluna do quadro aparecem ordenados por `data_fechamento`, sem alterar o agrupamento por estágio (FR-021)
+- [ ] T045 [US4] `TestCase`: sem parâmetros de busca/filtro, tabela e quadro exibem todos os editais do captador
+- [ ] T046 [US4] Implementar busca (`busca`) e filtro (`instituicao`) via querystring em `EditalListView`/`EditalKanbanView` (FR-018, FR-019; depende de T016, T018)
+- [ ] T047 [US4] Implementar ordenação por `data_fechamento` (principal na tabela via `ordenar`; secundária dentro de cada coluna do quadro) em `app/editais/views.py` (FR-020, FR-021; depende de T046)
+- [ ] T048 [P] [US4] Adicionar campos de busca/filtro/ordenação em `edital_list.html` e `edital_kanban.html` — alinhar com `designer` (depende de T046, T047)
 - [ ] A002 Layout responsivo da tabela de editais: em janelas estreitas
   (~463px, próximo de uma tela em split-screen) só 3 das 6 colunas ficam
   visíveis sem rolar, e são exatamente as 3 menos decisivas — Abertura,
@@ -73,6 +81,17 @@ todas as colunas.
   tabela mostra o link; FR-012 já pede ele acessível "diretamente a partir
   da tabela e do quadro". Protótipo: `prototype/avulsa-A001/`. Via teste de
   persona `docs/persona/avulsa-A001.html#dor-3`.
+- [ ] A005 Remover o `tabindex="0"` do card do Kanban (ou dar a ele uma
+  ação própria) — hoje é alcançável por Tab mas não reage a nada além dos
+  2 botões internos, uma parada extra sem função para quem navega por
+  teclado. Protótipo: `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-3`.
+- [ ] A006 Adicionar ao menos um edital mockado com `data_fechamento` no
+  passado no protótipo, para permitir observar ao vivo a indicação visual
+  de prazo vencido (FR-011) — nenhum dos 5 editais mockados atuais tem
+  data passada, então esse requisito nunca foi validado por teste ao vivo.
+  Protótipo: `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-4`.
 
 ### (avulsas)
 

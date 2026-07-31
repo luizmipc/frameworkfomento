@@ -40,7 +40,7 @@ const editais = [
     descricao: "Apoio a projetos de extensão universitária desenvolvidos junto a comunidades vulneráveis.",
     instituicao: "CAPES (fictício)",
     abertura: "2026-04-10",
-    fechamento: "2026-07-31",
+    fechamento: "2026-06-15",
     link: "https://exemplo.edu.br/extensao/comunitaria",
     status: "concluido",
   },
@@ -68,18 +68,28 @@ function formatDate(iso) {
   return `${d}/${m}/${y}`;
 }
 
+// FR-011: prazo vencido = fechamento antes de hoje. Datas mockadas são
+// YYYY-MM-DD, então comparar como string com a data de hoje (mesmo formato)
+// já ordena corretamente, sem precisar de objetos Date.
+function isVencido(fechamentoISO) {
+  const hojeISO = new Date().toISOString().slice(0, 10);
+  return fechamentoISO < hojeISO;
+}
+
 // --- Visão tabela ---
 function renderTabela() {
   const corpo = document.getElementById("tabela-corpo");
   corpo.innerHTML = "";
   editais.forEach((edital) => {
     const tr = document.createElement("tr");
+    const vencido = isVencido(edital.fechamento);
+    tr.classList.toggle("vencido", vencido);
     // Ordem prioriza as colunas decisivas para priorização (Fechamento, Abertura, Link)
     // logo após o identificador (Chamada); Instituição/Descrição, menos decisivas, ficam por
     // último. Os data-label alimentam o layout empilhado em telas estreitas (ver style.css).
     tr.innerHTML = `
       <td data-label="Chamada">${edital.chamada}</td>
-      <td data-label="Fechamento">${formatDate(edital.fechamento)}</td>
+      <td data-label="Fechamento">${formatDate(edital.fechamento)}${vencido ? ' <span class="badge-vencido">Vencido</span>' : ""}</td>
       <td data-label="Abertura">${formatDate(edital.abertura)}</td>
       <td data-label="Link"><a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a></td>
       <td data-label="Instituição">${edital.instituicao}</td>
@@ -107,6 +117,9 @@ function renderKanban() {
     card.querySelector(".card-inst").textContent = edital.instituicao;
     card.querySelector(".card-dates").textContent =
       `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`;
+    const vencido = isVencido(edital.fechamento);
+    card.classList.toggle("vencido", vencido);
+    card.querySelector(".card-vencido-badge").classList.toggle("hidden", !vencido);
     card.querySelector(".card-link").href = edital.link;
     list.appendChild(node);
   });

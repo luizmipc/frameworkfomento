@@ -132,6 +132,63 @@ um edital e confirmando que ele deixa de aparecer nas duas visões.
 
 ---
 
+### User Story 4 - Localizar um edital específico entre muitos (Priority: P4)
+
+Um captador de recursos que acompanha simultaneamente cerca de dez editais de
+fontes diferentes (prefeitura, governo estadual, fundações privadas) precisa
+encontrar rapidamente um edital específico, sem ler a lista inteira, e
+responder de imediato "o que fecha primeiro?". Ele busca editais pelo nome da
+chamada, filtra a lista por instituição responsável, e ordena os editais por
+data de fechamento.
+
+**Why this priority**: É a menos crítica das quatro user stories — o
+gerenciamento básico (cadastrar, listar, mover entre estágios, editar e
+remover) já entrega valor completo sem busca, filtro ou ordenação, e com
+poucos editais cadastrados a ausência desses recursos passa despercebida.
+Ela ganha valor à medida que o número de editais acompanhados cresce (ver
+Edge Cases), o que a torna um refinamento de uso contínuo, não um bloqueador
+inicial. Quanto ao escopo desta story: busca por nome e filtro por
+instituição fazem sentido tanto na tabela quanto no quadro de progresso — em
+ambas as visões o captador pode estar tentando localizar um edital
+específico. Já a ordenação por data de fechamento é tratada de forma
+diferente em cada visão: na tabela, que é uma lista plana sem outro
+critério de organização, ordenar por data de fechamento é o comportamento
+principal esperado; no quadro de progresso, o critério de organização
+primário já é o estágio (a coluna) — reordenar o quadro inteiro por data de
+fechamento romperia essa organização. Por isso, no quadro de progresso, a
+ordenação por data de fechamento se aplica apenas dentro de cada coluna (um
+critério secundário), preservando o agrupamento por estágio como a
+organização principal.
+
+**Independent Test**: Pode ser testado cadastrando vários editais com nomes,
+instituições e datas de fechamento diferentes e, na visão de tabela,
+buscando por um termo parcial do nome, filtrando por uma instituição
+específica e ordenando por data de fechamento — confirmando que a lista
+exibida corresponde ao esperado em cada caso; e, separadamente, confirmando
+que os cartões dentro de uma mesma coluna do quadro de progresso aparecem
+ordenados pela proximidade da data de fechamento.
+
+**Acceptance Scenarios**:
+
+1. **Given** existem editais cadastrados com nomes de chamada diferentes,
+   **When** o captador digita um termo de busca, **Then** a tabela passa a
+   exibir apenas os editais cujo nome da chamada contém esse termo.
+2. **Given** existem editais de instituições responsáveis diferentes,
+   **When** o captador seleciona um filtro por instituição responsável,
+   **Then** a tabela passa a exibir apenas os editais daquela instituição.
+3. **Given** existem editais com datas de fechamento diferentes, **When** o
+   captador ordena a tabela por data de fechamento, **Then** os editais
+   passam a aparecer ordenados por proximidade do prazo de fechamento.
+4. **Given** existem múltiplos editais em uma mesma coluna do quadro de
+   progresso, **When** o captador visualiza essa coluna, **Then** os
+   cartões aparecem ordenados por data de fechamento, do mais próximo ao
+   mais distante, sem alterar o agrupamento por estágio.
+5. **Given** o captador aplicou uma busca e/ou um filtro por instituição,
+   **When** ele limpa a busca/filtro, **Then** a listagem volta a exibir
+   todos os editais cadastrados.
+
+---
+
 ### Edge Cases
 
 - O que acontece quando um edital cadastrado não tem link oficial disponível
@@ -146,7 +203,9 @@ um edital e confirmando que ele deixa de aparecer nas duas visões.
 - O que acontece quando um edital não possui data de abertura definida (só a
   data de fechamento é conhecida no momento do cadastro)?
 - Como a listagem trata um número grande de editais cadastrados (ex.: mais de
-  50) em termos de conseguir localizar um edital específico?
+  50) em termos de conseguir localizar um edital específico? Este é
+  exatamente o problema que a User Story 4 (busca, filtro e ordenação —
+  FR-018 a FR-021) endereça.
 
 ## Requirements *(mandatory)*
 
@@ -205,6 +264,20 @@ um edital e confirmando que ele deixa de aparecer nas duas visões.
   itens em texto); esta feature não exige um checklist estruturado com
   marcação individual de "atendido/pendente" por item — o acompanhamento de
   progresso do edital é feito pelo Estágio de Acompanhamento.
+- **FR-018**: O sistema DEVE permitir que o captador busque editais pelo
+  nome da chamada, usando busca textual parcial, tanto na visão de tabela
+  quanto na visão de quadro de progresso.
+- **FR-019**: O sistema DEVE permitir que o captador filtre a listagem de
+  editais por instituição responsável, tanto na visão de tabela quanto na
+  visão de quadro de progresso.
+- **FR-020**: O sistema DEVE permitir que o captador ordene a visão de
+  tabela por data de fechamento, em ordem crescente ou decrescente de
+  proximidade do prazo.
+- **FR-021**: O sistema DEVE exibir, dentro de cada coluna do quadro de
+  progresso, os cartões ordenados por data de fechamento (do mais próximo ao
+  mais distante), como critério de ordenação secundário ao agrupamento por
+  estágio — a ordenação por data de fechamento não reorganiza os editais
+  entre colunas.
 
 ### Key Entities
 

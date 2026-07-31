@@ -81,6 +81,14 @@
       <li><code>FR-017</code> Documentação exigida e critérios de avaliação são texto livre descritivo, sem checklist estruturado item a item.</li>
     </ul>
 
+    <h4 id="fr-busca">Busca, filtro e ordenação (User Story 4 — P4)</h4>
+    <ul>
+      <li><code>FR-018</code> Busca de editais por nome da chamada (texto parcial), na tabela e no quadro de progresso.</li>
+      <li><code>FR-019</code> Filtro de editais por instituição responsável, na tabela e no quadro de progresso.</li>
+      <li><code>FR-020</code> Ordenação da tabela por data de fechamento (crescente ou decrescente).</li>
+      <li><code>FR-021</code> Dentro de cada coluna do quadro de progresso, cartões ordenados por data de fechamento (mais próximo primeiro), como critério secundário ao agrupamento por estágio.</li>
+    </ul>
+
     <div class="callout">
       Nenhuma outra feature foi especificada até o momento além de "Gerenciamento de Editais de Fomento". Esta seção será expandida conforme novas specs forem criadas.
     </div>
@@ -140,6 +148,7 @@
       <li>Remoção de um edital da lista de acompanhamento ativo.</li>
       <li>Indicação visual de prazo de fechamento vencido.</li>
       <li>Gerenciamento individual: cada captador só cadastra, acompanha e edita os próprios editais.</li>
+      <li>Busca por nome da chamada e filtro por instituição responsável, na tabela e no quadro de progresso; ordenação por data de fechamento na tabela e, dentro de cada coluna, no quadro de progresso.</li>
     </ul>
 
     <h4 id="sl-fora">Fora do escopo (nesta feature)</h4>
@@ -175,9 +184,9 @@
     <h4 id="sl-limitacoes">Limitações conhecidas (edge cases sem requisito dedicado)</h4>
     <p>Identificados na spec como Edge Cases, mas sem requisito funcional dedicado até o momento:</p>
     <ul>
-      <li>Comportamento da listagem/localização de um edital específico com um volume grande de editais cadastrados (ex.: mais de 50).</li>
       <li>Dois editais diferentes com o mesmo nome de chamada (ex.: edições anuais de um mesmo programa).</li>
     </ul>
+    <p>O edge case de localizar um edital específico em um volume grande de editais cadastrados (ex.: mais de 50) passou a ter requisito dedicado — ver <code>FR-018</code> a <code>FR-021</code> (User Story 4 — P4, busca, filtro e ordenação) na seção <a href="#fr-busca">Requisitos Funcionais</a>.</p>
 
     <div class="callout">
       Nenhuma outra feature foi especificada até o momento além de "Gerenciamento de Editais de Fomento". Esta seção será expandida conforme novas specs forem criadas.

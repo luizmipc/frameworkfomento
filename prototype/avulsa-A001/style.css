@@ -8,6 +8,8 @@
   --text-muted: #5b6472;
   --accent: #2f5d50;
   --accent-soft: #e4efe9;
+  --danger: #b3261e;
+  --danger-soft: #fbe8e6;
   --radius: 8px;
   font-size: 16px;
 }
@@ -68,8 +70,13 @@ main {
   padding: 1.5rem;
 }
 
-.view.hidden {
-  display: none;
+/* Utilitário genérico — usado tanto para esconder a view inativa quanto o
+   badge de "Vencido" no card do kanban quando o edital não está vencido.
+   !important porque .badge-vencido (definido mais abaixo) também fixa
+   `display`; um utilitário "hidden" precisa vencer qualquer outra regra de
+   mesma especificidade, independente da ordem no arquivo. */
+.hidden {
+  display: none !important;
 }
 
 /* Tabela */
@@ -120,6 +127,23 @@ tbody tr:hover {
 
 td a {
   color: var(--accent);
+}
+
+/* Prazo vencido (FR-011): borda de destaque na linha + badge junto do
+   Fechamento. Compartilhado com o card do kanban abaixo. */
+tr.vencido td:first-child {
+  border-left: 3px solid var(--danger);
+}
+
+.badge-vencido {
+  display: inline-block;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* Abaixo de 640px (ex.: split-screen com e-mail/planilha ao lado, ~463px) a
@@ -228,6 +252,14 @@ td a {
 
 .card.dragging {
   opacity: 0.5;
+}
+
+.card.vencido {
+  border-left: 3px solid var(--danger);
+}
+
+.card-vencido-badge {
+  margin: 0.35rem 0 0;
 }
 
 .card-title {

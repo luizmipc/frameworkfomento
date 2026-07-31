@@ -14,14 +14,14 @@ Verificável Antes de Pronto") exige que toda task tenha teste cobrindo os
 critérios de aceite antes de sair de "In Progress" para "Done"; não é uma
 adição especulativa desta lista de tasks.
 
-**Organization**: Tasks agrupadas por user story (US1/US2/US3, prioridade
-P1/P2/P3 conforme `spec.md`), para permitir implementação e teste
+**Organization**: Tasks agrupadas por user story (US1/US2/US3/US4, prioridade
+P1/P2/P3/P4 conforme `spec.md`), para permitir implementação e teste
 independentes de cada uma.
 
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Pode rodar em paralelo (arquivos diferentes, sem dependência de outra task incompleta)
-- **[Story]**: A qual user story a task pertence (US1, US2, US3)
+- **[Story]**: A qual user story a task pertence (US1, US2, US3, US4)
 - Caminhos de arquivo são absolutos/relativos à raiz do repo em `app/`
 
 ## Path Conventions
@@ -138,11 +138,45 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 
 ---
 
-## Phase 6: Polish & Cross-Cutting Concerns
+## Phase 6: User Story 4 - Localizar um edital específico entre muitos (Priority: P4)
+
+**Goal**: Captador busca editais por nome da chamada, filtra por instituição
+responsável e ordena por data de fechamento (tabela: critério principal;
+quadro: critério secundário dentro de cada coluna) — tanto na tabela quanto
+no quadro de progresso. Adicionada a partir de uma dor real encontrada em
+`docs/persona/avulsa-A001.html#dor-2` (teste de usabilidade via
+`/fundraiser-test`), formalizada como FR-018 a FR-021 em `spec.md`.
+
+**Independent Test**: Cadastrar vários editais com nomes/instituições/datas
+de fechamento diferentes; na tabela, buscar por termo parcial do nome,
+filtrar por instituição e ordenar por data de fechamento, confirmando o
+resultado esperado em cada caso; separadamente, confirmar que os cards
+dentro de uma mesma coluna do quadro aparecem ordenados por proximidade do
+prazo, sem mudar de coluna.
+
+### Tests for User Story 4
+
+- [ ] T041 [US4] `TestCase` em `app/editais/tests.py`: `GET /?busca=<termo>` filtra a tabela para editais cujo `nome_chamada` contém o termo (parcial, case-insensitive) (FR-018, Acceptance Scenario 1)
+- [ ] T042 [US4] `TestCase` em `app/editais/tests.py`: `GET /?instituicao=<nome>` filtra a tabela para editais daquela instituição (FR-019, Acceptance Scenario 2)
+- [ ] T043 [US4] `TestCase` em `app/editais/tests.py`: `GET /?ordenar=fechamento` (e `-fechamento`) ordena a tabela por proximidade do prazo de fechamento, crescente/decrescente (FR-020, Acceptance Scenario 3)
+- [ ] T044 [US4] `TestCase` em `app/editais/tests.py`: `GET /kanban/` exibe, dentro de uma mesma coluna com múltiplos editais, os cards ordenados por `data_fechamento` (mais próximo primeiro) sem alterar o agrupamento por estágio (FR-021, Acceptance Scenario 4)
+- [ ] T045 [US4] `TestCase` em `app/editais/tests.py`: `GET /` e `GET /kanban/` sem parâmetros de busca/filtro exibem todos os editais do captador (Acceptance Scenario 5 — limpar busca/filtro volta ao estado completo)
+
+### Implementation for User Story 4
+
+- [ ] T046 [US4] Implementar busca (`busca`, contra `nome_chamada`) e filtro (`instituicao`) via querystring no `get_queryset` de `EditalListView` e `EditalKanbanView` em `app/editais/views.py` (FR-018, FR-019; depende de T016, T018)
+- [ ] T047 [US4] Implementar ordenação por `data_fechamento` via querystring `ordenar` em `EditalListView` (critério principal) e ordenação secundária por `data_fechamento` dentro de cada coluna em `EditalKanbanView` (agrupamento por estágio preservado) em `app/editais/views.py` (FR-020, FR-021; depende de T046)
+- [ ] T048 [US4] [P] Adicionar campos de busca/filtro/ordenação (form `GET` simples, sem JS) em `edital_list.html` e `edital_kanban.html`, preservando os parâmetros ao mover/paginar — alinhar com `designer` (depende de T046, T047)
+
+**Checkpoint**: US4 completo e testável de forma independente — não bloqueia nem é bloqueada por US1/US2/US3.
+
+---
+
+## Phase 7: Polish & Cross-Cutting Concerns
 
 **Purpose**: Fechar a feature — documentação viva e validação de ponta a ponta.
 
-- [ ] T037 Rodar `uv run manage.py test editais` e garantir que toda a suíte (T011-T015, T022-T024, T029-T031) passa
+- [ ] T037 Rodar `uv run manage.py test editais` e garantir que toda a suíte (T011-T015, T022-T024, T029-T031, T041-T045) passa
 - [ ] T038 Executar o roteiro de `specs/001-manage-call-for-proposals/quickstart.md` manualmente (via `docker compose up`), confirmando os 5 passos (login, US2, US1, US3, isolamento por captador)
 - [ ] T039 [P] Atualizar `/home/lm/repos/frameworkfomento/CLAUDE.md` com os comandos reais de build/lint/test (`uv run manage.py runserver`, `uv run manage.py test`, `uv run manage.py migrate`) e a arquitetura de alto nível (app `editais`, model `Edital`, auth via `django.contrib.auth`)
 - [ ] T040 [P] Atualizar `docs/architecture-and-tech.md` e `docs/class-diagram.md` refletindo o app `editais`, o model `Edital` e o fluxo de autenticação mínima
@@ -158,13 +192,15 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 - **US1 (Phase 3)**: depende de Foundational; sem dependência de US2/US3 (dados de teste via `/admin/`, T008)
 - **US2 (Phase 4)**: depende de Foundational; usa o mesmo `EditalForm`/model de US1 mas é testável e entregável de forma independente
 - **US3 (Phase 5)**: depende de Foundational; reaproveita `edital_form.html` de US2 (T026) para o template de edição — se US2 ainda não foi implementada, T032 pode criar esse template como parte de si mesma
-- **Polish (Phase 6)**: depende de todas as user stories desejadas estarem completas
+- **US4 (Phase 6)**: depende de Foundational e de US1 (T016/T018, cujo `get_queryset` estende) — sem dependência de US2/US3
+- **Polish (Phase 7)**: depende de todas as user stories desejadas estarem completas
 
 ### Parallel Opportunities
 
 - Setup: T004 e T005 são `[P]` (arquivos diferentes)
 - Foundational: T008, T009, T010 são `[P]` entre si (arquivos diferentes), todos após T006/T007
-- Entre user stories: US1, US2, US3 podem ser trabalhadas em paralelo por pessoas diferentes após Foundational, mas a ordem de prioridade recomendada é P1 → P2 → P3 (ver Implementation Strategy)
+- Entre user stories: US1, US2, US3 podem ser trabalhadas em paralelo por pessoas diferentes após Foundational (US4 depende de US1 estar pronta); a ordem de prioridade recomendada é P1 → P2 → P3 → P4 (ver Implementation Strategy)
+- US4: T048 é `[P]` em relação a nada dentro da própria phase (depende de T046/T047, que são sequenciais entre si)
 - Polish: T039 e T040 são `[P]` entre si
 
 ---
@@ -183,14 +219,16 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 2. US1 → validar independentemente → MVP demonstrável (com dados via `/admin/`)
 3. US2 → validar independentemente → cadastro real pela UI substitui a necessidade do `/admin/`
 4. US3 → validar independentemente → edição/remoção completam o ciclo de vida do edital
-5. Polish → documentação viva atualizada, suíte de testes verde, quickstart validado
+5. US4 → validar independentemente → busca/filtro/ordenação (útil a partir de um volume real de editais; não bloqueia as demais)
+6. Polish → documentação viva atualizada, suíte de testes verde, quickstart validado
 
 ---
 
 ## Notes
 
 - `[P]` = arquivos diferentes, sem dependência de task incompleta
-- Toda task de template (`T004, T005, T017, T019, T026, T034, T028, T036`) usa markup Django simples e funcional; a forma final (CSS, disposição visual) é responsabilidade do `designer` e deve ser revisada com ele antes de considerar a feature pronta para release, por regra de handoff do `dev`
+- Toda task de template (`T004, T005, T017, T019, T026, T034, T028, T036, T048`) usa markup Django simples e funcional; a forma final (CSS, disposição visual) é responsabilidade do `designer` e deve ser revisada com ele antes de considerar a feature pronta para release, por regra de handoff do `dev`
 - `link` continua obrigatório no cadastro (FR-003/FR-005) — ver `research.md` para a justificativa de não afrouxar esse requisito nesta rodada
 - Remoção de edital (US3) é exclusão definitiva (hard delete) — ver `research.md`
+- US4 (T041-T048) foi adicionada depois das demais, a partir de uma dor real encontrada via `/fundraiser-test` (`docs/persona/avulsa-A001.html#dor-2`), formalizada em `spec.md` como FR-018 a FR-021
 - Commitar após cada task ou grupo lógico de tasks
