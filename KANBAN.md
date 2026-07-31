@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T07:31Z
+**Última sincronização**: 2026-07-31T07:47Z
 
 ## To Do
 
@@ -108,6 +108,15 @@ todas as colunas.
   `descricao`, `data_fechamento`) são obrigatórios por FR-003/FR-005 e
   não precisam desse tratamento. Protótipo: `prototype/avulsa-A001/`.
   Pedido direto do usuário, não via teste de persona.
+- [ ] A018 Implementar no protótipo o "ignorar edital" formalizado em
+  FR-027 a FR-030: alternar um edital como Ignorado (sem removê-lo,
+  distinto de FR-014/A030-remover), ocultá-lo por padrão da
+  tabela/quadro/contagens (FR-023/FR-024), oferecer uma visão/filtro
+  dedicado para localizar os ignorados, e permitir reverter a marcação.
+  Não é uma 5ª coluna do Kanban — é um atributo `ignorado` ortogonal ao
+  `estagio` (ver "Key Entities" em `spec.md`). Protótipo:
+  `prototype/avulsa-A001/`. Pedido direto do usuário, formalizado via
+  `/kanban-sync` → "Atualizar spec" em 2026-07-31.
 
 ### (avulsas)
 

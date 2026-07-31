@@ -84,3 +84,26 @@ renderizam.
 - Para o `scrum-master`: se `speckit-analyze` ou `speckit-checklist` apontar
   uma lacuna de UX na spec, a correção é sua (com o `product-owner` para
   decisões de escopo) antes da spec avançar.
+
+## Lições aprendidas
+
+- **2026-07-31**: ao implementar a task A018 (alternar entre a visão padrão
+  de editais e a visão de ignorados, FR-027–FR-030), o mecanismo escolhido
+  foi um checkbox genérico ("Mostrar somente ignorados"). O usuário apontou
+  que, para alternar entre exatamente dois estados nomeados (não é uma lista
+  de opções, é um par), um controle mais claro é um toggle/segmented control
+  de duas posições (ex.: setas `<-`/`->` ou abas ativas/ignorados) — um
+  checkbox comunica "ligado/desligado" de uma única opção, não "qual dos
+  dois grupos estou vendo agora". Confirmado contra literatura de UX
+  (Nielsen Norman Group, "Checkboxes vs. Switches in Forms" —
+  nngroup.com/videos/checkboxes-vs-switches-forms): checkbox serve para
+  seleção/ajuste em lote de uma opção (não implica mudança imediata);
+  toggle switch é para ligar/desligar uma funcionalidade/preferência única,
+  com efeito imediato; **segmented control** é o padrão específico para
+  alternar entre views/categorias opostas (ex.: lista vs. grade) — é esse
+  o caso de "editais ativos" vs. "editais ignorados", não um toggle nem um
+  checkbox. Regra: quando a UX pedida for alternar entre dois
+  conjuntos/vistas nomeados (não um filtro binário de uma única
+  propriedade nem uma preferência liga/desliga), use um segmented control
+  de duas posições — reserve o checkbox para seleção/lote e o toggle
+  switch para preferências de sistema com efeito imediato.

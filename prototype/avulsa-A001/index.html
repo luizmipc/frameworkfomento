@@ -39,6 +39,23 @@
         <option value="">Todas as instituições</option>
       </select>
     </div>
+    <!-- A018 / FR-029: visão dedicada para localizar editais ignorados —
+         reaproveita a mesma barra de controles compartilhada (Tabela +
+         Kanban) e o mesmo mecanismo de filtro do US4, em vez de uma
+         aba/rota nova. É uma troca de contexto entre dois conjuntos
+         nomeados (ativos vs. ignorados), não uma propriedade liga/desliga —
+         por isso um controle segmentado de duas posições nomeadas, não um
+         checkbox (ver lição em .claude/agents/designer.md, 2026-07-31). Por
+         padrão "Ativos": editais ignorados ficam fora das duas visões
+         (FR-028); trocar para "Ignorados" troca o universo exibido para
+         "somente ignorados", de onde dá para reverter (FR-030). -->
+    <div class="control-field control-toggle">
+      <span class="control-toggle-label" id="ignorados-toggle-label">Visão de editais</span>
+      <div class="segmented" role="group" aria-labelledby="ignorados-toggle-label">
+        <button type="button" class="segment-btn active" id="segment-ativos" aria-pressed="true">&lsaquo; Ativos</button>
+        <button type="button" class="segment-btn" id="segment-ignorados" aria-pressed="false">Ignorados <span class="col-count" id="ignorados-count"></span> &rsaquo;</button>
+      </div>
+    </div>
   </div>
 
   <!-- Indicador de busca/filtro ativo (A013) — junto da barra de controles
@@ -68,6 +85,7 @@
             <th scope="col">Link</th>
             <th scope="col">Instituição</th>
             <th scope="col">Descrição</th>
+            <th scope="col">Ações</th>
           </tr>
         </thead>
         <tbody id="tabela-corpo">
@@ -112,8 +130,14 @@
          neutro em vez de um "Ver chamada" clicável que não levaria a lugar nenhum. -->
     <span class="card-link-missing hidden">Link não informado</span>
     <div class="card-actions">
-      <button type="button" class="move-btn" data-dir="-1" aria-label="Mover para coluna anterior">&larr;</button>
-      <button type="button" class="move-btn" data-dir="1" aria-label="Mover para próxima coluna">&rarr;</button>
+      <div class="card-move-group">
+        <button type="button" class="move-btn" data-dir="-1" aria-label="Mover para coluna anterior">&larr;</button>
+        <button type="button" class="move-btn" data-dir="1" aria-label="Mover para próxima coluna">&rarr;</button>
+      </div>
+      <!-- A018 / FR-027/FR-030: mesmo texto do botão de ação da tabela
+           ("Ignorar" / "Reverter"), atualizado em renderKanban() conforme
+           edital.ignorado. -->
+      <button type="button" class="ignore-btn"></button>
     </div>
   </article>
 </template>
