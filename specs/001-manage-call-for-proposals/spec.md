@@ -16,6 +16,13 @@
 - Q: O quadro de progresso e os dados de um edital são visíveis só a quem cadastrou ou compartilhados com a organização proponente? → A: Gerenciamento individual — os editais cadastrados por um captador, e o estágio de acompanhamento de cada um, são visíveis e editáveis apenas por esse captador nesta feature. Colaboração multiusuário/por organização fica fora de escopo.
 - Q: Documentação exigida e critérios de avaliação são texto livre descritivo ou um checklist estruturado com itens marcáveis como atendidos/pendentes? → A: Texto livre descritivo (lista de itens em texto), sem controle individual de status "atendido/pendente" por item nesta feature — o acompanhamento de progresso do edital continua sendo feito pelo Estágio de Acompanhamento (quadro de progresso), não por um checklist interno de documentos.
 
+### Session 2026-07-31
+
+- Q: O link para a chamada continua sendo um campo obrigatório no cadastro (FR-003/FR-005), mesmo quando o edital foi anunciado mas o link oficial ainda não foi publicado (Edge Case)? → A: Não. O link passa a ser opcional no cadastro; o captador pode cadastrar o edital sem link e adicioná-lo ou corrigi-lo depois via edição (FR-013). Nome da chamada, instituição responsável, descrição e data de fechamento continuam obrigatórios.
+- Q: A descrição do edital é um campo obrigatório no cadastro? FR-003 a listava como parte do "no mínimo", mas o Acceptance Scenario 2 da User Story 2 (que espelha, em texto, os campos obrigatórios de FR-003/FR-005) não a incluía na lista de campos que bloqueiam o salvamento — as duas listas estavam inconsistentes entre si. → A: Sim, descrição é obrigatória, consistente com a definição original de FR-003; o Acceptance Scenario 2 foi corrigido para incluí-la (e para remover o link, que deixou de ser obrigatório).
+- Q: Quando uma busca por nome e/ou um filtro por instituição responsável estão ativos, a contagem por coluna do quadro de progresso (FR-024) deve refletir apenas os cartões visíveis após o filtro, ou sempre o total real de editais naquele estágio, independentemente do filtro? → A: Reflete o total já filtrado, pelo mesmo princípio que FR-023 já aplica ao total agregado — inclusive mostrando 0 quando o filtro esvazia uma coluna (consistente com a mensagem de estado vazio de FR-026).
+- Q: Uma coluna do quadro de progresso genuinamente sem nenhum edital cadastrado naquele estágio (sem nenhuma busca/filtro ativo) deve exibir alguma mensagem de estado vazio, ou ficar em branco? → A: Fica em branco, sem mensagem — a mensagem de FR-026 é exclusiva do caso em que um filtro/busca ativo esconde cartões que existiriam sem o filtro; uma coluna vazia sem filtro já comunica sem ambiguidade que não há editais naquele estágio.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Acompanhar editais em um quadro de progresso (Priority: P1)
@@ -101,8 +108,9 @@ perda de informação.
    Backlog.
 2. **Given** o captador está cadastrando um edital, **When** ele tenta
    salvar sem informar um campo obrigatório (nome da chamada, instituição
-   responsável, link ou data de fechamento), **Then** o sistema impede o
-   salvamento e indica claramente quais campos faltam.
+   responsável, descrição ou data de fechamento), **Then** o sistema impede o
+   salvamento e indica claramente quais campos faltam. O link para a chamada
+   é opcional e sua ausência nunca impede o salvamento (FR-003).
 3. **Given** um edital está sendo cadastrado, **When** o captador registra a
    documentação exigida (lista de documentos comprobatórios pedidos pelo
    edital) e os critérios de avaliação (como a proposta será julgada),
@@ -214,7 +222,9 @@ ordenados pela proximidade da data de fechamento.
    visualiza essa coluna, **Then** o sistema exibe, no lugar da coluna em
    branco, uma mensagem (ex.: "Nenhum edital encontrado com esses
    critérios.") indicando que a ausência de cartões é resultado do filtro
-   aplicado, não da falta de editais cadastrados naquele estágio.
+   aplicado, não da falta de editais cadastrados naquele estágio, e o
+   cabeçalho dessa coluna exibe a contagem 0 (FR-024), consistente com o
+   total já filtrado (FR-023).
 
 ---
 
@@ -222,7 +232,10 @@ ordenados pela proximidade da data de fechamento.
 
 - O que acontece quando um edital cadastrado não tem link oficial disponível
   no momento do cadastro (ex.: chamada anunciada mas edital completo ainda
-  não publicado)?
+  não publicado)? Resolução: o link deixou de ser um campo obrigatório no
+  cadastro (FR-003); o captador cadastra o edital sem link e o adiciona
+  depois via edição (FR-013), sem ficar bloqueado enquanto o link oficial não
+  é publicado. Ver Clarifications (sessão 2026-07-31).
 - Como o sistema trata um edital cuja data de fechamento já passou, mas que o
   captador ainda não moveu para "Concluído" no quadro de progresso?
 - O que acontece se dois editais diferentes tiverem o mesmo nome de chamada
@@ -240,6 +253,14 @@ ordenados pela proximidade da data de fechamento.
   "Fundação X" em um edital e "Fundação X Ltda" em outro)? Achado de teste de
   usabilidade sobre a User Story 2 (ainda não implementada — o campo é texto
   livre, FR-003); ver nota de decisão em Assumptions.
+- Como uma coluna do quadro de progresso se comporta quando não há nenhuma
+  busca ou filtro ativo e simplesmente não existe nenhum edital cadastrado
+  naquele estágio (ausência não causada por filtro)? Resolução: a coluna
+  permanece em branco, sem mensagem adicional — a mensagem de FR-026 é
+  exclusiva do caso em que uma busca/filtro ativo remove todos os cartões de
+  uma coluna que teria conteúdo sem o filtro; uma coluna vazia sem filtro
+  ativo já comunica sem ambiguidade "nenhum edital neste estágio ainda" e não
+  precisa de texto extra. Ver Clarifications (sessão 2026-07-31).
 
 ## Requirements *(mandatory)*
 
@@ -253,8 +274,12 @@ ordenados pela proximidade da data de fechamento.
   progresso (kanban) com exatamente quatro colunas nesta ordem: Backlog, Em
   andamento, Validação e Concluído.
 - **FR-003**: O sistema DEVE permitir que o captador cadastre um novo edital
-  informando, no mínimo: nome da chamada, instituição responsável, descrição,
-  link para a chamada e data de fechamento (prazo de submissão).
+  informando, no mínimo: nome da chamada, instituição responsável, descrição
+  e data de fechamento (prazo de submissão). O link para a chamada é
+  desejável mas não é obrigatório no momento do cadastro — cobre o caso de um
+  edital anunciado antes da publicação do link oficial (ver Edge Cases) — e
+  pode ser adicionado ou corrigido depois por meio da edição do edital
+  (FR-013).
 - **FR-004**: O sistema DEVE permitir que o captador registre, para cada
   edital, a data de abertura das submissões, além da data de fechamento.
 - **FR-005**: O sistema DEVE impedir o cadastro de um edital sem os campos
@@ -278,7 +303,10 @@ ordenados pela proximidade da data de fechamento.
   de progresso, editais cuja data de fechamento já passou, para que o
   captador identifique prazos vencidos.
 - **FR-012**: O sistema DEVE tornar o link para a chamada de cada edital
-  acessível diretamente a partir da tabela e do quadro de progresso.
+  acessível diretamente a partir da tabela e do quadro de progresso, quando
+  esse link estiver cadastrado; para um edital sem link registrado (FR-003),
+  o sistema DEVE indicar visualmente a ausência do link, sem impedir a
+  visualização dos demais dados do edital.
 - **FR-013**: O sistema DEVE permitir que o captador edite qualquer dado de
   um edital já cadastrado (descrição, instituição, link, datas, documentação
   exigida e critérios de avaliação).
@@ -338,14 +366,20 @@ ordenados pela proximidade da data de fechamento.
   é uma lacuna de usabilidade encontrada em teste com persona (Débora
   Nakashima, `docs/persona/avulsa-A001.html#dor-1`, severidade média): sem um
   total agregado visível, o captador precisava somar de cabeça as contagens
-  por coluna do quadro de progresso (FR-021) ou contar linhas na tabela para
+  por coluna do quadro de progresso (FR-024) ou contar linhas na tabela para
   saber quantos editais está acompanhando — a mesma conta manual que a
   ferramenta deveria eliminar.
 - **FR-024**: O sistema DEVE exibir, no cabeçalho de cada coluna do quadro de
   progresso, a quantidade de editais atualmente naquela coluna (ex.:
   "Validação (2)"), atualizada dinamicamente conforme editais entram, saem ou
   são movidos entre colunas — inclusive imediatamente após o captador mover
-  um cartão (FR-009). Este requisito permanece dentro da User Story 1 (não
+  um cartão (FR-009). Quando uma busca por nome e/ou um filtro por
+  instituição responsável estão ativos (FR-018/FR-019), essa contagem por
+  coluna reflete apenas os editais atualmente visíveis naquela coluna após o
+  filtro — o mesmo princípio de "total filtrado, não total geral" que FR-023
+  já aplica ao total agregado — incluindo o valor 0 quando o filtro não deixa
+  nenhum cartão na coluna (ver FR-026). Este requisito permanece dentro da
+  User Story 1 (não
   vira User Story própria) porque é um refinamento de visibilidade sobre a
   mesma visão de quadro de progresso já coberta por FR-002 e FR-009 — ver
   Acceptance Scenario 6. Formalização de um comportamento já implementado e
@@ -382,10 +416,10 @@ ordenados pela proximidade da data de fechamento.
 ### Key Entities
 
 - **Edital (Chamada de Fomento)**: representa uma oportunidade de captação de
-  recursos. Atributos principais: nome da chamada, descrição, instituição
-  responsável, link para a chamada, data de abertura, data de fechamento
-  (prazo de submissão), documentação exigida e critérios de avaliação.
-  Relaciona-se com um estágio de acompanhamento (ver Estágio de
+  recursos. Atributos obrigatórios: nome da chamada, descrição, instituição
+  responsável, data de fechamento (prazo de submissão). Atributos opcionais:
+  link para a chamada, data de abertura, documentação exigida e critérios de
+  avaliação. Relaciona-se com um estágio de acompanhamento (ver Estágio de
   Acompanhamento).
 - **Captador de Recursos**: pessoa responsável por identificar, avaliar e
   submeter propostas a editais de fomento em nome de uma organização
@@ -404,13 +438,16 @@ ordenados pela proximidade da data de fechamento.
   fechamento, link) e o estágio de acompanhamento de cada um, em uma única
   tela, sem precisar consultar fontes externas.
 - **SC-002**: Um captador consegue cadastrar um novo edital com todos os
-  dados essenciais (nome, instituição, descrição, link, datas) em até 5
-  minutos.
+  dados obrigatórios (nome, instituição, descrição, data de fechamento) e,
+  quando já disponíveis, os dados opcionais (link, data de abertura), em até
+  5 minutos.
 - **SC-003**: Um captador consegue mover um edital entre estágios do quadro
   de progresso em 3 ações ou menos.
-- **SC-004**: 100% dos editais cadastrados exibem prazo de fechamento e link
-  para a chamada, de forma que o captador nunca precise recorrer a uma
-  planilha ou anotação externa para saber quando um edital fecha.
+- **SC-004**: 100% dos editais cadastrados exibem prazo de fechamento, de
+  forma que o captador nunca precise recorrer a uma planilha ou anotação
+  externa para saber quando um edital fecha; entre os editais que têm link
+  cadastrado (campo opcional, FR-003), 100% exibem esse link acessível
+  diretamente na tabela e no quadro de progresso.
 - **SC-005**: Um captador identifica editais com prazo de fechamento já
   vencido em poucos segundos ao abrir a listagem ou o quadro de progresso,
   sem precisar comparar datas manualmente.
