@@ -42,7 +42,7 @@ Documentação viva do projeto:
 | `/speckit-tasks` | Quebra o plano em tasks (`T001`, `T002`...) |
 | `/speckit-analyze` | Checa consistência entre spec/plano/tasks antes de implementar |
 | `/speckit-implement` | Executa as tasks (uso manual; o dia a dia normalmente passa pelo `/kanban-start`) |
-| `/kanban-sync` | "Reunião de scrum": sincroniza o quadro, ou cria uma tarefa avulsa |
+| `/kanban-sync` | "Reunião de scrum": sincroniza o quadro, cria uma tarefa avulsa, ou formaliza um gap como requisito em `spec.md` |
 | `/kanban-start` | Escolhe uma tarefa do quadro (aqui no chat) e a implementa de ponta a ponta |
 | `/docs-sync` | Revisa e atualiza `docs/` a partir do estado real do projeto |
 | `/feature-start` | Atalho: roda specify→clarify→checklist→plan→tasks→kanban-sync numa tacada só, para uma feature grande/nova |
@@ -61,6 +61,7 @@ Documentação viva do projeto:
 - **"Quero saber que dores um captador de recursos real sentiria usando o protótipo atual"** → `/fundraiser-test` (não corrige nada, só devolve o parecer honesto em `docs/persona/`).
 - **"Quero saber que dores um captador de recursos real sentiria usando a aplicação já implementada"** → `/fundraiser-production-test` (mesma ideia, mas na aplicação rodando de verdade, não no protótipo).
 - **"Quero transformar dores achadas num teste de persona em tarefas"** → `/kanban-sync` → "Criar nova tarefa" → origem "A partir de um teste de persona (docs/persona/)" (escolhe o arquivo, escolhe quais dores viram task — pode criar mais de uma de uma vez).
+- **"Quero formalizar um gap ou insight como requisito real, não só uma tarefa avulsa"** → `/kanban-sync` → "Atualizar spec" (descreve o gap, o `product-owner` decide como formalizar em `spec.md` — novo FR, extensão de um existente, ou nova User Story — e opcionalmente já cria a tarefa avulsa correspondente na sequência).
 - **"Quero mudar um princípio/regra do projeto"** → `/speckit-constitution`.
 
 O `/kanban-start` já cuida de acionar o `dev` para implementar, o `qa` como gate obrigatório (testes de UI e lógica antes de fechar a task) e, ao final, pergunta se algo deu errado — se sim, registra a lição aprendida no arquivo do agente/skill responsável, para o processo melhorar com o tempo. Depois dessa retrospectiva, pergunta também se deve commitar ou commitar e dar push — sempre em Conventional Commits, com uma mensagem detalhada o suficiente para o commit servir como documentação da mudança (o quê, por quê, decisões tomadas na implementação e resultado do QA).

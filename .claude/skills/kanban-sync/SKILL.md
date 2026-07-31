@@ -1,6 +1,6 @@
 ---
 name: "kanban-sync"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, ou cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro."
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro, ou formaliza um gap/insight como requisito real em spec.md via product-owner."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
 compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, e docs/ (ver item 0 do plano de implementação)"
 metadata:
@@ -16,13 +16,14 @@ disable-model-invocation: true
 $ARGUMENTS
 ```
 
-Esta é a "reunião de scrum": ou uma sincronização de acompanhamento do quadro
-real de tasks, ou a criação de uma tarefa nova avulsa. Nunca dispara sozinha
-por inferência do modelo — só quando o usuário digitar `/kanban-sync`.
+Esta é a "reunião de scrum": uma sincronização de acompanhamento do quadro
+real de tasks, a criação de uma tarefa nova avulsa, ou a formalização de um
+gap como requisito em `spec.md`. Nunca dispara sozinha por inferência do
+modelo — só quando o usuário digitar `/kanban-sync`.
 
 **Duas formas de usar este arquivo:**
 - **Ritual completo** (`/kanban-sync` chamado pelo usuário, ou por
-  `/quick-task`/`/feature-start`): Passo 0 → um dos dois Modos → termina em
+  `/quick-task`/`/feature-start`): Passo 0 → um dos três Modos → termina em
   Retrospectiva. Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
   `/quick-task` só para atualizar `KANBAN.md` a partir de `tasks.md`, sem
@@ -32,15 +33,20 @@ por inferência do modelo — só quando o usuário digitar `/kanban-sync`.
 
 ## Passo 0 — Tipo de reunião
 
-Pergunte via `AskUserQuestion` (2 opções): **"Que tipo de reunião de scrum é
+Pergunte via `AskUserQuestion` (3 opções): **"Que tipo de reunião de scrum é
 essa?"**
 - **"Acompanhamento"** — sincronizar o quadro a partir do estado real das
   tasks.
 - **"Criar nova tarefa"** — descrever uma tarefa nova e alocá-la no quadro.
+- **"Atualizar spec"** — descrever um gap/insight (de um teste de persona,
+  de observação direta do quadro, ou de qualquer outra origem) e formalizá-lo
+  como requisito em `spec.md`, sem necessariamente criar task avulsa junto.
 
 Se `$ARGUMENTS` já contiver claramente uma descrição de tarefa nova (frase em
 linguagem natural, não um slug/caminho existente), pule esta pergunta e siga
-direto para o modo "Criar nova tarefa" com essa descrição.
+direto para o modo "Criar nova tarefa" com essa descrição — "Atualizar spec"
+só é alcançado escolhendo-o explicitamente na pergunta, nunca por inferência
+do `$ARGUMENTS`.
 
 ## Modo "Acompanhamento"
 
@@ -53,6 +59,42 @@ direto para o modo "Criar nova tarefa" com essa descrição.
    escopo** antes de continuar.
 3. Escreva `KANBAN.md` e reporte contagens/anomalias.
 4. Rode a **Retrospectiva**.
+
+## Modo "Atualizar spec"
+
+Formaliza um gap ou insight como requisito real em `spec.md` — o mesmo
+movimento que rodar `product-owner` manualmente para transformar uma dor de
+persona ou um pedido direto em FR/User Story, só que como caminho suportado
+do `/kanban-sync` em vez de uma ação avulsa.
+
+1. Se `$ARGUMENTS` não trouxer a descrição do gap, pergunte no chat (texto
+   livre): "Qual o gap ou insight que deve virar requisito formal? Descreva
+   o que motivou (teste de persona, observação direta, pedido do usuário
+   etc.) e o comportamento esperado."
+2. Descubra as features existentes: `find specs -mindepth 1 -maxdepth 1 -type d`.
+   - Nenhuma: informe que ainda não há `spec.md` (rode `/speckit-specify`
+     primeiro) e pare — não há o que atualizar.
+   - Uma: use-a direto.
+   - Mais de uma: pergunte via `AskUserQuestion` (até 4 opções, rotuladas
+     pelo slug) qual `spec.md` atualizar.
+3. Acione o subagente `product-owner` (`subagent_type: "product-owner"`)
+   com: a descrição do gap, o caminho exato de `spec.md` e `docs/index.html`,
+   e instrução para decidir a forma certa de formalizar — novo FR isolado,
+   extensão de um FR existente, ou nova User Story, critério dele, mas
+   documentando brevemente a decisão no próprio texto do requisito — mantendo
+   o padrão de numeração/estilo já usado no arquivo, e sincronizando
+   `docs/index.html`. Reforce explicitamente: **não** deve tocar
+   `tasks.md`/`KANBAN.md`/`plan.md` nem nada em `prototype/`/`app/` — isso é
+   decisão separada, do passo 4 abaixo.
+4. Quando o `product-owner` terminar, pergunte via `AskUserQuestion`
+   (2 opções): **"Requisito formalizado em spec.md. Criar já uma tarefa
+   avulsa para isso (protótipo e/ou lembrete de implementação)?"**
+   - **"Sim"** — vá para o **Modo "Criar nova tarefa"**, a partir do passo 2
+     (a origem já está resolvida: "manual", com uma descrição que referencia
+     o FR/User Story recém-formalizado). Ao terminar aquele modo, não rode a
+     Retrospectiva de novo — ela já roda uma vez só, no passo 5 abaixo.
+   - **"Não"** — siga direto ao passo 5.
+5. Rode a **Retrospectiva**.
 
 ## Modo "Criar nova tarefa"
 
@@ -223,10 +265,14 @@ registre a lição aprendida no arquivo correto (um agente em
 
 ## Done When
 
-- [ ] Tipo de reunião determinado (acompanhamento ou criar tarefa)
+- [ ] Tipo de reunião determinado (acompanhamento, criar tarefa, ou
+      atualizar spec)
 - [ ] Se "criar tarefa": origem escolhida (manual ou docs/persona/) e
       `KANBAN.md` reflete o estado atual com a(s) tarefa(s) nova(s)
       adicionada(s)
+- [ ] Se "atualizar spec": `product-owner` formalizou o requisito em
+      `spec.md`/`docs/index.html`, e a task avulsa (se aceita) seguiu o
+      Modo "Criar nova tarefa" a partir do passo 2
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
       a escolha do usuário (abandonar ou atualizar docs)
 - [ ] Retrospectiva rodou e, se houve problema reportado, o arquivo correto
