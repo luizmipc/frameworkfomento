@@ -19,6 +19,7 @@ documentação/critérios/estágio em models separados.
 | `documentacao_exigida`   | `TextField(blank=True)`                          | não (FR-006) | Texto livre (FR-017). |
 | `criterios_avaliacao`    | `TextField(blank=True)`                          | não (FR-007) | Texto livre (FR-017), critérios publicados pela instituição (CHK027). |
 | `estagio`                | `CharField(max_length=20, choices=Estagio.choices, default=Estagio.BACKLOG)` | sim (FR-008) | Ver `Estagio` abaixo. |
+| `ignorado`               | `BooleanField(default=False)`                     | sim (default `False`, FR-027) | Atributo de visibilidade ortogonal ao `estagio` — nunca alterado por transições de `estagio` nem vice-versa (FR-027/FR-028). Quando `True`, oculta o edital das visões/contagens padrão (tabela, kanban, FR-023, FR-024) sem excluí-lo; alternado via view dedicada (`toggle_ignorado`, FR-027/FR-030), nunca exposto no `EditalForm` de cadastro/edição. |
 | `criado_em`              | `DateTimeField(auto_now_add=True)`                | —           | Auditoria básica, não exposta na UI. |
 | `atualizado_em`          | `DateTimeField(auto_now=True)`                    | —           | Auditoria básica, não exposta na UI. |
 
@@ -71,6 +72,9 @@ class Estagio(models.TextChoices):
 
 ### Migrations
 
-- Uma única migration inicial (`0001_initial`) gerada via
-  `manage.py makemigrations editais` — sem migrations de dados (não há dado
-  legado a migrar).
+- Uma migration inicial (`0001_initial`) gerada via `manage.py makemigrations
+  editais` — sem migrations de dados (não há dado legado a migrar).
+- Uma segunda migration incremental (`0002_edital_ignorado`) adiciona o campo
+  `ignorado` — FR-027 a FR-030 foram formalizados em `spec.md` depois do
+  desenho inicial deste model; `default=False` cobre os registros já
+  existentes sem exigir migration de dados.

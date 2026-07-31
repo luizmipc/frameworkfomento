@@ -78,6 +78,7 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 - [ ] T014 [US1] `TestCase` em `app/editais/tests.py`: listagem e kanban de um captador nunca exibem editais de outro captador (FR-015, FR-016)
 - [ ] T015 [US1] `TestCase` em `app/editais/tests.py`: edital com `data_fechamento` no passado é marcado como vencido na resposta (via `prazo_vencido`/contexto do template) (FR-011)
 - [ ] T050 [US1] `TestCase` em `app/editais/tests.py`: `GET /kanban/` exibe, no cabeçalho de cada coluna, a quantidade de editais atualmente naquele estágio (ex.: "Validação (2)"), e a contagem atualiza imediatamente após um `POST /<id>/mover/` (FR-024, Acceptance Scenario 6)
+- [ ] T057 [US1] Nota em `app/editais/tests.py` (comentário, não `TestCase`): a apresentação responsiva (FR-031, Acceptance Scenario 7 — tabela utilizável em tela estreita sem ocultar coluna; 4 colunas do kanban lado a lado em desktop padrão sem rolagem horizontal) é comportamento puramente de CSS, sem lógica de servidor variando por largura de tela — validada por revisão visual manual do `designer`/QA (ex.: DevTools em ~375px e ~1280px), não por `TestCase` de Django (que não renderiza CSS/layout); T011/T012 já cobrem que os dados/colunas existem na resposta, o que basta do lado de servidor
 
 ### Implementation for User Story 1
 
@@ -85,6 +86,7 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 - [ ] T017 [US1] Criar template `app/editais/templates/editais/edital_list.html` (tabela: chamada, descrição, instituição, abertura, fechamento, link clicável, indicação visual de prazo vencido) — alinhar estilo final com `designer`
 - [ ] T018 [US1] Implementar `EditalKanbanView` em `app/editais/views.py`, agrupando o queryset do captador pelas 4 colunas de `Estagio`
 - [ ] T019 [US1] Criar template `app/editais/templates/editais/edital_kanban.html` (4 colunas, cards com botões acessíveis "mover para trás/frente", desabilitados nas bordas) — alinhar estilo final com `designer`; interação de referência em `prototype/avulsa-A001/`
+- [ ] T058 [US1] [P] CSS responsivo (FR-031) para `edital_list.html` (`@media (max-width: 640px)`: empilhar a tabela em formato de card, uma linha por edital, mantendo todos os campos visíveis sem ocultar coluna) e para `edital_kanban.html` (4 colunas cabendo lado a lado em desktop padrão sem rolagem horizontal) — referência de implementação em `prototype/avulsa-A001/style.css` (mesmo breakpoint); alinhar com `designer` (depende de T017, T019)
 - [ ] T051 [US1] Incluir a contagem de editais por coluna (ex.: "Validação (2)") no contexto de `EditalKanbanView` e no cabeçalho de cada coluna em `edital_kanban.html` (FR-024; depende de T018, T019)
 - [ ] T020 [US1] Implementar view `mover_estagio` (POST-only, `direcao=anterior|proxima`, 404 se o edital não pertence ao `request.user`, no-op nas bordas, redireciona para `next`/`kanban`) em `app/editais/views.py`
 - [ ] T021 [US1] Adicionar rotas `''`, `'kanban/'` e `'<int:pk>/mover/'` em `app/editais/urls.py` (depende de T016, T018, T020)
@@ -128,6 +130,10 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 - [ ] T029 [US3] `TestCase` em `app/editais/tests.py`: `POST /<id>/editar/` atualiza um campo (ex.: `data_fechamento`) e a mudança aparece imediatamente na listagem/kanban (Acceptance Scenario 1, SC-006)
 - [ ] T030 [US3] `TestCase` em `app/editais/tests.py`: `POST /<id>/remover/` remove o edital, que deixa de aparecer na listagem/kanban (Acceptance Scenario 2)
 - [ ] T031 [US3] `TestCase` em `app/editais/tests.py`: captador não consegue acessar `editar`/`remover` de um edital de outro captador (404) (FR-016)
+- [ ] T060 [US3] `TestCase` em `app/editais/tests.py`: `POST /<id>/ignorar/` marca `ignorado=True` sem alterar `estagio` (FR-027, Acceptance Scenario 3)
+- [ ] T061 [US3] `TestCase` em `app/editais/tests.py`: um edital com `ignorado=True` não aparece em `GET /` nem `GET /kanban/` por padrão, e não é contado no total (FR-023) nem na contagem por coluna (FR-024) (FR-028)
+- [ ] T062 [US3] `TestCase` em `app/editais/tests.py`: `GET /?ignorados=1` (e o equivalente em `/kanban/`) exibe somente os editais com `ignorado=True` do captador logado (FR-029, Acceptance Scenario 4)
+- [ ] T063 [US3] `TestCase` em `app/editais/tests.py`: `POST /<id>/ignorar/` em um edital já ignorado desmarca `ignorado`, que volta a aparecer em `GET /`/`GET /kanban/` no mesmo `estagio` em que já estava (FR-030, Acceptance Scenario 4)
 
 ### Implementation for User Story 3
 
@@ -136,6 +142,12 @@ Projeto Django único em `app/` (ver `plan.md` → Project Structure): app novo
 - [ ] T034 [US3] Criar template `app/editais/templates/editais/edital_confirm_delete.html` (confirmação simples) — alinhar com `designer`
 - [ ] T035 [US3] Adicionar rotas `'<int:pk>/editar/'` e `'<int:pk>/remover/'` em `app/editais/urls.py` (depende de T032, T033)
 - [ ] T036 [US3] Adicionar links "Editar"/"Remover" por edital em `edital_list.html` e `edital_kanban.html` — alinhar com `designer`
+- [ ] T064 [US3] Adicionar campo `ignorado` (`BooleanField(default=False)`) ao model `Edital` em `app/editais/models.py`, conforme `data-model.md` (FR-027)
+- [ ] T065 [US3] Gerar a migration incremental: `uv run manage.py makemigrations editais` → `app/editais/migrations/0002_edital_ignorado.py` (depende de T064)
+- [ ] T066 [US3] Implementar view `toggle_ignorado` (POST-only, alterna `ignorado` do edital, 404 se não pertence ao `request.user`, redireciona para `next`/lista/kanban) em `app/editais/views.py` (FR-027, FR-030; depende de T064)
+- [ ] T067 [US3] Adicionar rota `'<int:pk>/ignorar/'` em `app/editais/urls.py` (depende de T066)
+- [ ] T068 [US3] Atualizar `get_queryset` de `EditalListView`/`EditalKanbanView` para excluir `ignorado=True` por padrão e, quando `?ignorados=1` estiver na querystring, inverter o filtro para exibir somente os ignorados; refletir essa exclusão/inclusão nas contagens de FR-023 (T055) e FR-024 (T051) em `app/editais/views.py` (FR-028, FR-029; depende de T064, T046, T051, T055)
+- [ ] T069 [US3] [P] Segmented control "‹ Ativos" / "Ignorados ›" (com contagem de ignorados) em `edital_list.html` e `edital_kanban.html`, alternando o parâmetro `ignorados` na querystring e preservando `busca`/`instituicao`/`ordenar`; botão "Ignorar"/"Reverter" por edital chamando `POST /<id>/ignorar/` — alinhar com `designer`; interação/markup de referência em `prototype/avulsa-A001/index.html` (linhas 42-56) e `script.js` (linhas 126-243) (depende de T067, T068)
 
 **Checkpoint**: Todas as user stories (US1, US2, US3) funcionam de forma independente e integrada.
 
@@ -160,6 +172,7 @@ prazo, sem mudar de coluna.
 ### Tests for User Story 4
 
 - [ ] T041 [US4] `TestCase` em `app/editais/tests.py`: `GET /?busca=<termo>` filtra a tabela para editais cujo `nome_chamada` contém o termo (parcial, case-insensitive) (FR-018, Acceptance Scenario 1)
+- [ ] T059 [US4] `TestCase` em `app/editais/tests.py`: `GET /?busca=inovacao` (sem acento) encontra um edital cujo `nome_chamada` contém "Inovação" (com acento) — busca ignora diferenças de acentuação (FR-018 estendido, Acceptance Scenario 1 revisado); depende de T046 tratar acentuação na comparação, não só case
 - [ ] T042 [US4] `TestCase` em `app/editais/tests.py`: `GET /?instituicao=<nome>` filtra a tabela para editais daquela instituição (FR-019, Acceptance Scenario 2)
 - [ ] T043 [US4] `TestCase` em `app/editais/tests.py`: `GET /?ordenar=fechamento` (e `-fechamento`) ordena a tabela por proximidade do prazo de fechamento, crescente/decrescente (FR-020, Acceptance Scenario 3)
 - [ ] T044 [US4] `TestCase` em `app/editais/tests.py`: `GET /kanban/` exibe, dentro de uma mesma coluna com múltiplos editais, os cards ordenados por `data_fechamento` (mais próximo primeiro) sem alterar o agrupamento por estágio (FR-021, Acceptance Scenario 4)
@@ -184,7 +197,7 @@ prazo, sem mudar de coluna.
 
 **Purpose**: Fechar a feature — documentação viva e validação de ponta a ponta.
 
-- [ ] T037 Rodar `uv run manage.py test editais` e garantir que toda a suíte (T011-T015, T050, T022-T024, T049, T029-T031, T041-T045, T052-T054) passa
+- [ ] T037 Rodar `uv run manage.py test editais` e garantir que toda a suíte (T011-T015, T050, T057, T022-T024, T049, T029-T031, T060-T063, T041-T045, T052-T054, T059) passa
 - [ ] T038 Executar o roteiro de `specs/001-manage-call-for-proposals/quickstart.md` manualmente (via `docker compose up`), confirmando os 5 passos (login, US2, US1, US3, isolamento por captador)
 - [ ] T039 [P] Atualizar `/home/lm/repos/frameworkfomento/CLAUDE.md` com os comandos reais de build/lint/test (`uv run manage.py runserver`, `uv run manage.py test`, `uv run manage.py migrate`) e a arquitetura de alto nível (app `editais`, model `Edital`, auth via `django.contrib.auth`)
 - [ ] T040 [P] Atualizar `docs/architecture-and-tech.md` e `docs/class-diagram.md` refletindo o app `editais`, o model `Edital` e o fluxo de autenticação mínima
@@ -199,20 +212,23 @@ prazo, sem mudar de coluna.
 - **Foundational (Phase 2)**: depende de Setup — bloqueia todas as user stories
 - **US1 (Phase 3)**: depende de Foundational; sem dependência de US2/US3 (dados de teste via `/admin/`, T008)
 - **US2 (Phase 4)**: depende de Foundational; usa o mesmo `EditalForm`/model de US1 mas é testável e entregável de forma independente
-- **US3 (Phase 5)**: depende de Foundational; reaproveita `edital_form.html` de US2 (T026) para o template de edição — se US2 ainda não foi implementada, T032 pode criar esse template como parte de si mesma
-- **US4 (Phase 6)**: depende de Foundational e de US1 (T016/T018, cujo `get_queryset` estende) — sem dependência de US2/US3
+- **US3 (Phase 5)**: depende de Foundational; reaproveita `edital_form.html` de US2 (T026) para o template de edição — se US2 ainda não foi implementada, T032 pode criar esse template como parte de si mesma. Exceção: T068 (filtro de `ignorado` nas contagens de FR-023/FR-024) depende de T046/T051/T055 da Phase 6 (US4) já existirem — a marcação "Ignorado" (FR-027/FR-028) só se torna testável de ponta a ponta (contagens corretas) depois que US4 implementa a contagem/filtro que ela precisa ajustar; T060/T061/T063 (marcar, ocultar da listagem simples, reverter) não têm essa dependência e podem ser feitos antes
+- **US4 (Phase 6)**: depende de Foundational e de US1 (T016/T018, cujo `get_queryset` estende) — sem dependência de US2/US3 para T041-T048/T052-T056/T059; T068 de US3 depende de US4 (ver acima), não o contrário
 - **Polish (Phase 7)**: depende de todas as user stories desejadas estarem completas
 
 ### Parallel Opportunities
 
 - Setup: T004 e T005 são `[P]` (arquivos diferentes)
 - Foundational: T008, T009, T010 são `[P]` entre si (arquivos diferentes), todos após T006/T007
-- Entre user stories: US1, US2, US3 podem ser trabalhadas em paralelo por pessoas diferentes após Foundational (US4 depende de US1 estar pronta); a ordem de prioridade recomendada é P1 → P2 → P3 → P4 (ver Implementation Strategy)
+- Entre user stories: US1, US2, US3 podem ser trabalhadas em paralelo por pessoas diferentes após Foundational (US4 depende de US1 estar pronta), com uma exceção pontual: T068 dentro de US3 depende de T046/T051/T055 de US4/US1 (ver "Phase Dependencies"); o restante de US3 (T029-T036, T060-T063, T064-T067, T069 sem o filtro `ignorados`) segue paralelizável normalmente; a ordem de prioridade recomendada é P1 → P2 → P3 → P4 (ver Implementation Strategy)
 - US4: T048 é `[P]` em relação a nada dentro da própria phase (depende de T046/T047, que são sequenciais entre si)
 - Polish: T039 e T040 são `[P]` entre si
 - T050/T051 (contagem por coluna do kanban, FR-024) ficam dentro da Phase 3 (US1): T050 depende de T012 (kanban básico já existir para testar a contagem); T051 depende de T018/T019
+- T057 (FR-031, responsivo) e T058 (implementação CSS) ficam dentro da Phase 3 (US1): T057 é uma nota, não bloqueia nada; T058 é `[P]` em relação ao resto da phase (CSS puro, sem lógica de view/model), depende apenas de T017/T019 já existirem para ter o que estilizar
 - T049 (cadastro sem `link`, FR-003) fica dentro da Phase 4 (US2), mesma dependência de T022-T024: depende de T025 (`EditalCreateView`)
+- T060-T063 (testes de FR-027/FR-028/FR-029/FR-030 — marcar/ocultar/visão de ignorados/reverter) e T064-T069 (implementação: campo `ignorado`, migration, view de toggle, rota, filtro nas queries/contagens, segmented control) ficam dentro da Phase 5 (US3): T064/T065 (model/migration) não dependem de nada além de T006/T007 já existirem; T066/T067 dependem de T064; T068 depende de T064 e das contagens de US4 (T046, T051, T055) — por isso T068 tem uma dependência cruzada Phase 5 → Phase 6 que não existia antes (ver nota abaixo); T069 é `[P]` em relação a T036 (arquivos de template diferentes: `edital_confirm_delete.html` vs. `edital_list.html`/`edital_kanban.html`), depende de T067/T068
 - T052-T054 (testes de FR-023/FR-025/FR-026) e T055-T056 (implementação) ficam dentro da Phase 6 (US4): T055 depende de T046 (busca/filtro já implementados); T056 depende de T046 e de T051 (contagem por coluna, para exibir 0 junto da mensagem de FR-026)
+- T059 (busca ignora acentuação, FR-018 estendido) fica dentro da Phase 6 (US4), mesma dependência de T041: depende de T046
 
 ---
 
@@ -243,4 +259,9 @@ prazo, sem mudar de coluna.
 - Remoção de edital (US3) é exclusão definitiva (hard delete) — ver `research.md`
 - US4 (T041-T048) foi adicionada depois das demais, a partir de uma dor real encontrada via `/fundraiser-test` (`docs/persona/avulsa-A001.html#dor-2`), formalizada em `spec.md` como FR-018 a FR-021
 - T052-T056 (FR-023/FR-025/FR-026 — total exibido, indicador de filtro ativo, mensagem de coluna vazia por filtro) e T050-T051 (FR-024 — contagem por coluna) formalizam comportamentos já implementados no protótipo `prototype/avulsa-A001/` (tasks A009/A013/A014 do quadro do projeto) que não tinham task correspondente em `tasks.md`; adicionadas por `speckit-analyze` (achados F7-F9)
+- T057-T069 formalizam FR-018 (busca sem acento, estendido), FR-027 a FR-030 (marcar/ocultar/reverter "Ignorado") e FR-031 (novo, apresentação responsiva) — os três achados mais recentes de `speckit-analyze`/revisão de spec, sem task correspondente antes desta rodada:
+  - **FR-018 (busca sem acento)**: não recebeu uma task de implementação separada de T046 — é tratada como extensão natural do mesmo filtro de busca (T046 já faz `nome_chamada__icontains=busca`; ignorar acentuação é um ajuste de normalização na mesma linha de código, ex.: usar `unicodedata.normalize`/`strip` dos dois lados da comparação em Python, já que o projeto roda em SQLite sem extensão `unaccent` — não em uma segunda função ou view). Só T059 (`TestCase`) foi adicionada; T046 permanece a única task de implementação e passa a cobrir os dois casos (com/sem acento).
+  - **FR-027 a FR-030 (Ignorado)**: era a lacuna maior — nenhuma task cobria o campo, a view de alternância ou o segmented control antes desta rodada. Adicionadas T060-T063 (testes) e T064-T069 (model+migration, view de toggle, rota, filtro nas queries/contagens, template) dentro da Phase 5 (US3), reaproveitando a infraestrutura de contagem/querystring que US4 já implementa (T046/T051/T055) em vez de duplicá-la — daí a dependência cruzada T068 → US4 registrada em "Phase Dependencies".
+  - **FR-031 (responsivo)**: tratada como comportamento majoritariamente de CSS. T057 registra que a verificação primária é revisão visual manual do `designer`/QA (Acceptance Scenario 7 não é verificável por `TestCase` de Django, que não renderiza layout/CSS); T058 é a única task de implementação, `@media (max-width: 640px)` para a tabela e ajuste de largura das colunas do kanban, usando `prototype/avulsa-A001/style.css` como referência direta de implementação (mesmo breakpoint já validado no protótipo).
+  - `data-model.md` foi atualizado para incluir o campo `ignorado` (`BooleanField(default=False)`) na tabela de campos de `Edital`, que faltava desde que FR-027-030 foram formalizados em `spec.md` (não existia quando `data-model.md` foi gerado originalmente).
 - Commitar após cada task ou grupo lógico de tasks
