@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Persona — Renata Kowalski (protótipo avulsa-A001, 6ª rodada) — frameworkfomento</title>
+<title>Persona — Otávio Sales (protótipo avulsa-A001, 7ª rodada) — frameworkfomento</title>
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
 
   <nav class="toc">
     <p class="kicker group-label">docs/persona</p>
-    <a href="#top">Renata Kowalski</a>
+    <a href="#top">Otávio Sales</a>
     <a href="#canvas">Quem é essa persona</a>
     <a href="#tarefas">Tarefas testadas</a>
     <a href="#dores">Dores identificadas</a>
@@ -23,62 +23,67 @@
   </nav>
 
   <main>
-    <p class="kicker">fundraiser-test · docs/persona · 6ª rodada (foco em A015 / total de editais)</p>
-    <h1 id="top">Renata Kowalski</h1>
-    <p class="quote">"Eu cobro por hora dos meus clientes. Se preciso somar contador de coluna pra conferir um número antes de citar pra eles, isso é tempo que não deveria estar gastando — mas também não vou colar um total num e-mail de status sem antes desconfiar dele pelo menos uma vez."</p>
-    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-07-30, via comando <code>/fundraiser-test</code>. Esta é a <strong>6ª rodada</strong> de teste deste protótipo. Resumo do histórico: rodadas 1–3 (Marina Advíncula, Ricardo Bittencourt, Fernanda Vasconcelos) — layout responsivo, User Story 4 (busca/filtro/ordenação), contador por coluna (A009) e níveis de prazo próximo (A011). 4ª rodada (Tarcísio Andrade) — primeiro teste de busca/filtro combinados: achou busca sem normalização de acento (A012), ausência de indicador de filtro ativo (A013) e coluna do Kanban vazia por filtro sem mensagem (A014); uma nota estrutural sobre autocomplete de instituição ficou registrada sem virar task. 5ª rodada (Débora Nakashima) — reconfirmou A012–A014 sem regressão, inclusive em cenários combinados, e encontrou uma dor nova: nenhuma visão mostrava um total geral de editais (só contagem por coluna do Kanban). Essa dor virou FR-023 (dentro da própria User Story 4) e foi implementada como task A015. Entre a 5ª rodada e esta: <strong>A015 foi implementada e confirmada ao vivo no início desta sessão</strong> (via browser, servido em <code>http://localhost:8940/prototype/avulsa-A001/index.html</code>, sessão já encerrada antes deste parecer) — carregar a página sem filtro mostrou "5 editais exibidos" logo abaixo do subtítulo, e buscar "sustent" atualizou corretamente para "1 edital exibido" (singular certo), com a tabela mostrando só o edital correspondente e o indicador de filtro (A013) mostrando "Filtrando por: busca "sustent" · Limpar filtros" — tudo consistente e reagindo junto. Esta rodada testa A015 especificamente dentro de fluxos realistas de conferência de número antes de reportar a um cliente.</p>
+    <p class="kicker">fundraiser-test · docs/persona · 7ª rodada (protótipo sem mudança de código; foco em ângulos ainda não testados ao vivo)</p>
+    <h1 id="top">Otávio Sales</h1>
+    <p class="quote">"Eu não confio em card bonito — confio em link que abre. Antes de levar um edital pra reunião de diretoria, eu clico em cada 'Ver chamada' e mando pro jurídico. Se um dia um card não tiver link, eu preciso saber disso olhando pro quadro, não descobrindo na hora de mandar o e-mail."</p>
+    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-07-31, via comando <code>/fundraiser-test</code>. Esta é a <strong>7ª rodada</strong> de teste deste protótipo — mas o código do protótipo <strong>não mudou</strong> desde a 5ª/6ª rodada (confirmado via <code>git log</code>). O que mudou foi só a spec: uma sessão de <code>speckit-clarify</code> + <code>speckit-analyze</code> tornou o campo <code>link</code> opcional no cadastro (FR-003 revisado, dentro da User Story 2, que não tem protótipo aqui), formalizou retroativamente FR-023/FR-025/FR-026 (comportamento que o protótipo já tinha) e adicionou um Edge Case novo: coluna do Kanban genuinamente vazia (sem edital naquele estágio, <strong>sem</strong> filtro ativo) deve ficar em branco, sem mensagem — diferente da coluna esvaziada pelo filtro (FR-026). O Passo 3 desta sessão (via browser, <code>http://localhost:8941/prototype/avulsa-A001/index.html</code>) já confirmou ao vivo, antes deste parecer: busca sem resultado ("zzznada") mostrou corretamente "0 editais exibidos" (não sumiu, não ficou em branco — FR-023 cobre zero), e as 4 colunas do Kanban mostraram "(0)" com a mensagem "Nenhum edital encontrado com esses critérios." (FR-026, esvaziamento por filtro). O caso "coluna vazia sem filtro" não foi clicado ao vivo (os dados mockados sempre deixam as 4 colunas com pelo menos 1 edital sem filtro) — esta rodada usa leitura de código para fechar essa lacuna, e foca as tarefas em ângulos que nenhuma rodada anterior cobriu: mover cards manualmente entre colunas e a integridade dos links de cada edital.</p>
 
     <h2 id="canvas">Quem é essa persona</h2>
     <table>
       <tbody>
-        <tr><th>Papel</th><td>Consultora autônoma de captação de recursos, atende três organizações da sociedade civil de pequeno porte em paralelo, cobrando por hora/entrega de cada uma</td></tr>
-        <tr><th>Organização</th><td>Não tem organização própria — presta serviço para três OSCs pequenas (educação, meio ambiente e assistência social), cada uma com seu próprio conjunto de editais a acompanhar</td></tr>
-        <tr><th>Editais acompanhados hoje</th><td>Entre 15 e 20 no total, somando os três clientes — divide o tempo entre eles e precisa relatar números confiáveis a cada um sem gastar hora faturável recontando</td></tr>
-        <tr><th>Ferramentas atuais</th><td>Planilha própria por cliente (3 arquivos separados), sem quadro visual; copia manualmente um resumo numérico para o e-mail semanal de status de cada cliente</td></tr>
-        <tr><th>Familiaridade técnica</th><td>Média — confortável com planilhas e filtros, mas desconfiada por hábito profissional: antes de citar um número para um cliente, tende a conferir de outro jeito (nem que seja rápido) para não errar em algo que vai virar registro por escrito</td></tr>
+        <tr><th>Papel</th><td>Coordenador de captação de recursos, único responsável pela função na organização (reporta direto à direção executiva)</td></tr>
+        <tr><th>Organização</th><td>ONG de médio porte na área de saúde comunitária, equipe de 12 pessoas, um único funil de captação (não atende clientes externos como consultor)</td></tr>
+        <tr><th>Editais acompanhados hoje</th><td>Entre 8 e 12 simultaneamente, em estágios diferentes (do "vale a pena olhar" até "já submetido") — ele mesmo move cada edital de estágio conforme o processo interno avança</td></tr>
+        <tr><th>Ferramentas atuais</th><td>Quadro físico de post-its na parede da sala de reuniões, migrando aos poucos para uma planilha compartilhada; antes de cada reunião de diretoria, confere manualmente cada link para reenviar ao setor jurídico da organização revisar o edital antes da decisão de submeter</td></tr>
+        <tr><th>Familiaridade técnica</th><td>Média-baixa — usa e-mail e planilha no dia a dia, mas arrasta post-it fisicamente há anos; um quadro Kanban digital com drag-and-drop e botões de mover é um conceito familiar na forma, novo na ferramenta</td></tr>
       </tbody>
     </table>
 
     <h3>Objetivos</h3>
     <ul>
-      <li>Pegar o total de editais exibidos num relance, sem contar nada, para colar no e-mail semanal de status.</li>
-      <li>Saber, sem precisar adivinhar, se o número que está vendo é o total geral ou já reflete uma busca/filtro que ela mesma aplicou (e às vezes esquece que deixou ativo).</li>
-      <li>Ter uma forma rápida de conferir se o total bate com a soma das colunas do Kanban antes de confiar nele e citá-lo por escrito para um cliente.</li>
-      <li>Voltar ao total geral com segurança depois de limpar os filtros, sem precisar recarregar a página para ter certeza.</li>
+      <li>Mover um edital de estágio (ex.: de "Backlog" para "Em andamento") com confiança de que a coluna de origem e a de destino refletem isso corretamente, sem card duplicado nem perdido.</li>
+      <li>Saber, olhando o quadro, a diferença entre "essa coluna está vazia porque não tem nada nesse estágio agora" e "essa coluna está vazia porque eu apliquei um filtro e escondi tudo" — para não achar que perdeu um edital.</li>
+      <li>Conferir rapidamente, antes de mandar para o jurídico, se o link de cada edital realmente leva à chamada oficial — sem precisar abrir um por um se puder evitar.</li>
+      <li>Buscar por um edital específico numa reunião e, se não achar nada, ter certeza se é porque digitou errado ou porque aquele edital realmente não está mais na lista.</li>
     </ul>
     <h3>Frustrações atuais (antes de testar o protótipo)</h3>
     <ul>
-      <li>Em cada planilha de cliente, para saber "quantos editais estou acompanhando para essa OSC agora" ela conta linhas manualmente — já mandou um número errado num e-mail de status por ter contado errado uma vez.</li>
-      <li>Como atende três clientes com três planilhas, não tem como saber rapidamente se um filtro que aplicou (Ctrl+F de uma aba) ainda está ativo quando volta à planilha depois de um tempo — precisa reler os cabeçalhos para ter certeza.</li>
-      <li>Sem visão consolidada por estágio, não sabe se o número que vai reportar inclui editais que já foram submetidos (encerrados do ponto de vista dela) ou só os que ainda estão em aberto.</li>
+      <li>No quadro físico de post-its, mover um item de coluna é só puxar e colar — não existe "coluna vazia com mensagem de erro" nem "coluna vazia de verdade": os dois estados parecem visualmente idênticos (post-it nenhum ali), e ele nunca precisou distinguir os dois porque não existe filtro num quadro físico.</li>
+      <li>Confere link por link manualmente hoje, abrindo cada um numa aba antes de mandar ao jurídico — perde tempo real nisso, e uma vez mandou um link quebrado sem perceber, o que atrasou a revisão em um dia.</li>
+      <li>Quando busca um edital específico na planilha compartilhada (Ctrl+F) e não acha nada, não sabe se é porque digitou o nome errado ou porque o edital já foi removido da aba por alguém do time — precisa perguntar no grupo para confirmar.</li>
     </ul>
 
     <h2 id="tarefas">Tarefas testadas</h2>
     <ol>
-      <li>Abrir a tela sem aplicar nenhum filtro e, num único olhar, anotar quantos editais aparecem no total — sem contar linha por linha nem abrir o Kanban — para colar no e-mail semanal de status.</li>
-      <li>Buscar por um termo (ex.: "fomento") e verificar se o número exibido reflete só os resultados da busca, e não o total geral, sem precisar adivinhar nem comparar com outra tela.</li>
-      <li>Aplicar o filtro por instituição (ex.: BNDES) sozinho, sem busca, e confirmar que o total muda de acordo — testando se dá para confiar no número usando só um dos dois filtros.</li>
-      <li>Com o filtro por instituição ainda aplicado, ir para a visão Kanban e somar de cabeça os contadores das quatro colunas, comparando com o total mostrado lá em cima — a checagem que ela faria antes de citar um número para um cliente.</li>
-      <li>Limpar todos os filtros e confirmar que o total volta a refletir o total geral (5), sem precisar recarregar a página.</li>
+      <li>Buscar por um termo sem nenhum resultado correspondente e verificar se dá para confirmar, sem perguntar a ninguém, que a busca rodou certo e simplesmente não há edital com esse termo — não que o sistema travou ou perdeu dados.</li>
+      <li>Mover manualmente (via botões de mover, sem drag-and-drop) todos os editais de uma coluna do Kanban para outra, até a coluna de origem ficar sem nenhum card, e observar se essa coluna vazia parece quebrada, mostra alguma mensagem de erro indevida, ou fica corretamente em branco.</li>
+      <li>Voltar os editais movidos para a coluna original (para não deixar o protótipo num estado estranho para a próxima pessoa) e conferir se o contador da coluna (A009) e o total geral (FR-023) voltam a bater.</li>
+      <li>Percorrer os 5 editais nas duas visões (Tabela e Kanban) e clicar em cada link "Ver chamada" para confirmar que todos abrem, como faria antes de mandar para o jurídico revisar.</li>
+      <li>Por leitura de código (já que a spec agora torna o campo <code>link</code> opcional no cadastro, US2), verificar o que a Tabela/Kanban fariam se um edital não tivesse link — já que isso pode acontecer de verdade assim que o cadastro (fora do escopo deste protótipo) for implementado.</li>
     </ol>
 
     <h2 id="dores">Parecer — dores identificadas</h2>
-    <p>Nenhuma dor nova encontrada nesta rodada. As cinco tarefas foram desenhadas especificamente para pressionar A015 (FR-023) em cenários de conferência de confiança — exatamente o tipo de uso que motivou a dor da rodada anterior — e, por leitura de código confirmando o que já havia sido observado ao vivo no início desta sessão, o comportamento se sustenta em todos eles sem ambiguidade nem inconsistência. Ver "O que funcionou bem" abaixo para o detalhamento de cada tarefa.</p>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-1">Dor 1 — Tabela e Kanban não têm nenhum tratamento para edital sem link, e a spec agora permite isso</h3>
+        <span class="badge badge-medium">🟡 média</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> por leitura de código (Tarefa 5) — <code>renderTabela()</code> gera <code>&lt;a href="${edital.link}"&gt;Ver chamada&lt;/a&gt;</code> e <code>renderKanban()</code> faz <code>card.querySelector(".card-link").href = edital.link</code>, sem nenhuma checagem de que <code>edital.link</code> existe. Os 5 editais mockados sempre têm link preenchido, então isso nunca quebra visivelmente no protótipo hoje — não há como reproduzir ao vivo com os dados atuais (Tarefa 4 confirmou os 5 links abrindo normalmente, sem exceção).</p>
+      <p><strong>Por que é um problema:</strong> a spec foi revisada para tornar <code>link</code> opcional no cadastro (FR-003), justamente para não travar quem precisa cadastrar um edital com pressa e completar o link depois. Isso significa que, assim que a US2 (cadastro) for implementada, vão existir editais reais sem link — exatamente o cenário que a Tarefa 3 do Otávio simula ("preciso conferir cada link antes de mandar pro jurídico"). Se um card sem link chegar nessa mesma lógica de renderização (que é a do protótipo, referência de US1), o resultado seria um link "Ver chamada ↗" clicável apontando para <code>href="undefined"</code> — pior que não ter link nenhum, porque parece funcional e não é. Para o Otávio, isso é o oposto do que ele mais teme: mandar algo quebrado para o jurídico sem perceber (já aconteceu com ele fora do sistema, conforme frustração registrada no canvas).</p>
+      <p><strong>Recomendação:</strong> não é uma correção de protótipo (US1 nunca teve um edital sem link nos dados de exemplo, então não há bug a corrigir aqui) — é uma lacuna de requisito para o <code>product-owner</code> fechar: a spec deveria dizer explicitamente o que a listagem/Kanban exibem quando <code>link</code> está vazio (ex.: texto "Link não informado" no lugar do botão, sem âncora clicável), para que quem implementar US1 de verdade não replique a mesma omissão do protótipo.</p>
+    </section>
 
     <h2 id="bem">O que funcionou bem</h2>
     <ul>
-      <li><strong>Total geral visível sem nenhuma ação (Tarefa 1):</strong> "5 editais exibidos" aparece junto do subtítulo, sem precisar abrir o Kanban nem contar linhas da Tabela — exatamente o número que Renata levaria hoje, com esforço manual, de uma planilha. Resolve a lacuna que motivou FR-023.</li>
-      <li><strong>O número muda com a busca, e a razão da mudança fica visível ao lado, não escondida (Tarefa 2):</strong> por leitura de código, <code>updateEditalCount()</code> usa o mesmo <code>getFiltered()</code> que alimenta a Tabela e o Kanban — nunca um total "geral" desacoplado do que está realmente filtrado. Ao digitar, o indicador de filtro (A013, "Filtrando por: busca "…"") aparece junto, no mesmo instante, então Renata não precisa adivinhar se o "1" que vê é total geral ou resultado de busca: ela literalmente acabou de digitar o termo e viu os dois reagirem juntos, como já confirmado ao vivo nesta sessão com o termo "sustent".</li>
-      <li><strong>O filtro por instituição sozinho, sem busca, também atualiza o total corretamente (Tarefa 3):</strong> <code>getFiltered()</code> aplica busca e filtro de instituição como condições independentes (uma vazia não invalida a outra) — filtrar só por "BNDES (fictício)" muda o total para refletir só os editais dessa instituição, sem exigir que o campo de busca também esteja preenchido.</li>
-      <li><strong>Total e soma das colunas do Kanban sempre batem, com ou sem filtro (Tarefa 4):</strong> por leitura de código, as quatro colunas (<code>STATUSES</code>) são exaustivas e mutuamente exclusivas — todo edital tem exatamente um <code>status</code> — e tanto o total quanto os contadores de coluna (A009) partem do mesmo <code>getFiltered()</code>. Não há como a soma das colunas divergir do total mostrado no topo; a checagem de confiança que Renata faria antes de citar o número para um cliente sempre vai bater.</li>
-      <li><strong>"Limpar filtros" restaura o total geral de forma confiável (Tarefa 5):</strong> o botão zera busca e instituição e chama a mesma <code>applyFilters()</code> que recalcula o total — sem exigir recarregar a página nem deixar resíduo de um filtro anterior.</li>
-      <li><strong>Singular/plural corretos em todos os casos testados</strong> ("1 edital exibido" vs. "N editais exibidos", inclusive "0 editais exibidos" quando um filtro não encontra nada) — reconfirmação do que já havia sido observado ao vivo nesta sessão.</li>
+      <li><strong>Zero resultado é inequívoco, e o motivo fica visível (Tarefa 1):</strong> confirmado ao vivo no Passo 3 desta sessão — buscar um termo sem correspondência mostra "0 editais exibidos" (não em branco, não sumido) e o indicador de filtro (A013) continua mostrando exatamente o termo digitado ("Filtrando por: busca "…""). Para o Otávio, isso resolve a frustração relatada no canvas: ele não precisaria perguntar no grupo se sumiu algo — o sistema mostra o termo que ele digitou, então ele mesmo confere se digitou certo, sem depender de mais ninguém.</li>
+      <li><strong>Mover todos os editais de uma coluna a deixa em branco, sem mensagem indevida (Tarefa 2):</strong> por leitura de código, a mensagem "Nenhum edital encontrado com esses critérios." só aparece quando <code>isFilterActive()</code> é verdadeiro (<code>doStatus.length === 0 && isFilterActive()</code>) — sem filtro ativo, a coluna simplesmente fica vazia (<code>list.innerHTML = ""</code> sem conteúdo adicional), exatamente como o novo Edge Case da spec pede: coluna genuinamente vazia deve ficar em branco, não mostrar a mensagem de filtro. Essa distinção nunca tinha sido observada ao vivo antes desta rodada, mas a lógica é direta e não deixa ambiguidade — o comportamento de mover, para o Otávio, corresponderia exatamente à intuição de "puxar o post-it e a parede fica vazia", sem susto de mensagem de erro aparecendo à toa.</li>
+      <li><strong>Contador de coluna e total geral seguem corretos depois de mover cards (Tarefa 3):</strong> mover um edital de estágio não muda o total de editais exibidos (FR-023) — só redistribui entre colunas —, e por leitura de código isso é garantido porque <code>updateEditalCount()</code> lê o array completo filtrado, independente de <code>status</code>; o contador por coluna (A009) é recalculado a cada <code>renderKanban()</code>, chamado a cada <code>moveEdital()</code>. Não há caminho de código em que mover um card deixe os números dessincronizados.</li>
+      <li><strong>Todos os 5 links mockados abrem corretamente, sem exceção (Tarefa 4):</strong> em ambas as visões, cada "Ver chamada" tem uma URL completa e válida nos dados de exemplo — o fluxo que o Otávio faria hoje manualmente (abrir cada link antes de mandar ao jurídico) funcionaria sem atrito nos dados atuais do protótipo.</li>
     </ul>
 
-    <p>A dor de viewport estreito (rodada 4, ~440px) não foi re-testada nesta rodada — permanece registrada como limitação de ferramental, não como pendência nova.</p>
-
     <h2 id="resolver">Para quem resolver</h2>
-    <p>Nenhuma dor nesta rodada — nada a encaminhar. A015/FR-023 se sustentou em todos os cenários de conferência testados; nenhuma ação é necessária do <code>product-owner</code> ou do <code>designer</code> a partir deste parecer.</p>
+    <p><a href="#dor-1">Dor 1</a> (edital sem link não tem tratamento de exibição definido) → <code>product-owner</code>, para fechar em <code>spec.md</code> o comportamento esperado de Tabela/Kanban quando <code>link</code> está vazio, agora que FR-003 tornou o campo opcional no cadastro (US2). Não é bloqueante para US1/US4 como estão hoje — os dados de exemplo sempre têm link —, mas fica pendente antes de US2 ser implementada de verdade, para que quem construir a listagem real não repita a mesma omissão do protótipo.</p>
 
     <p class="page-footer">Este documento não corrige nada — é insumo para o <code>product-owner</code>/<code>designer</code> agirem sobre o parecer, via <code>/quick-task</code> ou ajuste de <code>spec.md</code>, a critério de quem revisa.</p>
   </main>
