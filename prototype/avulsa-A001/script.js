@@ -74,13 +74,16 @@ function renderTabela() {
   corpo.innerHTML = "";
   editais.forEach((edital) => {
     const tr = document.createElement("tr");
+    // Ordem prioriza as colunas decisivas para priorização (Fechamento, Abertura, Link)
+    // logo após o identificador (Chamada); Instituição/Descrição, menos decisivas, ficam por
+    // último. Os data-label alimentam o layout empilhado em telas estreitas (ver style.css).
     tr.innerHTML = `
-      <td>${edital.chamada}</td>
-      <td>${edital.descricao}</td>
-      <td>${edital.instituicao}</td>
-      <td>${formatDate(edital.abertura)}</td>
-      <td>${formatDate(edital.fechamento)}</td>
-      <td><a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a></td>
+      <td data-label="Chamada">${edital.chamada}</td>
+      <td data-label="Fechamento">${formatDate(edital.fechamento)}</td>
+      <td data-label="Abertura">${formatDate(edital.abertura)}</td>
+      <td data-label="Link"><a href="${edital.link}" target="_blank" rel="noopener">Ver chamada</a></td>
+      <td data-label="Instituição">${edital.instituicao}</td>
+      <td data-label="Descrição">${edital.descricao}</td>
     `;
     corpo.appendChild(tr);
   });
@@ -104,6 +107,7 @@ function renderKanban() {
     card.querySelector(".card-inst").textContent = edital.instituicao;
     card.querySelector(".card-dates").textContent =
       `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`;
+    card.querySelector(".card-link").href = edital.link;
     list.appendChild(node);
   });
 

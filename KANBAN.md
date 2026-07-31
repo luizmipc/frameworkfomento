@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-30T22:32Z
+**Última sincronização**: 2026-07-31T00:05Z
 
 ## To Do
 
@@ -56,6 +56,23 @@ todas as colunas.
 - [ ] T038 [Polish] Executar o roteiro de `specs/001-manage-call-for-proposals/quickstart.md` manualmente (via `docker compose up`)
 - [ ] T039 [P] [Polish] Atualizar `/home/lm/repos/frameworkfomento/CLAUDE.md` com os comandos reais de build/lint/test e a arquitetura de alto nível
 - [ ] T040 [P] [Polish] Atualizar `docs/architecture-and-tech.md` e `docs/class-diagram.md` refletindo o app `editais`, o model `Edital` e o fluxo de autenticação mínima
+- [ ] A002 Layout responsivo da tabela de editais: em janelas estreitas
+  (~463px, próximo de uma tela em split-screen) só 3 das 6 colunas ficam
+  visíveis sem rolar, e são exatamente as 3 menos decisivas — Abertura,
+  Fechamento e Link (os dados mais decisivos para priorizar) somem sem
+  nenhum indicador de que há mais conteúdo à direita. Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-1`.
+- [ ] A003 Ajustar largura mínima das colunas do quadro Kanban: as 4 colunas
+  (Backlog/Em andamento/Validação/Concluído) juntas ultrapassam a largura
+  disponível mesmo em desktop padrão (1440×900), exigindo rolagem
+  horizontal e escondendo parcialmente "Concluído". Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-2`.
+- [ ] A004 Incluir o link da chamada no card do quadro Kanban — hoje só a
+  tabela mostra o link; FR-012 já pede ele acessível "diretamente a partir
+  da tabela e do quadro". Protótipo: `prototype/avulsa-A001/`. Via teste de
+  persona `docs/persona/avulsa-A001.html#dor-3`.
 
 ### (avulsas)
 

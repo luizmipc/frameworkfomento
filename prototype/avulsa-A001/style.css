@@ -74,10 +74,19 @@ main {
 
 /* Tabela */
 .table-wrap {
-  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow-x: auto;
+  /* Sombra nas bordas esquerda/direita quando há conteúdo além da área visível
+     (some sozinha quando já rolou até o fim) — técnica CSS-only, sem JS. */
+  background:
+    linear-gradient(to right, var(--surface) 30%, rgba(255, 255, 255, 0)) 0 0,
+    linear-gradient(to left, var(--surface) 30%, rgba(255, 255, 255, 0)) 100% 0,
+    radial-gradient(farthest-side at 0 50%, rgba(31, 41, 51, 0.18), rgba(0, 0, 0, 0)) 0 0,
+    radial-gradient(farthest-side at 100% 50%, rgba(31, 41, 51, 0.18), rgba(0, 0, 0, 0)) 100% 0;
+  background-repeat: no-repeat;
+  background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+  background-attachment: local, local, scroll, scroll;
 }
 
 table {
@@ -113,11 +122,60 @@ td a {
   color: var(--accent);
 }
 
+/* Abaixo de 640px (ex.: split-screen com e-mail/planilha ao lado, ~463px) a
+   rolagem horizontal esconde as colunas decisivas (Fechamento/Abertura/Link).
+   Empilha a tabela em formato de card, uma linha por edital, sem precisar rolar. */
+@media (max-width: 640px) {
+  .table-wrap {
+    overflow-x: visible;
+    background: var(--surface);
+  }
+
+  table {
+    min-width: 0;
+  }
+
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    display: block;
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 1rem;
+  }
+
+  td {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.2rem 0;
+    border-bottom: none;
+    font-size: 0.85rem;
+  }
+
+  td::before {
+    content: attr(data-label);
+    flex: 0 0 88px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* Chamada é o título do card — sem rótulo repetido, com mais destaque. */
+  td:first-child {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  td:first-child::before {
+    content: none;
+  }
+}
+
 /* Kanban */
 .board {
   display: grid;
-  grid-template-columns: repeat(4, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
   align-items: start;
 }
 
@@ -127,6 +185,11 @@ td a {
   border-radius: var(--radius);
   padding: 0.75rem;
   min-height: 200px;
+  /* Grid items têm min-width:auto por padrão, o que deixa a coluna crescer além
+     da faixa reservada quando o conteúdo (título longo do card) pede mais espaço
+     — é o que empurrava "Concluído" para fora em 1440px. minmax(0, 1fr) acima +
+     min-width:0 aqui deixam as 4 colunas caberem sem rolagem horizontal. */
+  min-width: 0;
 }
 
 .column h2 {
@@ -176,6 +239,23 @@ td a {
   margin: 0;
   font-size: 0.78rem;
   color: var(--text-muted);
+}
+
+.card-title, .card-inst {
+  overflow-wrap: anywhere;
+}
+
+.card-link {
+  display: inline-block;
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.card-link:hover,
+.card-link:focus-visible {
+  text-decoration: underline;
 }
 
 .card-actions {
