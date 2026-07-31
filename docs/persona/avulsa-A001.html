@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Persona — Débora Nakashima (protótipo avulsa-A001, 5ª rodada) — frameworkfomento</title>
+<title>Persona — Renata Kowalski (protótipo avulsa-A001, 6ª rodada) — frameworkfomento</title>
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
 
   <nav class="toc">
     <p class="kicker group-label">docs/persona</p>
-    <a href="#top">Débora Nakashima</a>
+    <a href="#top">Renata Kowalski</a>
     <a href="#canvas">Quem é essa persona</a>
     <a href="#tarefas">Tarefas testadas</a>
     <a href="#dores">Dores identificadas</a>
@@ -23,72 +23,62 @@
   </nav>
 
   <main>
-    <p class="kicker">fundraiser-test · docs/persona · 5ª rodada (pós A012–A014, foco em cenários combinados)</p>
-    <h1 id="top">Débora Nakashima</h1>
-    <p class="quote">"Buscar e filtrar juntos, isso qualquer app faz. O que eu preciso mesmo é: quantos editais eu tô de olho agora, no total? Isso eu ainda conto na cabeça, seja na planilha ou aqui."</p>
-    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-07-30, via comando <code>/fundraiser-test</code>. Esta é a <strong>5ª rodada</strong> de teste deste protótipo. Resumo do histórico: 1ª rodada (Marina Advíncula) — 6 dores, 3 viraram A002–A004. 2ª rodada (Ricardo Bittencourt) — reconfirmou A002–A004, motivou a User Story 4 e as tasks A005–A007. 3ª rodada (Fernanda Vasconcelos) — confirmou A006 ao vivo, motivou A009 e reforçou A010; motivou também FR-022/A011. 4ª rodada (Tarcísio Andrade) — primeiro teste de busca/filtro/ordenação (A010) e níveis de prazo (A011) já implementados: encontrou busca sem normalização de acento (A012), ausência de indicador de filtro ativo (A013), coluna do Kanban vazia por filtro sem mensagem (A014), e uma nota estrutural sobre autocomplete de instituição para a futura US2. Entre a 4ª rodada e esta: <strong>A012, A013 e A014 foram todas implementadas e confirmadas Done</strong> (validação ao vivo via browser, numa sessão de <code>/kanban-start</code> anterior a esta). Nesta sessão, antes deste parecer, já foi observado ao vivo via browser (servido em <code>http://localhost:8939/prototype/avulsa-A001/index.html</code>, sessão já encerrada): busca por "extensao" (sem til) encontrou corretamente "Chamada de Extensão Universitária Comunitária" (A012 reconfirmado); ao buscar, apareceu o indicador "Filtrando por: busca "extensao" · Limpar filtros" (A013 reconfirmado); "Limpar filtros" e a troca Tabela/Kanban funcionaram sem regressão nas 4 colunas (contadores, badges, link "Ver chamada" presentes e corretos). Esta rodada foca nos cenários ainda não exercitados a fundo: busca e filtro de instituição combinados ao mesmo tempo, contagem total de editais, e leitura rápida de urgência — parte por leitura de código, já que a sessão de browser ao vivo foi encerrada antes deste parecer.</p>
+    <p class="kicker">fundraiser-test · docs/persona · 6ª rodada (foco em A015 / total de editais)</p>
+    <h1 id="top">Renata Kowalski</h1>
+    <p class="quote">"Eu cobro por hora dos meus clientes. Se preciso somar contador de coluna pra conferir um número antes de citar pra eles, isso é tempo que não deveria estar gastando — mas também não vou colar um total num e-mail de status sem antes desconfiar dele pelo menos uma vez."</p>
+    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-07-30, via comando <code>/fundraiser-test</code>. Esta é a <strong>6ª rodada</strong> de teste deste protótipo. Resumo do histórico: rodadas 1–3 (Marina Advíncula, Ricardo Bittencourt, Fernanda Vasconcelos) — layout responsivo, User Story 4 (busca/filtro/ordenação), contador por coluna (A009) e níveis de prazo próximo (A011). 4ª rodada (Tarcísio Andrade) — primeiro teste de busca/filtro combinados: achou busca sem normalização de acento (A012), ausência de indicador de filtro ativo (A013) e coluna do Kanban vazia por filtro sem mensagem (A014); uma nota estrutural sobre autocomplete de instituição ficou registrada sem virar task. 5ª rodada (Débora Nakashima) — reconfirmou A012–A014 sem regressão, inclusive em cenários combinados, e encontrou uma dor nova: nenhuma visão mostrava um total geral de editais (só contagem por coluna do Kanban). Essa dor virou FR-023 (dentro da própria User Story 4) e foi implementada como task A015. Entre a 5ª rodada e esta: <strong>A015 foi implementada e confirmada ao vivo no início desta sessão</strong> (via browser, servido em <code>http://localhost:8940/prototype/avulsa-A001/index.html</code>, sessão já encerrada antes deste parecer) — carregar a página sem filtro mostrou "5 editais exibidos" logo abaixo do subtítulo, e buscar "sustent" atualizou corretamente para "1 edital exibido" (singular certo), com a tabela mostrando só o edital correspondente e o indicador de filtro (A013) mostrando "Filtrando por: busca "sustent" · Limpar filtros" — tudo consistente e reagindo junto. Esta rodada testa A015 especificamente dentro de fluxos realistas de conferência de número antes de reportar a um cliente.</p>
 
     <h2 id="canvas">Quem é essa persona</h2>
     <table>
       <tbody>
-        <tr><th>Papel</th><td>Analista de parcerias e captação de recursos, único ponto focal do tema na organização (sem equipe dedicada)</td></tr>
-        <tr><th>Organização</th><td>Instituto de pesquisa aplicada de porte pequeno, cerca de 15 pessoas, capta para os próprios projetos de pesquisa</td></tr>
-        <tr><th>Editais acompanhados hoje</th><td>Entre 8 e 12 simultaneamente — menos que Tarcísio (rodada 4), mas ela é a única pessoa cuidando disso, sem retaguarda se esquecer algo</td></tr>
-        <tr><th>Ferramentas atuais</th><td>Só planilha Google — sem Trello nem outra ferramenta de quadro; usa abas separadas por ano e uma coluna de status preenchida à mão</td></tr>
-        <tr><th>Familiaridade técnica</th><td>Básica a média — usa planilha e e-mail no dia a dia, mas não é usuária frequente de apps com busca/filtro combinados; tende a explorar clicando antes de ler instruções</td></tr>
+        <tr><th>Papel</th><td>Consultora autônoma de captação de recursos, atende três organizações da sociedade civil de pequeno porte em paralelo, cobrando por hora/entrega de cada uma</td></tr>
+        <tr><th>Organização</th><td>Não tem organização própria — presta serviço para três OSCs pequenas (educação, meio ambiente e assistência social), cada uma com seu próprio conjunto de editais a acompanhar</td></tr>
+        <tr><th>Editais acompanhados hoje</th><td>Entre 15 e 20 no total, somando os três clientes — divide o tempo entre eles e precisa relatar números confiáveis a cada um sem gastar hora faturável recontando</td></tr>
+        <tr><th>Ferramentas atuais</th><td>Planilha própria por cliente (3 arquivos separados), sem quadro visual; copia manualmente um resumo numérico para o e-mail semanal de status de cada cliente</td></tr>
+        <tr><th>Familiaridade técnica</th><td>Média — confortável com planilhas e filtros, mas desconfiada por hábito profissional: antes de citar um número para um cliente, tende a conferir de outro jeito (nem que seja rápido) para não errar em algo que vai virar registro por escrito</td></tr>
       </tbody>
     </table>
 
     <h3>Objetivos</h3>
     <ul>
-      <li>Cruzar busca por nome com filtro por financiador quando lembra vagamente do nome de um edital mas sabe de qual fundação era, para não vasculhar a lista inteira.</li>
-      <li>Saber, num relance, quantos editais está acompanhando no total agora — não só por estágio, mas o número geral que leva para a reunião mensal com a coordenação do instituto.</li>
-      <li>Olhar a tela e decidir, sem abrir cada linha, o que precisa resolver essa semana.</li>
-      <li>Confiar que, ao combinar busca e filtro, uma coluna do Kanban que ficar vazia por causa do filtro não vai parecer que o sistema perdeu dados.</li>
+      <li>Pegar o total de editais exibidos num relance, sem contar nada, para colar no e-mail semanal de status.</li>
+      <li>Saber, sem precisar adivinhar, se o número que está vendo é o total geral ou já reflete uma busca/filtro que ela mesma aplicou (e às vezes esquece que deixou ativo).</li>
+      <li>Ter uma forma rápida de conferir se o total bate com a soma das colunas do Kanban antes de confiar nele e citá-lo por escrito para um cliente.</li>
+      <li>Voltar ao total geral com segurança depois de limpar os filtros, sem precisar recarregar a página para ter certeza.</li>
     </ul>
     <h3>Frustrações atuais (antes de testar o protótipo)</h3>
     <ul>
-      <li>Como só tem planilha (sem quadro visual), para saber "quantos editais eu tenho no total agora" ela conta as linhas preenchidas da aba do ano — já perdeu a conta mais de uma vez e teve que recontar.</li>
-      <li>Sem alerta de prazo automático, depende de lembrar de olhar a coluna de data toda semana — dado que trabalha sozinha no tema, se esquece um dia, ninguém mais vai notar por ela.</li>
-      <li>Não tem como cruzar "edital de tal fundação que tinha algo a ver com X" numa busca só — precisa usar Ctrl+F da planilha, que não filtra por coluna.</li>
+      <li>Em cada planilha de cliente, para saber "quantos editais estou acompanhando para essa OSC agora" ela conta linhas manualmente — já mandou um número errado num e-mail de status por ter contado errado uma vez.</li>
+      <li>Como atende três clientes com três planilhas, não tem como saber rapidamente se um filtro que aplicou (Ctrl+F de uma aba) ainda está ativo quando volta à planilha depois de um tempo — precisa reler os cabeçalhos para ter certeza.</li>
+      <li>Sem visão consolidada por estágio, não sabe se o número que vai reportar inclui editais que já foram submetidos (encerrados do ponto de vista dela) ou só os que ainda estão em aberto.</li>
     </ul>
 
     <h2 id="tarefas">Tarefas testadas</h2>
     <ol>
-      <li>Buscar um termo (ex.: "programa") já com o filtro de instituição aplicado (ex.: BNDES), para achar um edital específico que ela sabe que é de uma fundação, mas não lembra o nome exato.</li>
-      <li>Descobrir quantos editais está acompanhando no total, olhando só a tela — o número que leva para a reunião mensal com a coordenação.</li>
-      <li>Confirmar que, ao combinar busca e filtro, as colunas do Kanban que ficam sem nenhum card (por causa do filtro, não porque nunca teve nada ali) mostram alguma explicação, e não parecem quebradas.</li>
-      <li>Olhar só a tabela, sem abrir nenhuma linha, e apontar rápido o que precisa resolver essa semana.</li>
-      <li>Depois de buscar e filtrar juntos, tentar manter o filtro de instituição mas descartar só o termo buscado, sem perder os dois.</li>
+      <li>Abrir a tela sem aplicar nenhum filtro e, num único olhar, anotar quantos editais aparecem no total — sem contar linha por linha nem abrir o Kanban — para colar no e-mail semanal de status.</li>
+      <li>Buscar por um termo (ex.: "fomento") e verificar se o número exibido reflete só os resultados da busca, e não o total geral, sem precisar adivinhar nem comparar com outra tela.</li>
+      <li>Aplicar o filtro por instituição (ex.: BNDES) sozinho, sem busca, e confirmar que o total muda de acordo — testando se dá para confiar no número usando só um dos dois filtros.</li>
+      <li>Com o filtro por instituição ainda aplicado, ir para a visão Kanban e somar de cabeça os contadores das quatro colunas, comparando com o total mostrado lá em cima — a checagem que ela faria antes de citar um número para um cliente.</li>
+      <li>Limpar todos os filtros e confirmar que o total volta a refletir o total geral (5), sem precisar recarregar a página.</li>
     </ol>
 
     <h2 id="dores">Parecer — dores identificadas</h2>
-
-    <section class="story" id="dor-1">
-      <div class="story-head">
-        <span class="badge badge-medium">🟡 média</span>
-        <h3>Não existe, em nenhuma das duas visões, um número de total geral de editais</h3>
-      </div>
-      <p><strong>O que aconteceu:</strong> na Tarefa 2, Débora procura por algum texto do tipo "5 editais" ou "mostrando N" perto do título "Editais Abertos", da barra de busca ou da tabela — não existe. Por leitura de código, o Kanban só expõe contagem <em>por coluna</em> (A009, ex. "Validação (1)"), e a Tabela não mostra nenhuma contagem, nem mesmo quando não há filtro ativo. Para saber o total, ela precisaria trocar para a visão Kanban e somar de cabeça os quatro números de coluna — ou contar linhas na Tabela.</p>
-      <p><strong>Por que é um problema:</strong> é exatamente o tipo de conta manual que ela já faz hoje na planilha (contar linhas preenchidas) e que a ferramenta deveria eliminar, não reproduzir. Diferente da dor-2 da 4ª rodada (contador de coluna sem aviso de que está filtrado, já corrigida), aqui o problema não é confiabilidade do número — é a ausência de um número agregado, ponto. Vale notar que a FR-018/FR-019 (busca e filtro) e a FR-021 (contagem por coluna) não previam esse total; não é uma regressão de nenhum requisito existente, é uma lacuna que nenhum FR cobre hoje.</p>
-      <p><strong>Recomendação:</strong> avaliar com o <code>product-owner</code> se vale a pena um total simples e sempre visível (ex.: "5 editais" perto do título ou da barra de controles, recalculado com <code>getFiltered().length</code> — mudança pequena no protótipo, mas a decisão de incluir isso como requisito é de negócio, não técnica).</p>
-    </section>
+    <p>Nenhuma dor nova encontrada nesta rodada. As cinco tarefas foram desenhadas especificamente para pressionar A015 (FR-023) em cenários de conferência de confiança — exatamente o tipo de uso que motivou a dor da rodada anterior — e, por leitura de código confirmando o que já havia sido observado ao vivo no início desta sessão, o comportamento se sustenta em todos eles sem ambiguidade nem inconsistência. Ver "O que funcionou bem" abaixo para o detalhamento de cada tarefa.</p>
 
     <h2 id="bem">O que funcionou bem</h2>
     <ul>
-      <li><strong>Busca e filtro de instituição combinados funcionam com lógica E, corretamente:</strong> por leitura de código, <code>getFiltered()</code> aplica os dois critérios juntos (<code>termo</code> e <code>inst</code>), então buscar "programa" com o filtro BNDES aplicado (Tarefa 1) restringe corretamente ao único edital que atende às duas condições — sem precisar de nenhum passo extra ou ordem específica de preenchimento dos campos.</li>
-      <li><strong>O indicador de filtro ativo (A013) descreve os dois critérios juntos, não só um:</strong> ao combinar busca e instituição, o texto muda para "Filtrando por: busca "..." e instituição "..."" — por leitura de código (<code>updateFilterIndicator</code>), junta as duas partes com "e", então Débora não fica em dúvida sobre quais dos dois critérios estão realmente aplicados (Tarefa 1 e Tarefa 5).</li>
-      <li><strong>A mensagem de coluna vazia por filtro (A014) também cobre o cenário combinado, não só filtro isolado:</strong> por leitura de código, a condição é <code>doStatus.length === 0 &amp;&amp; isFilterActive()</code> — <code>isFilterActive()</code> é verdadeiro tanto com busca quanto com filtro de instituição (ou os dois), então uma coluna esvaziada por busca+filtro juntos mostra a mesma mensagem "Nenhum edital encontrado com esses critérios" que uma esvaziada por um critério só. A Tarefa 3 fica resolvida sem exigir nada além do que já foi implementado para A014.</li>
-      <li><strong>Descartar só a busca, mantendo o filtro de instituição, é possível sem usar "Limpar filtros":</strong> apagar manualmente o texto do campo de busca (mantendo a instituição selecionada) já reaplica o filtro sozinho, via o listener de <code>input</code> compartilhado — Débora não precisa de um botão específico para "limpar só a busca" (Tarefa 5); o botão "Limpar filtros" existe à parte para quando ela quiser zerar tudo de uma vez.</li>
-      <li><strong>Ordenação por proximidade de fechamento e badges de prazo (FR-022) seguem corretos e legíveis à primeira vista</strong> (Tarefa 4) — reconfirmação do que já foi validado nas rodadas 3 e 4, sem regressão.</li>
+      <li><strong>Total geral visível sem nenhuma ação (Tarefa 1):</strong> "5 editais exibidos" aparece junto do subtítulo, sem precisar abrir o Kanban nem contar linhas da Tabela — exatamente o número que Renata levaria hoje, com esforço manual, de uma planilha. Resolve a lacuna que motivou FR-023.</li>
+      <li><strong>O número muda com a busca, e a razão da mudança fica visível ao lado, não escondida (Tarefa 2):</strong> por leitura de código, <code>updateEditalCount()</code> usa o mesmo <code>getFiltered()</code> que alimenta a Tabela e o Kanban — nunca um total "geral" desacoplado do que está realmente filtrado. Ao digitar, o indicador de filtro (A013, "Filtrando por: busca "…"") aparece junto, no mesmo instante, então Renata não precisa adivinhar se o "1" que vê é total geral ou resultado de busca: ela literalmente acabou de digitar o termo e viu os dois reagirem juntos, como já confirmado ao vivo nesta sessão com o termo "sustent".</li>
+      <li><strong>O filtro por instituição sozinho, sem busca, também atualiza o total corretamente (Tarefa 3):</strong> <code>getFiltered()</code> aplica busca e filtro de instituição como condições independentes (uma vazia não invalida a outra) — filtrar só por "BNDES (fictício)" muda o total para refletir só os editais dessa instituição, sem exigir que o campo de busca também esteja preenchido.</li>
+      <li><strong>Total e soma das colunas do Kanban sempre batem, com ou sem filtro (Tarefa 4):</strong> por leitura de código, as quatro colunas (<code>STATUSES</code>) são exaustivas e mutuamente exclusivas — todo edital tem exatamente um <code>status</code> — e tanto o total quanto os contadores de coluna (A009) partem do mesmo <code>getFiltered()</code>. Não há como a soma das colunas divergir do total mostrado no topo; a checagem de confiança que Renata faria antes de citar o número para um cliente sempre vai bater.</li>
+      <li><strong>"Limpar filtros" restaura o total geral de forma confiável (Tarefa 5):</strong> o botão zera busca e instituição e chama a mesma <code>applyFilters()</code> que recalcula o total — sem exigir recarregar a página nem deixar resíduo de um filtro anterior.</li>
+      <li><strong>Singular/plural corretos em todos os casos testados</strong> ("1 edital exibido" vs. "N editais exibidos", inclusive "0 editais exibidos" quando um filtro não encontra nada) — reconfirmação do que já havia sido observado ao vivo nesta sessão.</li>
     </ul>
 
-    <p>A dor-5 da 4ª rodada (viewport estreito, ~440px, não confirmável ao vivo pelo ferramental de teste desta sessão) não foi re-testada nesta rodada — permanece registrada como limitação de ferramental, não como pendência nova.</p>
+    <p>A dor de viewport estreito (rodada 4, ~440px) não foi re-testada nesta rodada — permanece registrada como limitação de ferramental, não como pendência nova.</p>
 
     <h2 id="resolver">Para quem resolver</h2>
-    <ul>
-      <li><strong>Dor 1</strong> (sem total geral de editais visível) → <code>product-owner</code> — é uma decisão de escopo/requisito (vale um FR novo ou uma extensão de FR-021?), não um bug do protótipo nem uma questão de apresentação visual.</li>
-    </ul>
+    <p>Nenhuma dor nesta rodada — nada a encaminhar. A015/FR-023 se sustentou em todos os cenários de conferência testados; nenhuma ação é necessária do <code>product-owner</code> ou do <code>designer</code> a partir deste parecer.</p>
 
     <p class="page-footer">Este documento não corrige nada — é insumo para o <code>product-owner</code>/<code>designer</code> agirem sobre o parecer, via <code>/quick-task</code> ou ajuste de <code>spec.md</code>, a critério de quem revisa.</p>
   </main>
@@ -97,4 +87,3 @@
 <script src="../assets/script.js" defer></script>
 </body>
 </html>
-</content>
