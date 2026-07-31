@@ -11,6 +11,12 @@
 <header class="topbar">
   <h1>Editais Abertos</h1>
   <p class="subtitle">Acompanhe as chamadas de fomento disponíveis e organize seu progresso</p>
+  <!-- FR-023 / A015: total de editais sendo exibidos no momento — total geral
+       sem busca/filtro ativo, total já filtrado (getFiltered().length) quando
+       há busca e/ou filtro de instituição. Fica junto do título porque é
+       visível nas duas visões, sem precisar trocar de aba (aria-live avisa
+       leitores de tela quando o número muda). -->
+  <p class="edital-count" id="edital-count" aria-live="polite"></p>
 </header>
 
 <nav class="view-switch" role="tablist" aria-label="Alternar visão">

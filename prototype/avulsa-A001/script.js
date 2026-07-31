@@ -108,6 +108,7 @@ const sortFechamento = document.getElementById("sort-fechamento");
 const filterIndicator = document.getElementById("filter-indicator");
 const filterSummary = document.getElementById("filter-summary");
 const clearFiltersBtn = document.getElementById("clear-filters");
+const editalCount = document.getElementById("edital-count");
 
 // Opções do filtro de instituição vêm dos dados mockados — sem lista fixa.
 [...new Set(editais.map((e) => e.instituicao))].sort().forEach((inst) => {
@@ -149,10 +150,20 @@ function byFechamento(a, b) {
   return a.fechamento < b.fechamento ? -1 : a.fechamento > b.fechamento ? 1 : 0;
 }
 
+// FR-023 / A015: total geral quando não há busca/filtro ativo, total já
+// filtrado (getFiltered().length) quando há — nunca soma manual de coluna
+// nem contagem de linha por conta do captador.
+function updateEditalCount() {
+  const total = getFiltered().length;
+  const rotulo = total === 1 ? "edital exibido" : "editais exibidos";
+  editalCount.textContent = `${total} ${rotulo}`;
+}
+
 // Reaplica busca/filtro nas duas visões + no indicador de cima, sempre juntos
 // (US4): tabela e kanban compartilham a mesma barra de controles.
 function applyFilters() {
   updateFilterIndicator();
+  updateEditalCount();
   renderTabela();
   renderKanban();
 }
@@ -323,5 +334,6 @@ document.querySelectorAll(".view-btn").forEach((btn) => {
 });
 
 updateFilterIndicator();
+updateEditalCount();
 renderTabela();
 renderKanban();

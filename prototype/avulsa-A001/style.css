@@ -41,6 +41,15 @@ body {
   font-size: 0.95rem;
 }
 
+/* FR-023 / A015: total de editais exibidos, junto do título — visível nas
+   duas visões (Tabela e Kanban) sem precisar trocar de aba. */
+.edital-count {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 .view-switch {
   display: flex;
   gap: 0.5rem;

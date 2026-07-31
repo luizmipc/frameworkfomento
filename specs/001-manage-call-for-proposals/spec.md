@@ -193,6 +193,12 @@ ordenados pela proximidade da data de fechamento.
 5. **Given** o captador aplicou uma busca e/ou um filtro por instituição,
    **When** ele limpa a busca/filtro, **Then** a listagem volta a exibir
    todos os editais cadastrados.
+6. **Given** existem editais cadastrados, **When** o captador acessa a
+   listagem ou o quadro de progresso, **Then** o sistema exibe, próximo ao
+   título da tela ou aos controles de busca/filtro, o número total de
+   editais sendo exibidos no momento — mostrando o total geral quando
+   nenhuma busca ou filtro está ativo, e o total já filtrado quando o
+   captador aplicou busca e/ou filtro por instituição responsável.
 
 ---
 
@@ -298,6 +304,22 @@ ordenados pela proximidade da data de fechamento.
   prazo vencido — com cor, limiares e regra de "só o nível mais urgente"
   próprios, o que mantém FR-011 estável e cada requisito testável de forma
   independente.
+- **FR-023**: O sistema DEVE exibir, próximo ao título da tela ou aos
+  controles de busca/filtro, o número total de editais sendo exibidos no
+  momento — refletindo o total geral de editais cadastrados quando nenhuma
+  busca ou filtro está ativo, e o total já filtrado (não o total geral) quando
+  o captador tem uma busca por nome e/ou um filtro por instituição
+  responsável aplicados. Este requisito permanece dentro da User Story 4 (não
+  vira uma User Story própria) porque não introduz uma tarefa nova do
+  captador — é um refinamento de visibilidade sobre a mesma capacidade de
+  "localizar um edital entre muitos" que FR-018 a FR-021 já cobrem, e por isso
+  compartilha a mesma prioridade (P4) e o mesmo teste independente. A origem
+  é uma lacuna de usabilidade encontrada em teste com persona (Débora
+  Nakashima, `docs/persona/avulsa-A001.html#dor-1`, severidade média): sem um
+  total agregado visível, o captador precisava somar de cabeça as contagens
+  por coluna do quadro de progresso (FR-021) ou contar linhas na tabela para
+  saber quantos editais está acompanhando — a mesma conta manual que a
+  ferramenta deveria eliminar.
 
 ### Key Entities
 

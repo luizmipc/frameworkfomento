@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-07-31T02:10Z
+**Última sincronização**: 2026-07-31T02:24Z
 
 ## To Do
 
@@ -80,6 +80,13 @@ todas as colunas.
   `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-1` (rodada 1) /
   `#dor-5` (rodada 4).
+- [ ] A015 Mostrar o total de editais exibidos (geral, ou já filtrado
+  quando busca/instituição estiverem ativos) perto do título ou dos
+  controles de busca/filtro — hoje só existe contagem por coluna do
+  Kanban (A009); saber o total exige somar de cabeça ou contar linhas
+  na tabela (FR-023 em `spec.md`, User Story 4). Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-1`.
 
 ### (avulsas)
 
