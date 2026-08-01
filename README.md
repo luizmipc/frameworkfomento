@@ -76,9 +76,40 @@ Cada feature ganha seu próprio branch (nome igual ao slug em `specs/<feature>/`
 
 ## Segurança
 
-Para auditoria automatizada (SAST, dependências, configuração e um scan
-OWASP ZAP contra a aplicação real), rode `/cybersecurity-check` — o
-`cybersecurity-blue` devolve um relatório honesto em `docs/cybersec-report/`.
+Para auditoria automatizada, rode `/cybersecurity-check` — o
+`cybersecurity-blue` sobe a aplicação real, roda `shortcuts/security-test.sh`
+e devolve um relatório honesto (com interpretação real do agente, não só a
+saída crua das ferramentas — severidade CVSS, mapeamento ao OWASP Top
+10/ASVS, raciocínio MITRE ATT&CK/D3FEND nos achados críticos) em
+`docs/cybersec-report/`.
+
+`shortcuts/security-test.sh` roda sete ferramentas, nesta ordem — do achado
+mais barato/crítico de checar (segredo vazado) ao mais lento (scan dinâmico
+contra a aplicação rodando):
+
+| Ordem | Teste | Ferramenta | Cobre |
+|---|---|---|---|
+| 1 | `gitleaks` | [gitleaks](https://github.com/gitleaks/gitleaks) | Segredos/credenciais vazados, inclusive no histórico do git |
+| 2 | `bandit` | [bandit](https://github.com/PyCQA/bandit) | SAST — código Python |
+| 3 | `semgrep` | [semgrep](https://github.com/semgrep/semgrep) | SAST — regras OWASP Top 10, complementa o bandit |
+| 4 | `deps` | `uv audit` / [pip-audit](https://github.com/pypa/pip-audit) | SCA — CVEs conhecidas nas dependências Python (OWASP A06:2021) |
+| 5 | `trivy` | [trivy](https://github.com/aquasecurity/trivy) | SCA + IaC — dependências e misconfiguração de `Dockerfile`/`docker-compose.yml` |
+| 6 | `django-check` | `manage.py check --deploy` | Configuração de deploy do Django (OWASP A05:2021) |
+| 7 | `zap` | OWASP ZAP Baseline | DAST — scan dinâmico contra o dev server rodando |
+
+`gitleaks`, `trivy` e o ZAP rodam via imagem Docker oficial (sem instalar
+nada novo no sistema) — se `docker` não estiver disponível, o script pula
+essas três checagens sozinho e avisa, sem quebrar as demais.
+
+Por padrão o script roda a suíte inteira; para rodar só alguns testes,
+passe os nomes da coluna "Teste" acima como argumento, na ordem que
+preferir (o script sempre executa na ordem canônica da tabela):
+
+```bash
+./shortcuts/security-test.sh                  # suíte completa
+./shortcuts/security-test.sh gitleaks trivy    # só esses dois
+./shortcuts/security-test.sh --list            # lista os nomes válidos
+```
 
 Para pentest, veja o [Penligent](https://www.penligent.ai/).
 

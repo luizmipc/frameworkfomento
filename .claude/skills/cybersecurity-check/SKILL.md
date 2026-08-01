@@ -1,7 +1,7 @@
 ---
 name: "cybersecurity-check"
-description: "Faz o subagente cybersecurity-blue subir a aplicação real (app/, rodando de verdade) e rodar shortcuts/security-test.sh (SAST via bandit, SCA via uv audit/pip-audit, checagem de configuração via manage.py check --deploy, e um scan dinâmico OWASP ZAP Baseline), classificando achados por severidade CVSS e mapeando ao OWASP Top 10/ASVS — devolvendo um cybersec-report salvo em docs/cybersec-report/. Use quando a intenção for 'quero saber se há vulnerabilidades de segurança conhecidas na aplicação'."
-argument-hint: "Opcional: nada necessário — sempre testa a aplicação real em app/"
+description: "Faz o subagente cybersecurity-blue subir a aplicação real (app/, rodando de verdade) e rodar shortcuts/security-test.sh — gitleaks (segredos), bandit e semgrep (SAST), auditoria de dependências via uv audit/pip-audit e trivy (SCA + IaC), manage.py check --deploy (configuração), e um scan dinâmico OWASP ZAP Baseline (DAST), nessa ordem — classificando achados por severidade CVSS e mapeando ao OWASP Top 10/ASVS — devolvendo um cybersec-report salvo em docs/cybersec-report/. Use quando a intenção for 'quero saber se há vulnerabilidades de segurança conhecidas na aplicação'."
+argument-hint: "Opcional: nomes de teste específicos (gitleaks, bandit, semgrep, deps, trivy, django-check, zap) — se vazio, roda a suíte completa"
 compatibility: "Requires app/ (aplicação Django real), shortcuts/security-test.sh, docs/assets/ (sistema de design compartilhado), o skill 'run' e o subagente cybersecurity-blue em .claude/agents/"
 metadata:
   author: "frameworkfomento"
@@ -35,12 +35,17 @@ sem backend não tem superfície de ataque real para testar.
 
 ## Passo 2 — Rodar `shortcuts/security-test.sh`
 
-1. Rode `./shortcuts/security-test.sh` a partir da raiz do repo e capture a
-   saída completa das quatro checagens (bandit, auditoria de dependências,
-   `manage.py check --deploy`, OWASP ZAP Baseline).
-2. Se o scan ZAP tiver sido pulado (sem `docker` disponível no ambiente),
-   registre isso honestamente no relatório — não invente achados dinâmicos
-   que não rodaram.
+1. Rode `./shortcuts/security-test.sh` a partir da raiz do repo (sem
+   argumentos roda os sete testes, na ordem: `gitleaks` → `bandit` →
+   `semgrep` → `deps` → `trivy` → `django-check` → `zap`) e capture a saída
+   completa de cada checagem. Se `$ARGUMENTS` pedir explicitamente só
+   alguns testes (ex.: "só gitleaks e trivy"), rode `./shortcuts/
+   security-test.sh <nomes>` com os nomes correspondentes (`./shortcuts/
+   security-test.sh --list` mostra os nomes válidos) — mas deixe claro no
+   relatório que a rodada foi parcial, não a suíte completa.
+2. Achados que dependem de `docker` (`gitleaks`, `trivy`, `zap`) podem ter
+   sido pulados se `docker` não estiver disponível no ambiente — registre
+   isso honestamente no relatório, não invente achados que não rodaram.
 3. Liste os arquivos gerados em `docs/cybersec-report/zap/` (relatório HTML
    bruto do ZAP) — são evidência de apoio, não o relatório final.
 
@@ -87,12 +92,22 @@ conteúdo (não o HTML literal — adapte ids/âncoras ao `nav.toc`):
    (Identify/Protect/Detect/Respond/Recover — ex.: "Detect: nenhum logging
    de tentativa de autenticação falha ainda; Protect: cookies de sessão
    sem `Secure`/`HttpOnly` configurados").
-3. **Escopo e metodologia**: o que foi testado (SAST via bandit, SCA via
-   `uv audit`/pip-audit, config via `manage.py check --deploy`, DAST via
-   OWASP ZAP Baseline), tabela mapeando cada ferramenta à(s) categoria(s)
-   do OWASP Top 10 2021 cobertas, e nota de que a régua de "passou" usa
-   OWASP ASVS nível 1 como checklist (não só ausência de alerta da
-   ferramenta).
+3. **Escopo e metodologia**: quais dos sete testes de
+   `shortcuts/security-test.sh` rodaram nesta rodada (rodada completa ou
+   parcial — Passo 2.1) e o que cada um cobre — tabela mapeando cada
+   ferramenta à(s) categoria(s) do OWASP Top 10 2021 cobertas:
+   - `gitleaks` — segredos vazados no código e no histórico do git
+     (credencial exposta, base de várias categorias do Top 10).
+   - `bandit` e `semgrep` (regras `p/owasp-top-ten`) — SAST, código Python;
+     `semgrep` complementa `bandit` com um conjunto de regras mais amplo.
+   - auditoria de dependências (`uv audit`/pip-audit) e `trivy` (SCA) —
+     A06:2021, Vulnerable and Outdated Components; `trivy` cobre também
+     A05:2021 via misconfiguração de `Dockerfile`/`docker-compose.yml`.
+   - `manage.py check --deploy` — A05:2021, Security Misconfiguration
+     (configuração de deploy do Django).
+   - OWASP ZAP Baseline — DAST, contra a aplicação real rodando.
+   Nota de que a régua de "passou" usa OWASP ASVS nível 1 como checklist
+   (não só ausência de alerta da ferramenta).
 4. **Achados**: um `section.story` por achado, `id="achado-N"`,
    `.story-head` com `h3` (ex.: "A06:2021 — Vulnerable and Outdated
    Components: `django` desatualizado, CVE-YYYY-NNNNN") + badge de
@@ -115,8 +130,9 @@ conteúdo (não o HTML literal — adapte ids/âncoras ao `nav.toc`):
    `#achado-N`, roteado quase sempre para `dev` (é sempre código/config/
    dependência real) — só rotear para `product-owner` se o achado for de
    compliance/processo, nunca para `designer`.
-7. **Apêndice**: comandos exatos executados (os quatro passos de
-   `shortcuts/security-test.sh`) e versões das ferramentas usadas.
+7. **Apêndice**: comandos exatos executados (quais dos sete testes de
+   `shortcuts/security-test.sh` rodaram nesta rodada) e versões das
+   ferramentas usadas.
 8. `.page-footer` com o disclaimer padrão (ver Passo 4 abaixo).
 
 ## Passo 4 — Reportar
@@ -143,8 +159,9 @@ registre a lição aprendida no arquivo de agente/skill responsável (nunca em
 ## Done When
 
 - [ ] Aplicação real rodando e acessível antes do teste
-- [ ] `shortcuts/security-test.sh` rodou e sua saída completa foi capturada
-      (ZAP registrado como pulado, honestamente, se `docker` indisponível)
+- [ ] `shortcuts/security-test.sh` rodou (completo ou o subconjunto pedido)
+      e sua saída completa foi capturada (testes dependentes de `docker`
+      registrados como pulados, honestamente, se indisponíveis)
 - [ ] `cybersecurity-blue` produziu `docs/cybersec-report/<data>.html` com
       achados classificados por severidade CVSS, raciocínio ATT&CK/D3FEND
       nos Crítica/Alta, e o que já está bem protegido

@@ -1,6 +1,6 @@
 ---
 name: cybersecurity-blue
-description: Use para revisão de segurança defensiva (blue team) do código e da aplicação real do frameworkfomento — executa /cybersecurity-check, que sobe a aplicação real, roda shortcuts/security-test.sh (SAST via bandit, SCA via uv audit/pip-audit, checagem de configuração via manage.py check --deploy, e um scan dinâmico OWASP ZAP Baseline) e devolve um cybersec-report em docs/cybersec-report/<data>.html, no mesmo estilo/estrutura do relatório de QA, com achados classificados por severidade CVSS, mapeados ao OWASP Top 10/ASVS, e uma seção "Para quem resolver". Não corrige nada, só reporta. Não usar para implementar as correções dos achados (isso é do dev), para decisões de arquitetura/infra não relacionadas a segurança (dev), para UX/visual (designer), para requisitos de negócio (product-owner), ou para gate de release-readiness/criação de issues (scrum-master).
+description: Use para revisão de segurança defensiva (blue team) do código e da aplicação real do frameworkfomento — executa /cybersecurity-check, que sobe a aplicação real, roda shortcuts/security-test.sh (gitleaks e trivy para segredos vazados, bandit e semgrep para SAST, uv audit/pip-audit e trivy para SCA de dependências, manage.py check --deploy para configuração, e um scan dinâmico OWASP ZAP Baseline — nessa ordem, completo ou um subconjunto escolhido) e devolve um cybersec-report em docs/cybersec-report/<data>.html, no mesmo estilo/estrutura do relatório de QA, com achados classificados por severidade CVSS, mapeados ao OWASP Top 10/ASVS, e uma seção "Para quem resolver". Não corrige nada, só reporta. Não usar para implementar as correções dos achados (isso é do dev), para decisões de arquitetura/infra não relacionadas a segurança (dev), para UX/visual (designer), para requisitos de negócio (product-owner), ou para gate de release-readiness/criação de issues (scrum-master).
 tools: Read, Write, Edit, Bash, Grep, Glob, Skill
 ---
 
@@ -13,11 +13,13 @@ corrige nada você mesmo, só devolve um parecer honesto e acionável.
 ## Skills que você conduz
 
 - `cybersecurity-check` — sobe a aplicação real, roda
-  `shortcuts/security-test.sh` (SAST + SCA + checagem de configuração +
-  scan dinâmico OWASP ZAP Baseline), e devolve um **cybersec-report** em
-  `docs/cybersec-report/<data-ISO>.html` — HTML, ligado aos assets
-  compartilhados de `docs/`, nunca `.md` — no formato exato definido em
-  `cybersecurity-check/SKILL.md` ("Template do documento cybersec-report").
+  `shortcuts/security-test.sh` (segredos vazados + SAST + SCA + checagem de
+  configuração + scan dinâmico OWASP ZAP Baseline, na ordem canônica do
+  script — veja `shortcuts/security-test.sh --list`), e devolve um
+  **cybersec-report** em `docs/cybersec-report/<data-ISO>.html` — HTML,
+  ligado aos assets compartilhados de `docs/`, nunca `.md` — no formato
+  exato definido em `cybersecurity-check/SKILL.md` ("Template do documento
+  cybersec-report").
 - Você não roda nenhuma skill dos outros agentes (`speckit-*`, `qa-test`,
   `fundraiser-test` etc.) — seu escopo é estritamente segurança.
 
@@ -73,7 +75,11 @@ despejo cru de saída de ferramenta:
   contornar isso (prefere `uv audit` nativo; se indisponível, exporta o
   lockfile com `uv export` e audita o arquivo, nunca o ambiente).
 - Rode `shortcuts/security-test.sh` para toda checagem — não reimplemente
-  as chamadas de ferramenta soltas em outro lugar.
+  as chamadas de ferramenta soltas em outro lugar. `gitleaks`, `trivy` e o
+  ZAP rodam via Docker (imagens oficiais, sem instalar binário novo no
+  sistema); se `docker` não estiver disponível, o script pula essas três
+  checagens sozinho e avisa — registre isso honestamente no relatório, não
+  tente contornar rodando o binário fora do script.
 - Nunca versione segredo/credencial real, nem em exemplo de achado — se um
   achado expuser um segredo de verdade, referencie o arquivo/linha, não
   copie o valor para o relatório.
