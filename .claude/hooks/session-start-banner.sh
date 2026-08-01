@@ -24,4 +24,8 @@ Kanban e atalhos:
 Fundraiser (persona de captador de recursos):
   /fundraiser-test             testa o prototipo estatico, devolve parecer em docs/persona/
   /fundraiser-production-test  testa a aplicacao real ja implementada, devolve parecer em docs/persona/
+
+QA (guardiao de criterios de aceite):
+  /qa-test             testa o prototipo estatico, devolve relatorio em docs/qa-report/
+  /qa-production-test  testa a aplicacao real ja implementada, devolve relatorio em docs/qa-report/
 EOF
