@@ -339,6 +339,21 @@ tr.proximo td:first-child {
   color: var(--warning);
 }
 
+/* FR-010 / A020: rótulo do estágio de acompanhamento na tabela (mesmo texto
+   do card do kanban). Contorno em vez de preenchido, e cor de --accent em
+   vez de --danger/--warning, para não competir visualmente com os badges de
+   prazo (que são alertas) na mesma linha — este é só um rótulo informativo. */
+.badge-estagio {
+  display: inline-block;
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 /* Abaixo de 640px (ex.: split-screen com e-mail/planilha ao lado, ~463px) a
    rolagem horizontal esconde as colunas decisivas (Fechamento/Abertura/Link).
    Empilha a tabela em formato de card, uma linha por edital, sem precisar rolar. */

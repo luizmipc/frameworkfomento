@@ -251,7 +251,7 @@ function renderTabela() {
   const lista = getFiltered().sort(byFechamento);
   if (sortFechamento.value === "desc") lista.reverse();
   if (lista.length === 0) {
-    corpo.innerHTML = '<tr><td colspan="7" class="empty-state">Nenhum edital encontrado com esses critérios.</td></tr>';
+    corpo.innerHTML = '<tr><td colspan="8" class="empty-state">Nenhum edital encontrado com esses critérios.</td></tr>';
     return;
   }
   lista.forEach((edital) => {
@@ -279,6 +279,7 @@ function renderTabela() {
     // último. Os data-label alimentam o layout empilhado em telas estreitas (ver style.css).
     tr.innerHTML = `
       <td data-label="Chamada">${edital.chamada}</td>
+      <td data-label="Estágio"><span class="badge-estagio">${STATUS_LABEL[edital.status]}</span></td>
       <td data-label="Fechamento">${formatDate(edital.fechamento)}${badgePrazo}</td>
       <td data-label="Abertura">${
         edital.abertura
@@ -383,11 +384,22 @@ function updateMoveButtons() {
   });
 }
 
+// A020 / FR-010: move o edital e re-renderiza as DUAS visões — antes só
+// renderKanban() era chamado aqui, o que deixava a tabela sem meio de
+// mostrar a mudança de estágio feita pelo quadro (ver
+// docs/qa-report/avulsa-A001.html#fr-010: a tabela não tinha nenhum
+// indicador de estágio, então FR-010 não era observável a partir dela).
+// Ainda em aberto: spec.md não deixa explícito se um indicador visível na
+// tabela é exigido por FR-010 ou se "sincronizado" cobria só o dado
+// subjacente (que já era consistente antes desta mudança) — decisão
+// tomada aqui é a interpretação de menor risco, pendente de confirmação
+// do product-owner.
 function moveEdital(id, newStatus) {
   const edital = editais.find((e) => e.id === id);
   if (!edital) return;
   edital.status = newStatus;
   renderKanban();
+  renderTabela();
 }
 
 // Clique nos botões de mover (acessível, sem depender de drag-and-drop)

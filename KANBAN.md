@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-01T22:52Z
+**Última sincronização**: 2026-08-01T23:15Z
 
 ## To Do
 
@@ -138,6 +138,9 @@ todas as colunas.
   `estagio` (ver "Key Entities" em `spec.md`). Protótipo:
   `prototype/avulsa-A001/`. Pedido direto do usuário, formalizado via
   `/kanban-sync` → "Atualizar spec" em 2026-07-31.
+- [ ] A020 FR-010 — Estágio sincronizado entre tabela e quadro (via
+  relatório QA docs/qa-report/avulsa-A001.html#fr-010). Protótipo:
+  `prototype/avulsa-A001/`.
 
 ### (avulsas)
 
