@@ -107,7 +107,7 @@ do `/kanban-sync` em vez de uma ação avulsa.
    - Se `$ARGUMENTS` já trouxer a descrição da tarefa em linguagem natural,
      pule a pergunta abaixo — origem é "manual", uma única descrição, use
      `$ARGUMENTS` como texto.
-   - Caso contrário, pergunte via `AskUserQuestion` (3 opções): **"Como você
+   - Caso contrário, pergunte via `AskUserQuestion` (4 opções): **"Como você
      quer criar essa tarefa nova?"**
      - **"Descrever manualmente"** (Recomendado) — pergunte no chat (texto
        livre): "Qual a descrição dessa tarefa nova?". Uma única descrição.
@@ -117,6 +117,10 @@ do `/kanban-sync` em vez de uma ação avulsa.
      - **"A partir de um relatório de QA (docs/qa-report/)"** — rode a
        sub-rotina **Origem: docs/qa-report/** (abaixo); ela devolve uma
        lista de uma ou mais descrições (uma por critério/achado escolhido).
+     - **"A partir de achados de segurança (docs/cybersec-report/)"** —
+       rode a sub-rotina **Origem: docs/cybersec-report/** (abaixo); ela
+       devolve uma lista de uma ou mais descrições (uma por achado
+       escolhido).
    - Repita os passos 3 a 7 abaixo **para cada descrição** da lista resultante,
      na ordem, antes de seguir ao passo 8 (uma única Sincronização/Retrospectiva
      no final, mesmo que várias tarefas tenham sido criadas).
@@ -245,6 +249,43 @@ lê.
 6. Devolva a lista de descrições montadas ao passo 1 do Modo "Criar nova
    tarefa".
 
+## Origem: docs/cybersec-report/
+
+Sub-rotina do Modo "Criar nova tarefa" (passo 1) — transforma achados de
+segurança documentados em `docs/cybersec-report/*.html` (gerados por
+`/cybersecurity-check`) em uma ou mais descrições de tarefa avulsa. Não
+corrige nada nem edita o arquivo de relatório — só lê.
+
+1. Liste os arquivos: `find docs/cybersec-report -maxdepth 1 -name
+   '*.html'`. Se nenhum existir, informe "Nenhum relatório de segurança
+   encontrado em docs/cybersec-report/ ainda — rode /cybersecurity-check
+   primeiro." e volte à pergunta do passo 1 do Modo "Criar nova tarefa" (o
+   usuário escolhe manual ou desiste).
+2. Se houver mais de um arquivo, pergunte via `AskUserQuestion` (até 4
+   opções, rotuladas pelo nome do arquivo sem extensão) qual usar. Se
+   houver só um, use-o direto sem perguntar.
+3. Leia o arquivo escolhido e extraia cada achado com severidade Crítica,
+   Alta ou Média da seção "Achados" (um `<section class="story"
+   id="achado-N">` por achado, com badge `badge-high`/`badge-medium`,
+   título em `<h3>` e o texto de "O que foi encontrado"/"Impacto") —
+   achados ⚪ Informativa nunca viram tarefa por padrão (oferecer só se o
+   usuário pedir explicitamente algo além dos achados). Se existir a seção
+   "Para quem resolver", use-a para já saber o dono provável de cada item
+   (quase sempre `dev`).
+4. Ofereça os achados via `AskUserQuestion` (`multiSelect: true`) para o
+   usuário escolher quais viram tarefa — mesma paginação do Passo 2 de
+   `kanban-start/SKILL.md`: até 4 por chamada (3 primeiras + "Ver mais" se
+   houver mais de 4), rótulo = título curto do achado (com a severidade),
+   descrição = resumo de 1 frase de "Impacto".
+5. Para cada achado selecionado, monte a descrição da tarefa: `<título do
+   achado> (via relatório de segurança
+   docs/cybersec-report/<arquivo>#achado-N)` — o suficiente para quem for
+   implementar abrir o link e ler o parecer completo (incluindo prazo de
+   remediação recomendado e, se houver, o raciocínio ATT&CK/D3FEND); não
+   copie o parecer inteiro para dentro do `KANBAN.md`.
+6. Devolva a lista de descrições montadas ao passo 1 do Modo "Criar nova
+   tarefa".
+
 ## Checagem de escopo
 
 Informe ao usuário, em prosa, o que motivou a suspeita de desvio de escopo
@@ -321,9 +362,9 @@ registre a lição aprendida no arquivo correto (um agente em
 - [ ] Tipo de reunião determinado (acompanhamento, criar tarefa, ou
       atualizar spec)
 - [ ] Se "criar tarefa": branch trocado para `main` (passo 2) antes de
-      qualquer edição, origem escolhida (manual, docs/persona/, ou
-      docs/qa-report/), e `KANBAN.md` reflete o estado atual com a(s)
-      tarefa(s) nova(s) adicionada(s)
+      qualquer edição, origem escolhida (manual, docs/persona/,
+      docs/qa-report/, ou docs/cybersec-report/), e `KANBAN.md` reflete o
+      estado atual com a(s) tarefa(s) nova(s) adicionada(s)
 - [ ] Se "atualizar spec": branch trocado para a feature (passo 3) antes de
       acionar o `product-owner`, requisito formalizado em
       `spec.md`/`docs/index.html`, e a task avulsa (se aceita) seguiu o
