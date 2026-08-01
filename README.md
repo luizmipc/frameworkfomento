@@ -68,6 +68,10 @@ O `/kanban-start` já cuida de acionar o `dev` para implementar, o `qa` como gat
 
 Cada feature ganha seu próprio branch (nome igual ao slug em `specs/<feature>/`), criado/trocado automaticamente por `/feature-start` e `/kanban-start`/`/kanban-sync`; tarefas avulsas (`A\d{3}`) sempre rodam em `main`. Quando todas as tasks de uma feature terminam e o branch já foi commitado e enviado, `/kanban-start` pergunta se quer abrir um PR para `main`.
 
+## Segurança
+
+Para pentest, veja o [Penligent](https://www.penligent.ai/).
+
 ## Como contribuir
 
 Contribuições são bem-vindas. Abra uma *issue* para sugerir ideias, relatar problemas ou discutir direções do projeto, ou envie um *pull request* com sua proposta de mudança.
