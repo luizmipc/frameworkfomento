@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-01T01:49Z
+**Última sincronização**: 2026-08-01T22:17Z
 
 ## To Do
 
@@ -140,6 +140,10 @@ todas as colunas.
   `/kanban-sync` → "Atualizar spec" em 2026-07-31.
 
 ### (avulsas)
+
+- [ ] A019 A02:2021 — Cryptographic Failures: SECRET_KEY do Django hardcoded
+  em `app/config/settings.py` (via relatório de segurança
+  docs/cybersec-report/2026-08-01.html#achado-1).
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento
   (descrição, nome da chamada, instituição responsável, link para a chamada
