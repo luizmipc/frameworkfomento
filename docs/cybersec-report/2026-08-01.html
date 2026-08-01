@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Segurança — cybersecurity-blue (rodada parcial: bandit) — frameworkfomento</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <p class="kicker group-label">docs/cybersec-report</p>
+    <a href="#top">2026-08-01 (rodada parcial)</a>
+    <a href="#sumario">Sumário executivo</a>
+    <a href="#escopo">Escopo e metodologia</a>
+    <a href="#achado-1">Achado 1 — SECRET_KEY hardcoded</a>
+    <a href="#bem">O que já está bem protegido</a>
+    <a href="#resolver">Para quem resolver</a>
+    <a href="#apendice">Apêndice</a>
+
+    <p class="kicker group-label">frameworkfomento</p>
+    <a href="../index.html">Documentação</a>
+  </nav>
+
+  <main>
+    <p class="kicker">cybersecurity-blue · docs/cybersec-report · 1ª rodada (parcial)</p>
+    <h1 id="top">Relatório de Segurança — cybersecurity-blue</h1>
+    <p class="lede">Auditoria de segurança da aplicação real (<code>app/</code>, Django 6.0.7, subida via
+    <code>docker compose up -d --build</code> e confirmada respondendo em <code>http://localhost:8000/</code> —
+    HTTP 200, <code>System check identified no issues (0 silenced)</code>, com aviso de 18 migrações não
+    aplicadas registrado aqui apenas como observação factual do ambiente de dev, não como achado de
+    segurança), em 2026-08-01.</p>
+    <p class="callout"><strong>Rodada PARCIAL, a pedido explícito do usuário — só <code>bandit</code> rodou.</strong>
+    Dos sete testes de <code>shortcuts/security-test.sh</code> (<code>gitleaks</code>, <code>bandit</code>,
+    <code>semgrep</code>, auditoria de dependências, <code>trivy</code>, <code>manage.py check --deploy</code>,
+    OWASP ZAP Baseline), apenas <code>bandit</code> foi executado nesta rodada, via
+    <code>./shortcuts/security-test.sh bandit</code>. Docker estava disponível no ambiente (foi usado para subir
+    a aplicação via <code>docker compose</code>) — os outros seis testes não rodaram porque não foram pedidos,
+    não por indisponibilidade de ferramenta. Em nenhum lugar deste documento os seis testes não executados
+    devem ser lidos como "passou" ou "sem achados": são <strong>não executados nesta rodada</strong>, ponto.
+    Esta é a 1ª rodada de <code>/cybersecurity-check</code> registrada em <code>docs/cybersec-report/</code>.</p>
+
+    <h2 id="sumario">Sumário executivo</h2>
+    <table>
+      <thead><tr><th>Severidade</th><th>CVSS</th><th>Qtde</th></tr></thead>
+      <tbody>
+        <tr><td>🔴 Crítica</td><td>9.0–10.0</td><td>0</td></tr>
+        <tr><td>🔴 Alta</td><td>7.0–8.9</td><td>0</td></tr>
+        <tr><td>🟡 Média</td><td>4.0–6.9</td><td>1</td></tr>
+        <tr><td>🟢 Baixa</td><td>0.1–3.9</td><td>0</td></tr>
+        <tr><td>⚪ Informativa</td><td>—</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Postura atual pelo NIST CSF, restrita ao que <code>bandit</code> efetivamente cobriu</strong>
+    (código-fonte Python estático de <code>app/</code> — não cobre segredos no histórico do git, dependências,
+    configuração de deploy nem comportamento em runtime):</p>
+    <ul>
+      <li><strong>Identify:</strong> o único ativo sensível que <code>bandit</code> tem visibilidade para
+      identificar em código Python (um segredo criptográfico embutido, <code>SECRET_KEY</code>) foi
+      corretamente sinalizado — mas <code>bandit</code> não enxerga segredos fora de padrões de código Python
+      (ex.: chave de API em <code>.env</code> versionado), essa cobertura é do <code>gitleaks</code>, não
+      executado nesta rodada.</li>
+      <li><strong>Protect:</strong> fraco neste ponto específico — o segredo de assinatura de sessão/CSRF do
+      Django está em texto plano no repositório, não isolado em variável de ambiente/secret manager.</li>
+      <li><strong>Detect:</strong> fora do escopo de <code>bandit</code> (SAST estático não detecta uso indevido
+      em runtime); nenhuma afirmação pode ser feita aqui a partir desta rodada.</li>
+      <li><strong>Respond/Recover:</strong> fora do escopo de <code>bandit</code>; não avaliado nesta rodada.</li>
+    </ul>
+
+    <h2 id="escopo">Escopo e metodologia</h2>
+    <p>Tabela dos sete testes de <code>shortcuts/security-test.sh</code> e o que cada um cobre no OWASP Top 10
+    2021 — apenas a primeira linha rodou nesta rodada, as demais estão marcadas honestamente como não
+    executadas.</p>
+    <table>
+      <thead><tr><th>Teste</th><th>Cobertura OWASP Top 10 2021</th><th>Status nesta rodada</th></tr></thead>
+      <tbody>
+        <tr><td><code>bandit</code></td><td>SAST, código Python — base ampla do Top 10 (ex.: A02, A03, A05, dependendo da regra)</td><td>✅ Executado</td></tr>
+        <tr><td><code>gitleaks</code></td><td>Segredos vazados no código e no histórico do git</td><td>⚪ Não executado nesta rodada</td></tr>
+        <tr><td><code>semgrep</code> (<code>p/owasp-top-ten</code>)</td><td>SAST, conjunto de regras mais amplo que <code>bandit</code></td><td>⚪ Não executado nesta rodada</td></tr>
+        <tr><td>Auditoria de dependências (<code>uv audit</code>/pip-audit)</td><td>A06:2021 — Vulnerable and Outdated Components</td><td>⚪ Não executado nesta rodada</td></tr>
+        <tr><td><code>trivy</code></td><td>A06:2021 (SCA) e A05:2021 via misconfiguração de <code>Dockerfile</code>/<code>docker-compose.yml</code></td><td>⚪ Não executado nesta rodada</td></tr>
+        <tr><td><code>manage.py check --deploy</code></td><td>A05:2021 — Security Misconfiguration (configuração de deploy do Django)</td><td>⚪ Não executado nesta rodada</td></tr>
+        <tr><td>OWASP ZAP Baseline</td><td>DAST, contra a aplicação real rodando</td><td>⚪ Não executado nesta rodada</td></tr>
+      </tbody>
+    </table>
+    <p>A régua de "OK" usada abaixo é o <strong>OWASP ASVS nível 1</strong> (adequado ao estágio atual do
+    projeto — sem dado sensível de usuário real em produção ainda), não apenas "a ferramenta não reclamou".
+    Para o único achado desta rodada, o requisito relevante é <strong>ASVS V6.4.1</strong> (chaves e segredos
+    criptográficos não devem estar hardcoded no código-fonte; devem vir de configuração/variável de ambiente
+    gerenciada fora do controle de versão).</p>
+    <p><strong>Ferramenta:</strong> <code>bandit 1.9.4</code> (Python 3.14.0). <strong>Comando exato:</strong>
+    <code>./shortcuts/security-test.sh bandit</code>, a partir da raiz do repo.</p>
+
+    <h2 id="achados">Achados</h2>
+
+    <section class="story" id="achado-1">
+      <div class="story-head">
+        <h3>A02:2021 — Cryptographic Failures: <code>SECRET_KEY</code> do Django hardcoded em <code>config/settings.py</code></h3>
+        <span class="badge badge-medium">🟡 Média — CVSS 5.9</span>
+      </div>
+      <p><strong>O que foi encontrado:</strong> a <code>SECRET_KEY</code> usada pelo Django para assinar
+      sessões, tokens CSRF e tokens de reset de senha está escrita em texto plano no código-fonte, com o
+      prefixo <code>django-insecure-</code> — marcador padrão gerado por <code>django-admin startproject</code>,
+      o que confirma que o valor nunca foi trocado por um segredo real gerenciado fora do controle de versão
+      (ex.: variável de ambiente).</p>
+      <p><strong>Evidência</strong> (saída literal do <code>bandit</code> — o valor real do segredo não é
+      reproduzido aqui além do que a própria ferramenta já imprimiu; ver <code>app/config/settings.py:23</code>
+      para o valor completo):</p>
+      <pre>&gt;&gt; Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'django-insecure-...'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)
+   Location: ./config/settings.py:23:13</pre>
+      <p><strong>Contexto adicional</strong> (leitura manual de <code>app/config/settings.py</code>, para
+      confirmar o achado — não é um novo achado de ferramenta): a linha 23 não lê de variável de ambiente
+      (<code>os.environ</code>/<code>django-environ</code> não estão em uso neste arquivo); o mesmo valor
+      hardcoded seria usado em qualquer ambiente (dev, staging, produção) que rodasse este código sem
+      alteração. Nota à parte: a linha 26 (<code>DEBUG = True</code>) também está hardcoded no mesmo arquivo —
+      isso não é um achado de <code>bandit</code> (bandit não tem regra para <code>DEBUG</code> do Django; essa
+      checagem é do <code>manage.py check --deploy</code>, não executado nesta rodada) e não está sendo
+      classificado como achado aqui; é só uma observação de contexto para quando a suíte completa rodar.</p>
+      <p><strong>Impacto:</strong> se o código-fonte for exposto a alguém que não deveria ter acesso a produção
+      (colaborador removido, cópia de repo vazada, imagem Docker publicada com o arquivo embutido), quem tiver
+      o valor da <code>SECRET_KEY</code> consegue forjar assinatura de sessão, token CSRF e token de reset de
+      senha do Django — potencialmente sequestrando sessões de outros usuários ou disparando reset de senha
+      arbitrário. Como o repositório é privado neste estágio e a chave não está publicada isoladamente (só
+      dentro do próprio código), a exploração depende de uma etapa adicional de acesso ao código-fonte —
+      por isso <strong>AC:High</strong> no CVSS abaixo, não Low.</p>
+      <p><strong>CVSS 3.1:</strong> <code>AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N</code> = <strong>5.9 (Média)</strong>.
+      Justificativa: sem acesso ao segredo em si o ataque não é possível (Confidentiality N — o achado não
+      vaza a chave por si, é a existência da prática que é o risco), mas quem obtiver o valor tem
+      Integridade Alta (forjar sessão/CSRF/reset de senha) sem precisar de privilégio ou interação do usuário
+      alvo (PR:N, UI:N). Acesso ao código-fonte é uma pré-condição adicional (AC:H), não algo alcançável
+      diretamente contra a aplicação rodando.</p>
+      <p><strong>ASVS relevante:</strong> V6.4.1 (nível 1) — segredos e chaves criptográficas devem ser
+      gerenciados fora do código-fonte versionado.</p>
+      <p><strong>Recomendação:</strong> gerar uma <code>SECRET_KEY</code> nova e única por ambiente (dev/staging/produção),
+      lida de variável de ambiente (ex.: <code>os.environ["DJANGO_SECRET_KEY"]</code>, sem valor default
+      hardcoded em produção), e remover o valor atual do histórico do git se o repositório algum dia tiver
+      sido ou vier a ser público (rotação de chave é obrigatória nesse caso — chave antiga continua válida
+      para forjar tokens enquanto não for trocada).</p>
+      <p><strong>Prazo de remediação recomendado:</strong> até 60 dias (Média).</p>
+    </section>
+
+    <h2 id="bem">O que já está bem protegido</h2>
+    <p>Honesto e restrito ao que <code>bandit</code> efetivamente escaneou (128 linhas de código Python em
+    <code>app/</code>, 0 issues suprimidos via <code>#nosec</code>):</p>
+    <ul>
+      <li>Nenhum uso de função perigosa clássica sinalizado por <code>bandit</code> nesta rodada —
+      sem <code>eval</code>/<code>exec</code> sobre entrada externa, sem <code>subprocess</code> com
+      <code>shell=True</code>, sem construção de SQL por concatenação de string, sem
+      <code>pickle</code>/<code>yaml.load</code> inseguro — nenhuma dessas categorias apareceu no código
+      atual (que ainda é majoritariamente o scaffold padrão do <code>django-admin startproject</code>, sem
+      app de negócio implementado).</li>
+      <li>O único achado (1 issue, severidade "Low" na escala própria do bandit, confiança "Medium") é
+      justamente o esperado para um projeto neste estágio de scaffold — <code>bandit</code> não encontrou
+      nada além disso nas 128 linhas escaneadas.</li>
+    </ul>
+    <p class="callout">Isto NÃO é uma afirmação de que o restante da aplicação está seguro — apenas que,
+    dentro do que <code>bandit</code> cobre (SAST estático de Python), nada mais foi sinalizado. Segredos no
+    histórico do git, dependências vulneráveis, configuração insegura de deploy e comportamento da aplicação
+    rodando (XSS refletido, cabeçalhos HTTP, etc.) não foram avaliados nesta rodada — nenhuma conclusão pode
+    ser tirada sobre eles a partir deste relatório.</p>
+
+    <h2 id="resolver">Para quem resolver</h2>
+    <ul>
+      <li><a href="#achado-1">Achado 1</a> — <code>dev</code>: mover <code>SECRET_KEY</code> para variável de
+      ambiente, gerar valor novo por ambiente, e planejar rotação se o valor atual já tiver circulado fora do
+      controle de acesso atual do repositório. Vira tarefa via <code>/kanban-sync</code> → "Criar nova tarefa" →
+      "A partir de achados de segurança (docs/cybersec-report/)".</li>
+    </ul>
+
+    <h2 id="apendice">Apêndice</h2>
+    <p><strong>Comandos exatos executados nesta rodada:</strong></p>
+    <pre>docker compose up -d --build
+curl http://localhost:8000/            # HTTP 200, confirma app real rodando
+./shortcuts/security-test.sh bandit    # único teste pedido nesta rodada</pre>
+    <p><strong>Versões:</strong> <code>bandit 1.9.4</code> (Python 3.14.0); Django 6.0.7 (a partir do output do
+    servidor de desenvolvimento, "System check identified no issues (0 silenced)", com aviso de 18 migrações
+    não aplicadas — observação factual do ambiente, não achado de segurança).</p>
+    <p><strong>Testes não executados nesta rodada</strong> (a pedido explícito do usuário, não por falha de
+    ambiente — docker estava disponível): <code>gitleaks</code>, <code>semgrep</code>, auditoria de
+    dependências (<code>uv audit</code>/pip-audit), <code>trivy</code>, <code>manage.py check --deploy</code>,
+    OWASP ZAP Baseline. Nenhum desses seis deve ser lido como "passou" a partir deste documento.</p>
+
+    <p class="page-footer">Este relatório não corrige nada — é um parecer honesto e acionável. Ações sobre os
+    achados (correção de código/config/dependência) são sempre um comando separado
+    (<code>/quick-task</code>, <code>/kanban-sync</code> → "Criar nova tarefa"), decidido pelo usuário depois de
+    ler este documento. Requisitos de compliance formal (ex.: LGPD) não são decididos aqui — isso é do
+    <code>product-owner</code>. Release-readiness não é decidida aqui — isso é do <code>scrum-master</code>.</p>
+
+    <!-- ============================== outras fontes ============================== -->
+    <p class="kicker group-label">frameworkfomento</p>
+  </main>
+
+</div>
+<script src="../assets/script.js" defer></script>
+</body>
+</html>

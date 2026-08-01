@@ -22,11 +22,13 @@ Este projeto está em estágio inicial. A estrutura de código, funcionalidades 
 
 ## Fluxo de trabalho (tutorial básico)
 
-Este projeto é desenvolvido com o [GitHub Spec Kit](https://github.com/github/spec-kit) (fluxo orientado por spec) mais um quadro Kanban local (`KANBAN.md`) e seis agentes de papel em `.claude/agents/`: `product-owner`, `dev`, `designer`, `scrum-master`, `qa` e `fundraiser`. Cada um tem escopo e regras de handoff documentados no próprio arquivo.
+Este projeto é desenvolvido com o [GitHub Spec Kit](https://github.com/github/spec-kit) (fluxo orientado por spec) mais um quadro Kanban local (`KANBAN.md`) e sete agentes de papel em `.claude/agents/`: `product-owner`, `dev`, `designer`, `scrum-master`, `qa`, `fundraiser` e `cybersecurity-blue`. Cada um tem escopo e regras de handoff documentados no próprio arquivo.
 
 Documentação viva do projeto:
 - `docs/` — requisitos funcionais/não funcionais, regras de negócio, escopo, arquitetura, diagrama de classes, critérios de aceite. Site HTML autocontido, sem markdown — abra `docs/index.html` no navegador.
 - `docs/persona/` — documentos de Persona (canvas + parecer/dores) gerados por `/fundraiser-test` e `/fundraiser-production-test`, um captador de recursos real testando o protótipo ou a aplicação em produção.
+- `docs/qa-report/` — relatórios de conformidade a critérios de aceite gerados por `/qa-test` e `/qa-production-test`.
+- `docs/cybersec-report/` — relatórios de segurança (SAST/SCA/config/OWASP ZAP) gerados por `/cybersecurity-check`.
 - `.specify/memory/constitution.md` — princípios não-negociáveis do projeto (simplicidade/YAGNI, qualidade via QA antes de "Done", spec antes de código, etc.).
 - `specs/<feature>/` — spec, plano e tasks de cada feature, geradas pelo Spec Kit.
 - `KANBAN.md` — quadro To Do / In Progress / Done, única fonte de verdade do que está em andamento.
@@ -49,6 +51,9 @@ Documentação viva do projeto:
 | `/quick-task` | Atalho: cria uma tarefa avulsa e já a implementa (kanban-sync + kanban-start em um comando), para ajustes pequenos |
 | `/fundraiser-test` | O `fundraiser` vira um captador de recursos real e testa um protótipo estático, devolvendo um documento de Persona com parecer/dores em `docs/persona/` |
 | `/fundraiser-production-test` | Igual ao anterior, mas testa a aplicação real já implementada (rodando de verdade), não o protótipo |
+| `/qa-test` | O `qa` verifica se um protótipo estático sustenta os critérios de aceite, devolvendo um relatório em `docs/qa-report/` |
+| `/qa-production-test` | Igual ao anterior, mas testa a aplicação real já implementada, com testes automatizados + walkthrough ao vivo |
+| `/cybersecurity-check` | O `cybersecurity-blue` audita a aplicação real (SAST/SCA/config/OWASP ZAP), devolvendo um relatório de segurança em `docs/cybersec-report/` |
 
 ### Por onde começar, de acordo com a intenção
 
@@ -60,13 +65,53 @@ Documentação viva do projeto:
 - **"Quero atualizar a documentação do projeto"** → `/docs-sync`.
 - **"Quero saber que dores um captador de recursos real sentiria usando o protótipo atual"** → `/fundraiser-test` (não corrige nada, só devolve o parecer honesto em `docs/persona/`).
 - **"Quero saber que dores um captador de recursos real sentiria usando a aplicação já implementada"** → `/fundraiser-production-test` (mesma ideia, mas na aplicação rodando de verdade, não no protótipo).
-- **"Quero transformar dores achadas num teste de persona em tarefas"** → `/kanban-sync` → "Criar nova tarefa" → origem "A partir de um teste de persona (docs/persona/)" (escolhe o arquivo, escolhe quais dores viram task — pode criar mais de uma de uma vez).
+- **"Quero transformar dores achadas num teste de persona em tarefas"** → `/kanban-sync` → "Criar nova tarefa" → origem "A partir de um teste de persona (docs/persona/)" (escolhe o arquivo, escolhe quais dores viram task — pode criar mais de uma de uma vez). A mesma lógica vale para achados de `/qa-test`/`/qa-production-test` (origem `docs/qa-report/`) e de `/cybersecurity-check` (origem `docs/cybersec-report/`).
+- **"Quero saber se há vulnerabilidades de segurança conhecidas na aplicação"** → `/cybersecurity-check` (o `cybersecurity-blue` roda SAST/SCA/checagem de configuração/scan OWASP ZAP contra a aplicação real e devolve um parecer honesto em `docs/cybersec-report/`, sem corrigir nada).
 - **"Quero formalizar um gap ou insight como requisito real, não só uma tarefa avulsa"** → `/kanban-sync` → "Atualizar spec" (descreve o gap, o `product-owner` decide como formalizar em `spec.md` — novo FR, extensão de um existente, ou nova User Story — e opcionalmente já cria a tarefa avulsa correspondente na sequência).
 - **"Quero mudar um princípio/regra do projeto"** → `/speckit-constitution`.
 
 O `/kanban-start` já cuida de acionar o `dev` para implementar, o `qa` como gate obrigatório (testes de UI e lógica antes de fechar a task) e, ao final, pergunta se algo deu errado — se sim, registra a lição aprendida no arquivo do agente/skill responsável, para o processo melhorar com o tempo. Depois dessa retrospectiva, pergunta também se deve commitar ou commitar e dar push — sempre em Conventional Commits, com uma mensagem detalhada o suficiente para o commit servir como documentação da mudança (o quê, por quê, decisões tomadas na implementação e resultado do QA).
 
 Cada feature ganha seu próprio branch (nome igual ao slug em `specs/<feature>/`), criado/trocado automaticamente por `/feature-start` e `/kanban-start`/`/kanban-sync`; tarefas avulsas (`A\d{3}`) sempre rodam em `main`. Quando todas as tasks de uma feature terminam e o branch já foi commitado e enviado, `/kanban-start` pergunta se quer abrir um PR para `main`.
+
+## Segurança
+
+Para auditoria automatizada, rode `/cybersecurity-check` — o
+`cybersecurity-blue` sobe a aplicação real, roda `shortcuts/security-test.sh`
+e devolve um relatório honesto (com interpretação real do agente, não só a
+saída crua das ferramentas — severidade CVSS, mapeamento ao OWASP Top
+10/ASVS, raciocínio MITRE ATT&CK/D3FEND nos achados críticos) em
+`docs/cybersec-report/`.
+
+`shortcuts/security-test.sh` roda sete ferramentas, nesta ordem — do achado
+mais barato/crítico de checar (segredo vazado) ao mais lento (scan dinâmico
+contra a aplicação rodando):
+
+| Ordem | Teste | Ferramenta | Cobre |
+|---|---|---|---|
+| 1 | `gitleaks` | [gitleaks](https://github.com/gitleaks/gitleaks) | Segredos/credenciais vazados, inclusive no histórico do git |
+| 2 | `bandit` | [bandit](https://github.com/PyCQA/bandit) | SAST — código Python |
+| 3 | `semgrep` | [semgrep](https://github.com/semgrep/semgrep) | SAST — regras OWASP Top 10, complementa o bandit |
+| 4 | `deps` | `uv audit` / [pip-audit](https://github.com/pypa/pip-audit) | SCA — CVEs conhecidas nas dependências Python (OWASP A06:2021) |
+| 5 | `trivy` | [trivy](https://github.com/aquasecurity/trivy) | SCA + IaC — dependências e misconfiguração de `Dockerfile`/`docker-compose.yml` |
+| 6 | `django-check` | `manage.py check --deploy` | Configuração de deploy do Django (OWASP A05:2021) |
+| 7 | `zap` | OWASP ZAP Baseline | DAST — scan dinâmico contra o dev server rodando |
+
+`gitleaks`, `trivy` e o ZAP rodam via imagem Docker oficial (sem instalar
+nada novo no sistema) — se `docker` não estiver disponível, o script pula
+essas três checagens sozinho e avisa, sem quebrar as demais.
+
+Por padrão o script roda a suíte inteira; para rodar só alguns testes,
+passe os nomes da coluna "Teste" acima como argumento, na ordem que
+preferir (o script sempre executa na ordem canônica da tabela):
+
+```bash
+./shortcuts/security-test.sh                  # suíte completa
+./shortcuts/security-test.sh gitleaks trivy    # só esses dois
+./shortcuts/security-test.sh --list            # lista os nomes válidos
+```
+
+Para pentest, veja o [Penligent](https://www.penligent.ai/).
 
 ## Como contribuir
 
