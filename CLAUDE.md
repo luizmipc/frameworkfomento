@@ -12,6 +12,11 @@ When code is added to this repo, update this file with:
 
 ## Git workflow
 
+- Antes de todo commit, rode `./run_tests.sh` a partir da raiz do repo —
+  ele linta (`shortcuts/lint.sh`: `ruff check --fix` seguido de `ruff
+  check`) e roda a suíte de testes Django. Se algo for sinalizado, corrija
+  antes de prosseguir — só então siga para commit e push, conforme as
+  regras abaixo.
 - Commit messages always follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`, etc.).
 - Every commit body ends with a trailer crediting Claude as co-author: `Co-Authored-By: Claude <noreply@anthropic.com>`. Applies to every commit in this repo, including ones made inside `/kanban-start`/`/kanban-sync`/`/quick-task` flows, not just ones following the generic commit steps.
 - After committing, push right away unless the user says otherwise.
