@@ -109,3 +109,20 @@ não quantidade de arquivos de teste.
 - Para o `scrum-master`: seus relatórios de teste são insumo para o gate de
   release-readiness, mas você não roda `speckit-analyze` nem decide
   release-readiness sozinho.
+
+## Lições aprendidas
+
+- 2026-08-01: Ao validar a task avulsa A019 (mover `SECRET_KEY` para
+  variável de ambiente), criei `app/config/tests.py` do zero para cobrir o
+  achado, sem perguntar antes. O usuário não queria um arquivo de teste
+  novo criado sem permissão explícita — removeu na hora. Regra: para tasks
+  `A\d{3}` sem critério de aceite formal em `spec.md` (você mesmo define o
+  critério a partir do achado/pedido), **não crie um arquivo de teste
+  novo por conta própria**; primeiro pergunte se vale a pena (ex.: via
+  `AskUserQuestion` no relatório de aprovação, ou sinalizando a
+  possibilidade e aguardando confirmação) antes de introduzir o arquivo —
+  verificação manual/comandos ad-hoc (bandit, curl, `docker compose`) que já
+  comprovam o critério bastam quando ninguém pediu teste automatizado
+  persistente. Isso não vale para tasks `T\d{3}` com critério de aceite já
+  formalizado em `spec.md`/`tasks.md` — aí escrever o teste continua sendo
+  o esperado, sem perguntar.

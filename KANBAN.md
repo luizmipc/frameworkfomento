@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-01T22:17Z
+**Última sincronização**: 2026-08-01T22:52Z
 
 ## To Do
 
@@ -141,10 +141,6 @@ todas as colunas.
 
 ### (avulsas)
 
-- [ ] A019 A02:2021 — Cryptographic Failures: SECRET_KEY do Django hardcoded
-  em `app/config/settings.py` (via relatório de segurança
-  docs/cybersec-report/2026-08-01.html#achado-1).
-
 - [ ] A001 Página com tabela de todos os editais abertos no momento
   (descrição, nome da chamada, instituição responsável, link para a chamada
   e datas importantes), com quadro Kanban para o captador de recursos mover
@@ -212,3 +208,15 @@ _Nenhuma tarefa em progresso._
   ao vivo via browser em 2026-07-31 (filtrando por uma instituição com 1
   único edital, as 3 colunas restantes mostraram "Nenhum edital
   encontrado com esses critérios." com contador "(0)").
+
+### (avulsas)
+
+- [x] A019 A02:2021 — Cryptographic Failures: SECRET_KEY do Django hardcoded
+  em `app/config/settings.py` (via relatório de segurança
+  docs/cybersec-report/2026-08-01.html#achado-1). Corrigida: `SECRET_KEY`
+  agora lida de `DJANGO_SECRET_KEY` via `os.environ.get`, com fallback de
+  dev marcado; `.env`/`.env.example` criados (`.env` fora do git),
+  `docker-compose.yml`/`Dockerfile` parametrizados com
+  `DJANGO_HOST`/`DJANGO_PORT`. QA aprovado em 2026-08-01 (bandit limpo,
+  `docker compose up` responde 200, `./run_tests.sh` verde, 3 testes de
+  regressão em `app/config/tests.py`).
