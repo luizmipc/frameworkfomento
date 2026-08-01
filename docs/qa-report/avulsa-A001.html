@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Conformidade de critérios — prototype/avulsa-A001 (1ª rodada) — frameworkfomento</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <p class="kicker group-label">docs/qa-report</p>
+    <a href="#top">avulsa-A001</a>
+    <a href="#criterios">Critérios testados</a>
+    <a href="#parecer-listagem">US1 — Listagem e quadro</a>
+    <a href="#parecer-busca">US4 — Busca, filtro, ordenação</a>
+    <a href="#parecer-ignorar">US3 — Ignorar edital</a>
+    <a href="#parecer-fora">Fora de escopo desta tela</a>
+    <a href="#bem">O que funcionou bem</a>
+    <a href="#resolver">Para quem resolver</a>
+
+    <p class="kicker group-label">frameworkfomento</p>
+    <a href="../index.html">Documentação</a>
+  </nav>
+
+  <main>
+    <p class="kicker">qa-test · docs/qa-report · 1ª rodada</p>
+    <h1 id="top">Conformidade de critérios — prototype/avulsa-A001</h1>
+    <p class="lede">Checagem estrutural (não um teste automatizado — o protótipo não tem backend) de <code>prototype/avulsa-A001/</code> contra os critérios de aceite FR-001 a FR-031 de <a href="../../specs/001-manage-call-for-proposals/spec.md"><code>specs/001-manage-call-for-proposals/spec.md</code></a>, via comando <code>/qa-test</code>, em 2026-07-31. Task dona no <code>KANBAN.md</code>: A008 (avulsa, bucket <code>001-manage-call-for-proposals</code>) — "Designer audita <code>prototype/avulsa-A001/</code> contra todas as tasks que o referenciam (A002-A007) e reconcilia qualquer gap". O protótipo também é referência de interação citada em T019/T058/T069 de <code>tasks.md</code> para a implementação real futura.</p>
+    <p class="callout"><strong>1ª rodada, avaliada por leitura de código, não ao vivo no browser.</strong> As ferramentas <code>mcp__claude-in-chrome__*</code> não carregaram nesta sessão ("Browser extension is not connected") — seguindo o fallback do Passo 3 de <code>qa-test/SKILL.md</code>, a verificação foi feita lendo <code>index.html</code>, <code>script.js</code> e <code>style.css</code> por completo, com a data do sistema (2026-07-31) usada para conferir manualmente a aritmética de <code>isVencido()</code>/<code>nivelProximidade()</code> contra os dados mockados. Para FR-031 (responsividade), este relatório cita também a evidência ao vivo já registrada em <code>KANBAN.md</code> nas tasks A002/A003 (confirmadas via browser em 2026-07-31, antes desta rodada), já que não há como reconfirmar CSS em viewport estreito só por leitura de código com a mesma confiança.</p>
+
+    <h2 id="criterios">Critérios testados</h2>
+    <p>Esta tela ("Editais Abertos" — visão tabela + visão kanban) cobre a listagem/quadro de progresso (US1) e a busca/filtro/ordenação/contagem (US4) por inteiro, e o mecanismo de ignorar edital (US3, FR-027 a FR-030). Não cobre nenhuma tela de cadastro, edição, exclusão nem controle de acesso multi-usuário — os FR-xxx correspondentes (FR-003 a FR-008, FR-013 a FR-017) são marcados ⚪ não aplicável a este protótipo específico, não como falha.</p>
+    <table>
+      <thead><tr><th>Grupo</th><th>FR-xxx em escopo</th><th>Resultado</th></tr></thead>
+      <tbody>
+        <tr><td>US1 — Listagem e quadro de progresso</td><td>FR-001, FR-002, FR-009 a FR-012, FR-022, FR-024, FR-031</td><td>8 ✅ · 1 🟡</td></tr>
+        <tr><td>US4 — Busca, filtro, ordenação, contagem</td><td>FR-018 a FR-021, FR-023, FR-025, FR-026</td><td>7 ✅</td></tr>
+        <tr><td>US3 — Ignorar edital</td><td>FR-027 a FR-030</td><td>4 ✅</td></tr>
+        <tr><td>Fora de escopo desta tela (cadastro/edição/exclusão/multiusuário)</td><td>FR-003 a FR-008, FR-013 a FR-017</td><td>11 ⚪</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ============================== US1 ============================== -->
+
+    <h2 id="parecer-listagem">Parecer — US1: Listagem e quadro de progresso</h2>
+
+    <section class="story" id="fr-001">
+      <div class="story-head">
+        <h3>FR-001 — Tabela com nome, descrição, instituição, link e datas</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> a tabela precisa mostrar, no mínimo, nome da chamada, descrição, instituição responsável, link e datas de abertura/fechamento.</p>
+      <p><strong>Evidência:</strong> <code>index.html</code> declara as colunas <code>&lt;th&gt;</code> Chamada, Fechamento, Abertura, Link, Instituição, Descrição, Ações; <code>renderTabela()</code> (<code>script.js</code>) preenche todas elas a partir de cada <code>edital</code> mockado, incluindo fallback textual quando Abertura/Link estão ausentes (<code>.field-missing</code>).</p>
+    </section>
+
+    <section class="story" id="fr-002">
+      <div class="story-head">
+        <h3>FR-002 — Quadro kanban com 4 colunas na ordem Backlog/Em andamento/Validação/Concluído</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> existência da visão de quadro e a ordem exata das 4 colunas exigida pelo FR.</p>
+      <p><strong>Evidência:</strong> <code>nav.view-switch</code> com abas Tabela/Kanban (<code>role="tablist"</code>, alterna <code>.hidden</code> entre <code>#view-tabela</code>/<code>#view-kanban</code>); dentro de <code>#board</code>, as 4 <code>.column</code> aparecem no DOM na ordem <code>data-status="backlog"</code>, <code>"andamento"</code>, <code>"validacao"</code>, <code>"concluido"</code> — mesma ordem de <code>STATUSES</code> em <code>script.js</code>, usada por <code>renderKanban()</code> para popular cada coluna.</p>
+    </section>
+
+    <section class="story" id="fr-009">
+      <div class="story-head">
+        <h3>FR-009 — Mover edital entre quaisquer colunas, em qualquer direção</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> se o fluxo permite ir e voltar entre qualquer par de colunas, não só avançar.</p>
+      <p><strong>Evidência:</strong> dois mecanismos redundantes em <code>script.js</code> — os botões acessíveis <code>←</code>/<code>→</code> (<code>moveEdital(edital.id, STATUSES[idx ± 1])</code>, restrito a colunas adjacentes, com <code>updateMoveButtons()</code> desabilitando o botão nas pontas) e drag-and-drop livre (<code>drop</code> em qualquer <code>.card-list</code> chama <code>moveEdital(id, list.dataset.status)</code> com o <code>status</code> de destino arbitrário, cobrindo o caso "quaisquer colunas" sem exigir passos intermediários).</p>
+    </section>
+
+    <section class="story" id="fr-010">
+      <div class="story-head">
+        <h3>FR-010 — Estágio sincronizado entre tabela e quadro</h3>
+        <span class="badge badge-medium">🟡 parcial</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> o modelo de dados é consistente — há um único array <code>editais</code> compartilhado, e <code>moveEdital()</code> muda <code>edital.status</code> diretamente nesse objeto, então trocar de aba sempre mostra o estado atual. Só que a tabela (conforme o próprio escopo de FR-001, que não lista "estágio" entre as colunas obrigatórias) <strong>não tem nenhuma coluna/indicador de estágio</strong> — não há "Estágio" nem cor/rótulo equivalente em <code>renderTabela()</code>. Além disso, <code>moveEdital()</code> chama só <code>renderKanban()</code>, nunca <code>renderTabela()</code>, o que não quebra nada visualmente hoje só porque a tabela nunca renderiza o estágio.</p>
+      <p><strong>Por que é um problema:</strong> "manter sincronizado ... mudar em uma visão DEVE refletir imediatamente na outra" pressupõe que as duas visões expõem o dado que está sendo sincronizado. Como a tabela não expõe estágio nenhum, esse critério não é <em>demonstrável</em> a partir dela — só é verificável olhando o quadro kanban duas vezes (antes/depois de mover), o que testa "o quadro reflete a própria mudança que ele mesmo fez", não "a tabela reflete uma mudança feita no quadro". Fica ambíguo se FR-010 é satisfeito por consistência de dado (que existe) ou se pressupõe algum indicador visível de estágio também na tabela (que não existe).</p>
+      <p><strong>Recomendação:</strong> <code>product-owner</code> esclarecer em <code>spec.md</code> se a tabela precisa expor o estágio de acompanhamento de alguma forma (mesmo que discreta, ex.: uma coluna "Estágio" ou uma tag) para que FR-010 seja observável nas duas visões, ou se a intenção sempre foi "consistência do dado subjacente", caso em que vale registrar isso explicitamente no FR para não depender de inferência.</p>
+    </section>
+
+    <section class="story" id="fr-011">
+      <div class="story-head">
+        <h3>FR-011 — Indicação visual de prazo vencido</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> se há um estado visualmente distinto para editais cujo fechamento já passou, nas duas visões.</p>
+      <p><strong>Evidência:</strong> <code>isVencido(fechamentoISO)</code> compara a data (string ISO) com <code>new Date().toISOString().slice(0,10)</code>; badge <code>.badge-vencido</code> ("Vencido") na tabela e <code>.card-vencido-badge</code> no card do kanban, mais borda vermelha (<code>tr.vencido</code>/<code>.card.vencido</code> em <code>style.css</code>). Conferido com a data do sistema (2026-07-31): o edital mockado <code>e4</code> tem <code>fechamento: "2026-06-15"</code>, que é anterior a hoje — <code>isVencido</code> retorna <code>true</code> para ele, então <code>e4</code> deve renderizar com o badge "Vencido" nas duas visões.</p>
+    </section>
+
+    <section class="story" id="fr-012">
+      <div class="story-head">
+        <h3>FR-012 — Link acessível a partir da tabela/quadro; ausência indicada visualmente</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> link clicável quando existe, e um estado visual claro (não um link quebrado) quando não existe — valor de fronteira: edital sem link cadastrado.</p>
+      <p><strong>Evidência:</strong> na tabela, <code>&lt;a href="${edital.link}" target="_blank" rel="noopener"&gt;Ver chamada&lt;/a&gt;</code> só é gerado se <code>edital.link</code> é truthy; caso contrário, <code>&lt;span class="field-missing"&gt;Link não informado&lt;/span&gt;</code> (itálico, sem sublinhado, propositalmente não-clicável). No card do kanban, mesma lógica via <code>.card-link</code>/<code>.card-link-missing</code> com <code>.hidden</code> alternado por <code>Boolean(edital.link)</code>. O edital mockado <code>e5</code> tem <code>link: ""</code> de propósito (comentário A016 no código) para exercitar esse fallback nos dois lugares.</p>
+    </section>
+
+    <section class="story" id="fr-022">
+      <div class="story-head">
+        <h3>FR-022 — Prazo se aproximando em 4 níveis (7/14/21/30 dias), só o mais urgente</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> os 4 limiares, a precedência sobre FR-011 (vencido nunca mostra "próximo" ao mesmo tempo) e a regra de mostrar só o nível mais urgente aplicável.</p>
+      <p><strong>Evidência:</strong> <code>NIVEIS_PROXIMIDADE = [7, 14, 21, 30]</code>; <code>nivelProximidade()</code> retorna <code>null</code> se <code>isVencido()</code> já for verdadeiro (precedência correta) e, senão, <code>NIVEIS_PROXIMIDADE.find(limite =&gt; diasRestantes &lt;= limite)</code> — <code>Array.prototype.find</code> devolve o <strong>primeiro</strong> (logo o menor/mais urgente) limiar satisfeito, nunca mais de um. Conferido com a data do sistema (2026-07-31): <code>e1</code> (<code>fechamento: "2026-08-05"</code>) tem 5 dias restantes → cai em "até 7 dias" (bate com o comentário A011 no mock); <code>e5</code> (<code>fechamento: "2026-08-19"</code>) tem 19 dias restantes → <code>19 &lt;= 7</code> falso, <code>19 &lt;= 14</code> falso, <code>19 &lt;= 21</code> verdadeiro → "até 21 dias" (bate com o comentário A011). Cor amarela (<code>--warning</code>) distinta da vermelha de FR-011 em <code>.badge-proximo</code>/<code>tr.proximo</code>/<code>.card.proximo</code>.</p>
+    </section>
+
+    <section class="story" id="fr-024">
+      <div class="story-head">
+        <h3>FR-024 — Contagem por coluna do kanban, atualizada dinamicamente, respeita filtro</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> contador no cabeçalho de cada coluna, incluindo o valor 0, e que ele reflete o total filtrado (não o geral) quando há busca/filtro ativo.</p>
+      <p><strong>Evidência:</strong> cada <code>&lt;h2&gt;</code> de coluna tem <code>&lt;span class="col-count" data-status="..."&gt;</code>; em <code>renderKanban()</code>, <code>doStatus</code> é derivado de <code>filtrados = getFiltered()</code> (não do array bruto <code>editais</code>) antes de filtrar por <code>status</code>, então o contador <code>(${doStatus.length})</code> já reflete busca/instituição/ignorados aplicados — inclusive podendo chegar a 0. <code>renderKanban()</code> roda tanto em <code>moveEdital()</code> quanto em <code>applyFilters()</code>, então o contador atualiza tanto ao mover um cartão quanto ao digitar na busca.</p>
+    </section>
+
+    <section class="story" id="fr-031">
+      <div class="story-head">
+        <h3>FR-031 — Tabela e quadro utilizáveis em diferentes larguras de tela</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> tabela reorganiza (não esconde colunas) em telas estreitas; as 4 colunas do quadro cabem lado a lado em desktop padrão, sem rolagem horizontal.</p>
+      <p><strong>Evidência:</strong> <code>@media (max-width: 640px)</code> em <code>style.css</code> transforma a tabela em cartões empilhados (<code>thead { display: none }</code>, cada <code>&lt;td&gt;</code> vira uma linha rotulada via <code>content: attr(data-label)</code>, todos os <code>data-label</code> presentes em <code>renderTabela()</code>) — nenhuma coluna é omitida, só reorganizada, como o FR exige. O board usa <code>grid-template-columns: repeat(4, minmax(0, 1fr))</code> com <code>min-width: 0</code> nas colunas (comentário no CSS explica que isso evita que uma coluna force rolagem por causa de um título de card longo); só abaixo de <code>@media (max-width: 800px)</code> — fora da faixa de "resolução de desktop padrão" — o grid vira 1 coluna. <strong>Evidência adicional (histórica, ao vivo):</strong> <code>KANBAN.md</code> registra as tasks A002 (layout responsivo da tabela) e A003 (largura mínima das 4 colunas do kanban em desktop) como confirmadas ao vivo via browser em 2026-07-31 — antes desta rodada, com o mesmo código atual (nenhuma mudança em <code>style.css</code> desde então, confirmável via <code>git log</code>).</p>
+    </section>
+
+    <!-- ============================== US4 ============================== -->
+
+    <h2 id="parecer-busca">Parecer — US4: Busca, filtro, ordenação, contagem</h2>
+
+    <section class="story" id="fr-018">
+      <div class="story-head">
+        <h3>FR-018 — Busca textual parcial por nome da chamada, ignorando acentuação</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> busca parcial (substring), insensível a acento, nas duas visões; valor de fronteira — busca sem nenhum resultado correspondente.</p>
+      <p><strong>Evidência:</strong> <code>normalizeText()</code> usa <code>str.normalize("NFD").replace(/[\u0300-\u036f]/g, "")</code> para remover diacríticos antes de comparar (comentário A012 confirma a intenção — "inovacao" encontra "Inovação"); <code>getFiltered()</code> aplica <code>normalizeText(e.chamada).includes(termo)</code>, alimentando tanto <code>renderTabela()</code> quanto <code>renderKanban()</code> a partir da mesma função. Fronteira de zero resultados: quando <code>lista.length === 0</code>, a tabela mostra explicitamente "Nenhum edital encontrado com esses critérios." (não fica em branco silenciosamente) e <code>updateEditalCount()</code> mostraria "0 editais exibidos" — não um erro nem uma tela travada.</p>
+    </section>
+
+    <section class="story" id="fr-019">
+      <div class="story-head">
+        <h3>FR-019 — Filtro por instituição responsável, nas duas visões</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> opções do filtro geradas a partir dos dados reais, aplicadas às duas visões via a mesma <code>getFiltered()</code>.</p>
+      <p><strong>Evidência:</strong> <code>[...new Set(editais.map(e =&gt; e.instituicao))].sort()</code> popula <code>#inst-filter</code> dinamicamente (sem lista fixa hardcoded); <code>getFiltered()</code> aplica <code>(!inst || e.instituicao === inst)</code>, mesma função usada por <code>renderTabela()</code> e <code>renderKanban()</code>.</p>
+    </section>
+
+    <section class="story" id="fr-020">
+      <div class="story-head">
+        <h3>FR-020 — Ordenar a visão de tabela por data de fechamento (asc/desc)</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> controle de ordenação crescente/decrescente, aplicado à tabela (o FR só exige isso da visão de tabela).</p>
+      <p><strong>Evidência:</strong> <code>&lt;select id="sort-fechamento"&gt;</code> com opções "Mais próximo primeiro"/"Mais distante primeiro"; <code>renderTabela()</code> ordena com <code>byFechamento</code> e aplica <code>.reverse()</code> se <code>sortFechamento.value === "desc"</code>.</p>
+    </section>
+
+    <section class="story" id="fr-021">
+      <div class="story-head">
+        <h3>FR-021 — Cartões de cada coluna ordenados por fechamento, sem reorganizar entre colunas</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> ordenação secundária dentro da coluna, sem mover o card entre colunas por causa da ordenação.</p>
+      <p><strong>Evidência:</strong> em <code>renderKanban()</code>, <code>filtrados.filter(e =&gt; e.status === status).sort(byFechamento)</code> — o <code>filter</code> por <code>status</code> acontece antes do <code>sort</code>, então a ordenação nunca influencia o agrupamento por estágio; comentário no código confirma que é automático, sem controle visível separado do de FR-020.</p>
+    </section>
+
+    <section class="story" id="fr-023">
+      <div class="story-head">
+        <h3>FR-023 — Total de editais exibidos, geral ou filtrado</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> contador visível perto do título, correto tanto sem filtro (total geral) quanto com filtro (total já filtrado); fronteira de zero.</p>
+      <p><strong>Evidência:</strong> <code>#edital-count</code> com <code>aria-live="polite"</code>; <code>updateEditalCount()</code> usa <code>getFiltered().length</code> sempre — como <code>getFiltered()</code> sem nenhum termo/instituição/ignorados já retorna todos os ativos, o mesmo cálculo cobre os dois casos do FR sem lógica condicional própria. Pluralização tratada (<code>"edital exibido"</code> vs. <code>"editais exibidos"</code>), incluindo o singular/plural correto para 0 e 1.</p>
+    </section>
+
+    <section class="story" id="fr-025">
+      <div class="story-head">
+        <h3>FR-025 — Indicador de busca/filtro ativo, com "Limpar filtros" que não mexe na ordenação</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> indicador visível some quando não há filtro, aparece com o resumo certo quando há, e "Limpar filtros" reseta busca+instituição+ignorados numa ação só, sem tocar na ordenação vigente.</p>
+      <p><strong>Evidência:</strong> <code>#filter-indicator</code> alterna <code>.hidden</code> via <code>isFilterActive()</code> (<code>Boolean(searchInput.value.trim() || instFilter.value || mostrarIgnorados)</code>); <code>updateFilterIndicator()</code> monta o texto juntando as partes ativas ("Filtrando por: busca "..." e instituição "..."" etc.). <code>clearFiltersBtn</code> zera <code>searchInput.value</code>, <code>instFilter.value</code> e chama <code>setMostrarIgnorados(false)</code> — nunca toca em <code>sortFechamento.value</code>, confirmando que a ordenação vigente não é alterada pela ação.</p>
+    </section>
+
+    <section class="story" id="fr-026">
+      <div class="story-head">
+        <h3>FR-026 — Coluna do kanban vazia por filtro mostra mensagem, não fica em branco</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> a distinção entre "coluna vazia porque o filtro não deixou nada" (deve mostrar mensagem) e "coluna genuinamente vazia, sem filtro" (deve ficar em branco, sem mensagem de filtro).</p>
+      <p><strong>Evidência:</strong> <code>if (doStatus.length === 0 && isFilterActive()) { list.innerHTML = '&lt;p class="empty-state"&gt;Nenhum edital encontrado com esses critérios.&lt;/p&gt;' }</code> — a mensagem só aparece quando há filtro ativo; sem filtro, uma coluna sem cartões fica com <code>list.innerHTML = ""</code> (branco), sem texto indevido. Nota: a mesma mensagem na visão de tabela (<code>if (lista.length === 0)</code>) é exibida <strong>independente</strong> de <code>isFilterActive()</code> — o FR-026 só exige esse tratamento do kanban (a spec assume que a tabela já comunica "vazio" pela ausência natural de linhas), então isso não é uma falha deste critério; fica registrado como observação, não como problema, já que nenhum FR pede o comportamento condicional também na tabela.</p>
+    </section>
+
+    <!-- ============================== US3 ============================== -->
+
+    <h2 id="parecer-ignorar">Parecer — US3: Ignorar edital</h2>
+
+    <section class="story" id="fr-027">
+      <div class="story-head">
+        <h3>FR-027 — Marcar edital como "Ignorado" sem excluir, sem virar 5ª coluna</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> ação de ignorar disponível nas duas visões, e que ela não introduz um estágio novo no quadro.</p>
+      <p><strong>Evidência:</strong> botão <code>.ignore-btn</code> presente na tabela (delegação de clique em <code>#tabela-corpo</code>) e no card do kanban (delegação em <code>#board</code>), ambos chamando <code>toggleIgnorado(id)</code>; <code>toggleIgnorado()</code> só altera <code>edital.ignorado</code>, nunca <code>edital.status</code> — e o quadro continua com exatamente as 4 colunas de <code>STATUSES</code>, sem coluna "Ignorado".</p>
+    </section>
+
+    <section class="story" id="fr-028">
+      <div class="story-head">
+        <h3>FR-028 — Ignorados ocultos por padrão, inclusive das contagens</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> visão padrão exclui ignorados da tabela, do quadro e dos totais (FR-023/FR-024).</p>
+      <p><strong>Evidência:</strong> <code>let mostrarIgnorados = false</code> por padrão; <code>getFiltered()</code> exige <code>Boolean(e.ignorado) === wantIgnorados</code>, e como <code>editalCount</code>/<code>col-count</code> são sempre derivados de <code>getFiltered()</code> (nunca do array <code>editais</code> bruto), um edital ignorado desaparece de tabela, quadro e das duas contagens simultaneamente, sem lógica extra por contagem. O edital mockado <code>e5</code> vem com <code>ignorado: true</code> de propósito (comentário A018), então ele não deveria aparecer na visão padrão "Ativos".</p>
+    </section>
+
+    <section class="story" id="fr-029">
+      <div class="story-head">
+        <h3>FR-029 — Alternância "Ativos"/"Ignorados" como controle de 2 posições nomeadas (não checkbox)</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> o mecanismo de UI exigido pela revisão mais recente do FR — segmentado de duas posições nomeadas, com contagem de ignorados visível, não um checkbox/toggle liga-desliga nem rota separada.</p>
+      <p><strong>Evidência:</strong> <code>&lt;div class="segmented" role="group"&gt;</code> com dois <code>&lt;button&gt;</code> (<code>#segment-ativos</code> "&lsaquo; Ativos", <code>#segment-ignorados</code> "Ignorados <span>(N)</span> &rsaquo;"), cada um com <code>aria-pressed</code> refletindo o estado — não é um <code>&lt;input type="checkbox"&gt;</code>. <code>#ignorados-count</code> é atualizado por <code>updateIgnoradosCount()</code> a cada <code>applyFilters()</code>, sempre visível junto do botão (mesmo sem clicar nele antes). Reaproveita a mesma barra de controles/pipeline de FR-018/019/023, como o FR pede.</p>
+    </section>
+
+    <section class="story" id="fr-030">
+      <div class="story-head">
+        <h3>FR-030 — Desmarcar edital ignorado, volta no mesmo estágio de antes</h3>
+        <span class="badge badge-passed">✅ passou</span>
+      </div>
+      <p><strong>O que foi verificado:</strong> reverter a marcação de ignorado a partir da visão de ignorados, sem alterar o estágio de acompanhamento que o edital já tinha.</p>
+      <p><strong>Evidência:</strong> mesma função <code>toggleIgnorado()</code> de FR-027 é usada para marcar e desmarcar (o rótulo do botão alterna "Ignorar"/"Reverter" conforme <code>edital.ignorado</code>); como ela nunca escreve em <code>edital.status</code>, o estágio anterior é preservado por construção — não há caminho de código que resete <code>status</code> ao reverter. Comentário no mock do <code>e5</code> confirma a intenção: "O estágio ("backlog") não muda por estar ignorado".</p>
+    </section>
+
+    <!-- ============================== fora de escopo ============================== -->
+
+    <h2 id="parecer-fora">Fora de escopo desta tela</h2>
+    <p>Os FR-xxx abaixo pertencem a User Stories/telas que <code>prototype/avulsa-A001/</code> não implementa (cadastro, edição, exclusão, escopo por usuário) — este protótipo é só a tela "Editais Abertos" (tabela + kanban de editais já existentes). Marcados ⚪ não aplicável, não é uma falha desta rodada.</p>
+    <ul class="cross-list">
+      <li><code>FR-003</code> Cadastro de novo edital — sem formulário de criação neste protótipo.</li>
+      <li><code>FR-004</code> Registro da data de abertura no cadastro — o campo é <em>exibido</em> (com fallback quando ausente, ver FR-001), mas não há onde <em>registrá-lo</em> aqui.</li>
+      <li><code>FR-005</code> Bloqueio de cadastro sem campos obrigatórios — não há formulário para validar.</li>
+      <li><code>FR-006</code> Registro de documentação exigida — nem exibido nem editável nesta tela.</li>
+      <li><code>FR-007</code> Registro de critérios de avaliação — nem exibido nem editável nesta tela.</li>
+      <li><code>FR-008</code> Estágio inicial "Backlog" ao cadastrar — comportamento de cadastro, sem tela de criação aqui.</li>
+      <li><code>FR-013</code> Edição de dados de um edital já cadastrado — sem tela/modal de edição neste protótipo.</li>
+      <li><code>FR-014</code> Remoção definitiva de um edital — só existe "Ignorar" (FR-027), que é reversível por design; não há ação de exclusão.</li>
+      <li><code>FR-015</code> Lista de acompanhamento pessoal por captador — sem autenticação/múltiplos captadores no protótipo.</li>
+      <li><code>FR-016</code> Restrição de visualização/edição ao captador dono — mesma razão, sem controle de acesso multiusuário aqui.</li>
+      <li><code>FR-017</code> Documentação/critérios como texto livre — nem exibido nesta tela (ver FR-006/FR-007).</li>
+    </ul>
+
+    <h2 id="bem">O que funcionou bem</h2>
+    <ul>
+      <li><strong>Fonte única de verdade para os dois pipelines de renderização:</strong> <code>getFiltered()</code> é a única função que decide "o que está visível agora" (busca + instituição + ativos/ignorados), consumida sem duplicação por <code>renderTabela()</code>, <code>renderKanban()</code>, <code>updateEditalCount()</code> e os contadores por coluna — nenhum dos 7 critérios de US4 precisou de lógica de filtro repetida em mais de um lugar.</li>
+      <li><strong>Precedência vencido/próximo correta e sem sobreposição visual (FR-011/FR-022):</strong> <code>nivelProximidade()</code> retorna <code>null</code> sempre que <code>isVencido()</code> é verdadeiro, então nunca existe <code>tr.vencido.proximo</code> nem um card com os dois badges ao mesmo tempo — confirmado tanto no CSS (comentário explícito) quanto na aritmética dos dois editais mockados que testam os limiares (<code>e1</code>, <code>e5</code>).</li>
+      <li><strong>Fallbacks de campo ausente (link, abertura) usam a mesma classe visual e nunca renderizam algo clicável apontando para lugar nenhum:</strong> <code>.field-missing</code>/<code>.card-link-missing</code> são explicitamente não-clicáveis (itálico, sem sublinhado), diferente do bug que um teste de persona anterior (<code>docs/persona/avulsa-A001.html#dor-1</code>) já havia sinalizado como risco antes de FR-003/FR-012 serem formalizados — o protótipo atual já trata esse caso corretamente nos dois lugares.</li>
+      <li><strong>Ignorar/reverter é ortogonal ao estágio por construção, não por disciplina de quem programa depois:</strong> como <code>toggleIgnorado()</code> é a única função que toca <code>edital.ignorado</code> e nunca aparece perto de nenhuma atribuição a <code>edital.status</code>, FR-030 (preservar estágio ao reverter) é garantido estruturalmente, não só verificado pelos dados de exemplo.</li>
+    </ul>
+
+    <h2 id="resolver">Para quem resolver</h2>
+    <p><a href="#fr-010">FR-010</a> (estágio sincronizado entre tabela e quadro) → <code>product-owner</code>, para esclarecer em <code>spec.md</code> se a visão de tabela precisa expor algum indicador de estágio de acompanhamento (hoje ausente, por escopo de FR-001) para que a sincronização exigida por FR-010 seja observável nas duas visões, ou se "sincronizado" se refere só à consistência do dado subjacente — o que já está garantido pelo modelo de dados único do protótipo, independente da resposta.</p>
+
+    <p class="page-footer">Este comando não corrige nada — se algo aqui virar trabalho, use <code>/quick-task</code> ou peça ao <code>product-owner</code>/<code>designer</code> para agir sobre o parecer. Este relatório não substitui teste automatizado contra a implementação real (ver <code>/qa-production-test</code> quando US1/US4/US3 forem construídas em <code>app/</code>).</p>
+  </main>
+
+</div>
+<script src="../assets/script.js" defer></script>
+</body>
+</html>
