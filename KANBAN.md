@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-02T00:47Z
+**Última sincronização**: 2026-08-02T01:17Z
 
 ## To Do
 
@@ -143,6 +143,16 @@ todas as colunas.
   `prototype/avulsa-A001/`.
 
 ### (avulsas)
+
+- [ ] A027 A05:2021 — `manage.py check --deploy` não roda: gap de tooling no
+  próprio script de auditoria (via relatório de segurança
+  docs/cybersec-report/2026-08-02.html#achado-9).
+- [ ] A028 Self-check de segurança da task A023 não é executado
+  automaticamente (via relatório de segurança
+  docs/cybersec-report/2026-08-02.html#achado-10).
+- [ ] A029 A05:2021 — Cross-Origin-Resource-Policy header ausente,
+  residual do ZAP (via relatório de segurança
+  docs/cybersec-report/2026-08-02.html#achado-11).
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento
   (descrição, nome da chamada, instituição responsável, link para a chamada
