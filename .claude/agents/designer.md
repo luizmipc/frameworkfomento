@@ -107,3 +107,21 @@ renderizam.
   propriedade nem uma preferência liga/desliga), use um segmented control
   de duas posições — reserve o checkbox para seleção/lote e o toggle
   switch para preferências de sistema com efeito imediato.
+
+- **2026-08-02**: a 8ª e a 9ª rodada de teste de persona em
+  `prototype/avulsa-A001/` (`docs/persona/avulsa-A001.html#dor-1`, a
+  segunda delas confirmada ao vivo em browser, não só por leitura de
+  código) encontraram o mesmo problema: clicar "Ignorar" faz a linha/card
+  desaparecer instantaneamente da visão atual, sem nenhuma confirmação,
+  toast ou mensagem — o único sinal da mudança é um contador pequeno
+  ("Ignorados (N)") fora do fluxo visual de onde o clique aconteceu, fácil
+  de não notar. Para uma ação reversível mas que remove o item da view
+  corrente (diferente de excluir de fato), o usuário não tem como saber,
+  sem já conhecer a interface de antemão, que o dado não foi perdido.
+  Regra: toda ação que faz um item sumir da visão atual (ignorar,
+  arquivar, mover para outra visão/filtro) precisa de feedback textual
+  imediato e visível no ponto onde o clique aconteceu (ex.: um toast "Item
+  movido para Ignorados"), não só uma atualização silenciosa de contador
+  em outro canto da tela — aplique isso por padrão ao desenhar qualquer
+  toggle/ação equivalente daqui em diante, sem esperar um terceiro achado
+  de persona apontar a mesma lacuna.

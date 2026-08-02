@@ -19,6 +19,14 @@
   <p class="edital-count" id="edital-count" aria-live="polite"></p>
 </header>
 
+<!-- A035: feedback textual ao ignorar/reverter um edital (docs/persona/avulsa-A001.html#dor-1) —
+     antes a única mudança visível era o contador "Ignorados (N)", fora do
+     fluxo de onde o clique aconteceu. Fixed no topo, não bloqueia interação
+     (não é alert/confirm); mesma convenção aria-live de #edital-count e
+     #filter-indicator. Conteúdo/exibição controlados por showToast() em
+     script.js. -->
+<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
 <nav class="view-switch" role="tablist" aria-label="Alternar visão">
   <button type="button" role="tab" id="tab-tabela" aria-selected="true" aria-controls="view-tabela" class="view-btn active" data-view="tabela">Tabela</button>
   <button type="button" role="tab" id="tab-kanban" aria-selected="false" aria-controls="view-kanban" class="view-btn" data-view="kanban">Kanban</button>
@@ -117,6 +125,10 @@
         <h2>Validação <span class="col-count" data-status="validacao">0</span></h2>
         <div class="card-list" data-status="validacao"></div>
       </div>
+      <!-- A036 (docs/persona/avulsa-A001.html#dor-2): "Concluído" aqui é ambíguo —
+           não deixa claro se é "submetido" ou "resultado já saiu". Decisão de
+           produto pendente (product-owner: 5º estágio, campo complementar, ou
+           limitação documentada) — nenhuma mudança visual feita nesta task. -->
       <div class="column" data-status="concluido">
         <h2>Concluído <span class="col-count" data-status="concluido">0</span></h2>
         <div class="card-list" data-status="concluido"></div>

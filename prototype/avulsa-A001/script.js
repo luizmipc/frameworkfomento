@@ -72,6 +72,10 @@ const editais = [
   },
 ];
 
+// A036 (docs/persona/avulsa-A001.html#dor-2): "Concluído" mistura dois
+// sentidos possíveis ("proposta submetida" vs. "resultado do edital já
+// saiu") sem distinção visual/textual. Decisão de produto pendente — não
+// resolvida nesta task, só documentada aqui para quem revisitar.
 const STATUS_LABEL = {
   backlog: "Backlog",
   andamento: "Em andamento",
@@ -230,8 +234,26 @@ clearFiltersBtn.addEventListener("click", () => {
   // "Limpar filtros" volta para a visão padrão "Ativos" (FR-028) — chama
   // setMostrarIgnorados em vez de applyFilters direto, senão os botões do
   // segmented control ficam com o estado visual desatualizado.
+  // A037 (docs/persona/avulsa-A001.html#dor-3): resetar o toggle Ativos/
+  // Ignorados junto com "Limpar filtros" é uma decisão implícita deste
+  // protótipo, não uma regra confirmada em spec.md — product-owner ainda vai
+  // declarar em FR-025/FR-029 se esse é o comportamento pretendido.
   setMostrarIgnorados(false);
 });
+
+// A035 (docs/persona/avulsa-A001.html#dor-1): feedback textual imediato ao
+// ignorar/reverter — antes só o contador "Ignorados (N)" mudava, fora do
+// fluxo de onde o clique aconteceu. Toast simples (sem dependência nova):
+// some sozinho após alguns segundos, não bloqueia interação (não é
+// alert/confirm). #toast já tem aria-live="polite" no HTML.
+const toastEl = document.getElementById("toast");
+let toastTimer = null;
+function showToast(message) {
+  toastEl.textContent = message;
+  toastEl.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toastEl.classList.add("hidden"), 2500);
+}
 
 // A018 / FR-027/FR-030: marca/desmarca um edital como ignorado — o estágio
 // (edital.status) não é tocado, só o atributo ortogonal `ignorado`.
@@ -241,6 +263,7 @@ function toggleIgnorado(id) {
   const edital = editais.find((e) => e.id === id);
   if (!edital) return;
   edital.ignorado = !edital.ignorado;
+  showToast(edital.ignorado ? "Edital movido para Ignorados" : "Edital revertido para Ativos");
   applyFilters();
 }
 

@@ -141,6 +141,29 @@ todas as colunas.
 - [ ] A020 FR-010 — Estágio sincronizado entre tabela e quadro (via
   relatório QA docs/qa-report/avulsa-A001.html#fr-010). Protótipo:
   `prototype/avulsa-A001/`.
+- [ ] A035 Dar feedback textual imediato e visível (ex.: toast "Edital
+  movido para Ignorados") no momento de clicar "Ignorar"/"Reverter" — hoje
+  o item some/reaparece instantaneamente da visão atual sem nenhuma
+  confirmação, só um contador pequeno no canto muda (FR-027/FR-030).
+  Protótipo: `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-1` (reafirmada da 8ª rodada, agora
+  confirmada ao vivo na 9ª). Ver também lição aprendida em
+  `.claude/agents/designer.md` (2026-08-02) sobre feedback de ações que
+  removem um item da visão atual.
+- [ ] A036 Avaliar se o estágio "Concluído" do quadro de progresso precisa
+  distinguir dois momentos reais diferentes do processo de captação —
+  "submetido, aguardando parecer" vs. "resultado já saiu/processo
+  encerrado" — hoje ambos caem na mesma coluna, sem diferenciação visual
+  nem de dado. Decisão de produto (novo estágio/campo, ou documentar como
+  limitação conhecida fora de escopo), não de UX. Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-2`.
+- [ ] A037 Confirmar/declarar em FR-025 ou FR-029 se "Limpar filtros" deve
+  mesmo resetar o toggle Ativos/Ignorados de volta para "Ativos" (comportamento
+  atual do protótipo, decisão implícita não coberta por nenhum FR) ou se
+  deveria preservar a visão atual e só limpar busca/instituição. Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-3`.
 
 ### (avulsas)
 

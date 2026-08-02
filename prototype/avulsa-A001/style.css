@@ -573,3 +573,22 @@ tr.ignorado,
     grid-template-columns: 1fr;
   }
 }
+
+/* A035: toast de feedback ao ignorar/reverter (docs/persona/avulsa-A001.html#dor-1).
+   Fixed no topo central, por cima do conteúdo, sem deslocar layout nem
+   bloquear interação. Reaproveita .hidden (display:none !important) para
+   esconder — visibilidade controlada por showToast() em script.js. */
+.toast {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  z-index: 100;
+}
