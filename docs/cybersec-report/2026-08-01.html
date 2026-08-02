@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relatório de Segurança — cybersecurity-blue (2ª rodada parcial: bandit) — frameworkfomento</title>
+<title>Relatório de Segurança — cybersecurity-blue (3ª rodada, completa) — frameworkfomento</title>
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -11,9 +11,10 @@
 
   <nav class="toc">
     <p class="kicker group-label">docs/cybersec-report</p>
-    <a href="#top">2026-08-01 (2ª rodada, parcial)</a>
+    <a href="#top">2026-08-01 (3ª rodada, completa)</a>
     <a href="#sumario">Sumário executivo</a>
     <a href="#escopo">Escopo e metodologia</a>
+    <a href="#achados">Achados desta rodada</a>
     <a href="#bem">O que já está bem protegido</a>
     <a href="#resolver">Para quem resolver</a>
     <a href="#apendice">Apêndice</a>
@@ -23,180 +24,300 @@
   </nav>
 
   <main>
-    <p class="kicker">cybersecurity-blue · docs/cybersec-report · 2ª rodada (parcial)</p>
+    <p class="kicker">cybersecurity-blue · docs/cybersec-report · 3ª rodada (completa)</p>
     <h1 id="top">Relatório de Segurança — cybersecurity-blue</h1>
     <p class="lede">Auditoria de segurança da aplicação real (<code>app/</code>, Django 6.0.7, subida via
     <code>docker compose up -d --build</code> e confirmada respondendo em <code>http://localhost:8000/</code> —
-    HTTP 200), em 2026-08-01. Esta é a <strong>2ª rodada</strong> do mesmo dia, registrada no mesmo documento
-    (não um arquivo novo) — a 1ª rodada (mais abaixo, histórico preservado) tinha achado apenas o achado 1
-    (<code>SECRET_KEY</code> hardcoded), que foi corrigido desde então pela task <strong>A019</strong>
-    (commit <code>5db4142</code> em <code>main</code>) e é confirmado resolvido nesta rodada — ver
-    <a href="#bem">O que já está bem protegido</a>.</p>
-    <p class="callout"><strong>Rodada PARCIAL, a pedido explícito do usuário — só <code>bandit</code> rodou de
-    novo.</strong> Dos sete testes de <code>shortcuts/security-test.sh</code> (<code>gitleaks</code>,
-    <code>bandit</code>, <code>semgrep</code>, auditoria de dependências, <code>trivy</code>,
-    <code>manage.py check --deploy</code>, OWASP ZAP Baseline), apenas <code>bandit</code> foi executado nesta
-    rodada, via <code>./shortcuts/security-test.sh bandit</code>. Docker estava disponível no ambiente (foi
-    usado para subir a aplicação via <code>docker compose</code>) — os outros seis testes não rodaram porque não
-    foram pedidos, não por indisponibilidade de ferramenta. Em nenhum lugar deste documento os seis testes não
-    executados devem ser lidos como "passou" ou "sem achados": são <strong>não executados nesta rodada</strong>,
-    ponto — a mesma lacuna já registrada honestamente na 1ª rodada continua aberta.</p>
+    HTTP 200), em 2026-08-01. Esta é a <strong>3ª rodada</strong> do mesmo dia, registrada no mesmo documento
+    (não um arquivo novo). Diferente das duas rodadas anteriores (ambas restritas a <code>bandit</code>), esta é
+    a <strong>primeira vez que os sete testes de <code>shortcuts/security-test.sh</code> rodam sem
+    argumentos</strong> — <code>gitleaks</code>, <code>bandit</code>, <code>semgrep</code>, auditoria de
+    dependências, <code>trivy</code>, <code>manage.py check --deploy</code> e OWASP ZAP Baseline, na ordem
+    canônica do script. Docker estava disponível e foi usado para subir a aplicação e rodar
+    <code>gitleaks</code>/<code>trivy</code>/ZAP — nenhum teste foi pulado por falta de ferramenta nesta rodada.</p>
 
     <h2 id="sumario">Sumário executivo</h2>
-    <p>Contagem de achados <strong>nesta 2ª rodada</strong> (o que <code>bandit</code> cobre): zerada. O único
-    achado que já existiu neste documento (Média, <code>SECRET_KEY</code> hardcoded) foi corrigido e é
-    confirmado resolvido agora — ver <a href="#bem">O que já está bem protegido</a>. Ele não é deletado do
-    histórico, só reclassificado.</p>
+    <p>Cinco testes (<code>gitleaks</code>, <code>bandit</code>, <code>semgrep</code>, <code>trivy</code> contra
+    <code>app/uv.lock</code>) não encontraram nada de novo. Os dois testes que nunca tinham rodado contra
+    superfícies novas — auditoria de dependências e <code>manage.py check --deploy</code> — encontraram achados
+    reais, e o ZAP encontrou ausência de cabeçalhos de segurança HTTP. Nenhum achado desta rodada é Crítico ou
+    Alto por CVSS puro; o mais grave em termos de exploitability real é o Dockerfile rodando como root
+    (classificado Alta pelo <code>trivy</code>, tratado abaixo com o devido contexto).</p>
     <table>
-      <thead><tr><th>Severidade</th><th>CVSS</th><th>Qtde (2ª rodada)</th></tr></thead>
+      <thead><tr><th>Severidade</th><th>CVSS</th><th>Qtde (3ª rodada)</th></tr></thead>
       <tbody>
         <tr><td>🔴 Crítica</td><td>9.0–10.0</td><td>0</td></tr>
-        <tr><td>🔴 Alta</td><td>7.0–8.9</td><td>0</td></tr>
-        <tr><td>🟡 Média</td><td>4.0–6.9</td><td>0 <span class="badge badge-medium">1 resolvido</span></td></tr>
-        <tr><td>🟢 Baixa</td><td>0.1–3.9</td><td>0</td></tr>
-        <tr><td>⚪ Informativa</td><td>—</td><td>0</td></tr>
+        <tr><td>🟠 Alta</td><td>7.0–8.9</td><td>1 <span class="badge badge-high">Dockerfile como root — ver contexto</span></td></tr>
+        <tr><td>🟡 Média</td><td>4.0–6.9</td><td>2 <span class="badge badge-medium">DEBUG=True; SECRET_KEY fallback em check --deploy</span></td></tr>
+        <tr><td>🟢 Baixa</td><td>0.1–3.9</td><td>7 <span class="badge badge-low">ALLOWED_HOSTS vazio; 3 headers de sessão/transporte; 4 warnings ZAP; HEALTHCHECK ausente</span></td></tr>
+        <tr><td>⚪ Informativa</td><td>—</td><td>1 <span class="badge badge-na"><code>mcp</code> transitivo de dev, sem CVE aplicável em produção</span></td></tr>
       </tbody>
     </table>
-    <p><strong>Postura atual pelo NIST CSF, restrita ao que <code>bandit</code> efetivamente cobriu</strong>
-    (código-fonte Python estático de <code>app/</code> — não cobre segredos no histórico do git, dependências,
-    configuração de deploy nem comportamento em runtime):</p>
+    <p><strong>Postura atual pelo NIST CSF</strong>, agora com cobertura completa dos sete testes:</p>
     <ul>
-      <li><strong>Identify:</strong> o único ativo sensível que <code>bandit</code> tinha visibilidade para
-      identificar em código Python (o segredo criptográfico embutido, <code>SECRET_KEY</code>) já foi corrigido
-      — nesta rodada não há novo ativo sensível sinalizado. <code>bandit</code> continua sem enxergar segredos
-      fora de padrões de código Python (ex.: chave de API em <code>.env</code> versionado); essa cobertura é do
-      <code>gitleaks</code>, não executado nesta rodada.</li>
-      <li><strong>Protect:</strong> melhorou no ponto específico que <code>bandit</code> cobre — o segredo de
-      assinatura de sessão/CSRF do Django saiu do texto plano do repositório e passou a vir de variável de
-      ambiente (task A019). Isso não significa que o <code>.env</code> em si esteja auditado por
-      <code>gitleaks</code> nesta rodada (não rodou).</li>
-      <li><strong>Detect:</strong> fora do escopo de <code>bandit</code> (SAST estático não detecta uso indevido
-      em runtime); nenhuma afirmação pode ser feita aqui a partir desta rodada.</li>
-      <li><strong>Respond/Recover:</strong> fora do escopo de <code>bandit</code>; não avaliado nesta rodada. A
-      correção do achado 1 em si (A019) é evidência de um ciclo de Respond funcional para achados reportados por
-      este agente, mas isso é observação sobre processo, não sobre a cobertura desta ferramenta.</li>
+      <li><strong>Identify:</strong> ativos identificados nesta rodada — o ambiente de dev do agente de
+      segurança carrega uma dependência transitiva vulnerável (<code>mcp</code>, via <code>semgrep</code>), a
+      imagem Docker não declara usuário não-root, e a configuração Django em <code>app/config/settings.py</code>
+      tem três parâmetros ainda em modo dev (<code>DEBUG=True</code>, <code>ALLOWED_HOSTS=[]</code>, fallback de
+      <code>SECRET_KEY</code> com prefixo <code>django-insecure-</code>). Nenhum segredo real foi encontrado
+      versionado (<code>gitleaks</code>, histórico completo de 59 commits, zero achados).</li>
+      <li><strong>Protect:</strong> ponto fraco concentrado em configuração de deploy — nenhum dos sete
+      cabeçalhos/flags de <code>manage.py check --deploy</code> está endurecido ainda (a aplicação nunca chegou a
+      rodar fora de modo dev/sem TLS até aqui), e a imagem roda como root. Código-fonte em si (SAST via
+      <code>bandit</code> e <code>semgrep</code>, 0 achados em ambos) está limpo.</li>
+      <li><strong>Detect:</strong> sem melhoria nesta rodada — nenhum teste do script cobre telemetria/logging de
+      segurança em runtime; fora do escopo de SAST/SCA/DAST baseline.</li>
+      <li><strong>Respond:</strong> o achado da 1ª rodada (<code>SECRET_KEY</code> hardcoded) segue confirmado
+      corrigido (task A019) — evidência de um ciclo de resposta funcional a achados deste agente.</li>
+      <li><strong>Recover:</strong> não avaliado — nenhum teste do script cobre backup/plano de recuperação.</li>
     </ul>
 
     <h2 id="escopo">Escopo e metodologia</h2>
-    <p>Tabela dos sete testes de <code>shortcuts/security-test.sh</code> e o que cada um cobre no OWASP Top 10
-    2021 — apenas a primeira linha rodou nesta rodada (de novo), as demais continuam honestamente marcadas como
-    não executadas.</p>
+    <p>Tabela dos sete testes de <code>shortcuts/security-test.sh</code>, agora todos ✅ executados nesta rodada:</p>
     <table>
-      <thead><tr><th>Teste</th><th>Cobertura OWASP Top 10 2021</th><th>Status nesta rodada</th></tr></thead>
+      <thead><tr><th>Teste</th><th>Cobertura OWASP Top 10 2021</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td><code>bandit</code></td><td>SAST, código Python — base ampla do Top 10 (ex.: A02, A03, A05, dependendo da regra)</td><td>✅ Executado (2ª vez)</td></tr>
-        <tr><td><code>gitleaks</code></td><td>Segredos vazados no código e no histórico do git</td><td>⚪ Não executado nesta rodada</td></tr>
-        <tr><td><code>semgrep</code> (<code>p/owasp-top-ten</code>)</td><td>SAST, conjunto de regras mais amplo que <code>bandit</code></td><td>⚪ Não executado nesta rodada</td></tr>
-        <tr><td>Auditoria de dependências (<code>uv audit</code>/pip-audit)</td><td>A06:2021 — Vulnerable and Outdated Components</td><td>⚪ Não executado nesta rodada</td></tr>
-        <tr><td><code>trivy</code></td><td>A06:2021 (SCA) e A05:2021 via misconfiguração de <code>Dockerfile</code>/<code>docker-compose.yml</code></td><td>⚪ Não executado nesta rodada</td></tr>
-        <tr><td><code>manage.py check --deploy</code></td><td>A05:2021 — Security Misconfiguration (configuração de deploy do Django)</td><td>⚪ Não executado nesta rodada</td></tr>
-        <tr><td>OWASP ZAP Baseline</td><td>DAST, contra a aplicação real rodando</td><td>⚪ Não executado nesta rodada</td></tr>
+        <tr><td><code>gitleaks</code></td><td>Segredos vazados no código e no histórico do git</td><td>✅ Executado — 0 achados</td></tr>
+        <tr><td><code>bandit</code></td><td>SAST, código Python — A02, A03, A05 (conforme regra)</td><td>✅ Executado (3ª vez) — 0 achados</td></tr>
+        <tr><td><code>semgrep</code> (<code>p/owasp-top-ten</code>)</td><td>SAST, regras mais amplas que <code>bandit</code></td><td>✅ Executado (1ª vez) — 0 achados</td></tr>
+        <tr><td>Auditoria de dependências (pip-audit via <code>uv export</code>)</td><td>A06:2021 — Vulnerable and Outdated Components</td><td>✅ Executado (1ª vez) — 3 CVEs em <code>mcp</code> (dev-only, ver achado)</td></tr>
+        <tr><td><code>trivy</code></td><td>A06:2021 (SCA) e A05:2021 (misconfiguração de <code>Dockerfile</code>)</td><td>✅ Executado (1ª vez) — 0 vuln. em <code>uv.lock</code>, 2 misconfigs no <code>Dockerfile</code></td></tr>
+        <tr><td><code>manage.py check --deploy</code></td><td>A05:2021 — Security Misconfiguration</td><td>✅ Executado (1ª vez) — 7 warnings</td></tr>
+        <tr><td>OWASP ZAP Baseline</td><td>DAST, contra a aplicação real rodando</td><td>✅ Executado (1ª vez) — 62 PASS, 5 WARN-NEW, 0 FAIL</td></tr>
       </tbody>
     </table>
-    <p>A régua de "OK" continua sendo o <strong>OWASP ASVS nível 1</strong> (adequado ao estágio atual do
-    projeto — sem dado sensível de usuário real em produção ainda), não apenas "a ferramenta não reclamou".
-    O requisito relevante ao único achado histórico deste documento é <strong>ASVS V6.4.1</strong> (chaves e
-    segredos criptográficos não devem estar hardcoded no código-fonte; devem vir de configuração/variável de
-    ambiente gerenciada fora do controle de versão) — nesta rodada, o código passa nesse requisito (ver
-    <a href="#bem">O que já está bem protegido</a>).</p>
-    <p><strong>Ferramenta:</strong> <code>bandit 1.9.4</code> (Python 3.14.0 — mesma versão da 1ª rodada).
-    <strong>Comando exato:</strong> <code>./shortcuts/security-test.sh bandit</code>, a partir da raiz do repo
-    (equivalente a <code>cd app &amp;&amp; uv run bandit -r . -x ./.venv</code>; o script roda com
-    <code>-q</code> e por isso não imprime nada quando não há achados — rodado também sem <code>-q</code>
-    nesta verificação para confirmar a saída completa abaixo).</p>
-    <p><strong>Resultado desta 2ª rodada:</strong> <code>No issues identified</code> — 132 linhas de código
-    Python escaneadas (128 na 1ª rodada; a diferença de 4 linhas é consistente com a troca do valor hardcoded
-    por uma leitura via <code>os.environ.get(...)</code> em <code>config/settings.py</code>, que ocupa mais
-    linhas que a atribuição literal anterior — não foi conferido linha a linha neste relatório, então é
-    registrado como inferência plausível, não fato confirmado), 0 issues suprimidos via <code>#nosec</code>.</p>
-    <pre>Test results:
-	No issues identified.
+    <p>A régua de "OK" é o <strong>OWASP ASVS nível 1</strong> (adequado ao estágio atual do projeto — sem dado
+    sensível de usuário real em produção ainda). Requisitos citados nos achados abaixo: <strong>V14.2.1</strong>
+    (dependências verificadas contra vulnerabilidades conhecidas), <strong>V14.1</strong> (build/config de
+    deployment não roda com privilégios desnecessários), <strong>V14.4</strong> (cabeçalhos de resposta HTTP
+    configurados corretamente), <strong>V1.4.1</strong>/<strong>V14.2</strong> (configuração de produção
+    separada de dev — <code>DEBUG</code>, hosts permitidos).</p>
+    <p><strong>Comando canônico:</strong> <code>./shortcuts/security-test.sh</code> (sem argumentos, todos os
+    sete testes na ordem do script). Ferramentas via Docker: <code>gitleaks</code>, <code>trivy</code>, ZAP
+    Baseline (imagens oficiais). <code>uv audit</code> nativo indisponível nesta versão do <code>uv</code>
+    (0.9.4); o script fez fallback automático para <code>uv export</code> + <code>pip-audit</code> sobre o
+    lockfile exportado, nunca sobre o ambiente virtual (que não tem <code>pip</code> instalado, por ser criado
+    pelo <code>uv</code>).</p>
 
-Code scanned:
-	Total lines of code: 132
-	Total lines skipped (#nosec): 0
-	Total potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0
+    <h2 id="achados">Achados desta rodada</h2>
 
-Run metrics:
-	Total issues (by severity):
-		Undefined: 0
-		Low: 0
-		Medium: 0
-		High: 0</pre>
-
-    <h2 id="bem">O que já está bem protegido</h2>
-    <p>Honesto e restrito ao que <code>bandit</code> efetivamente escaneou (132 linhas de código Python em
-    <code>app/</code>, 0 issues suprimidos via <code>#nosec</code>):</p>
-
-    <section class="story" id="achado-1">
+    <section class="story" id="achado-2">
       <div class="story-head">
-        <h3>RESOLVIDO — A02:2021 — Cryptographic Failures: <code>SECRET_KEY</code> do Django hardcoded em
-        <code>config/settings.py</code> (achado original da 1ª rodada, 2026-08-01)</h3>
-        <span class="badge badge-medium">🟡 Média — CVSS 5.9 (histórico) → ✅ Corrigido</span>
+        <h3>A05:2021 — Security Misconfiguration: Dockerfile roda como root</h3>
+        <span class="badge badge-high">🟠 Alta — CVSS 7.0 (contextualizado)</span>
       </div>
-      <p><strong>Histórico do achado (1ª rodada):</strong> a <code>SECRET_KEY</code> usada pelo Django para
-      assinar sessões, tokens CSRF e tokens de reset de senha estava escrita em texto plano no código-fonte,
-      com o prefixo <code>django-insecure-</code> (marcador padrão de <code>django-admin startproject</code>),
-      confirmando que o valor nunca tinha sido trocado por um segredo real gerenciado fora do controle de
-      versão. <code>bandit</code> sinalizou como <code>[B105:hardcoded_password_string]</code> / CWE-259, em
-      <code>app/config/settings.py:23</code>. CVSS 3.1 original: <code>AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N</code>
-      = 5.9 (Média) — ver justificativa completa preservada no histórico do git deste documento
-      (<code>git log -p docs/cybersec-report/2026-08-01.html</code>).</p>
-      <p><strong>Correção aplicada e confirmada nesta 2ª rodada:</strong> task <strong>A019</strong>, aprovada
-      pelo QA, commit <code>5db4142</code> em <code>main</code>. <code>SECRET_KEY</code> agora é lida via
-      <code>os.environ.get("DJANGO_SECRET_KEY", &lt;fallback marcado como dev-only&gt;)</code>, com
-      <code>.env</code>/<code>.env.example</code> criados e <code>docker-compose.yml</code>/<code>Dockerfile</code>
-      parametrizados para injetar o valor real por ambiente. <code>bandit</code> não sinaliza mais
-      <code>B105</code> nesta linha — 0 achados nesta 2ª rodada, nas mesmas 132 linhas de código Python.</p>
-      <p><strong>Ressalva honesta:</strong> esta rodada confirma apenas que o <em>código-fonte Python</em> não
-      tem mais o valor hardcoded (o que <code>bandit</code> consegue ver). Não confirma que o
-      <code>.env</code> real de produção esteja fora do controle de versão nem que o fallback de dev não
-      vaze para produção por engano — essas checagens são de <code>gitleaks</code> (segredos versionados) e de
-      <code>manage.py check --deploy</code>/revisão manual de config de deploy, nenhum dos dois executado
-      nesta rodada. ASVS V6.4.1 é atendido no que <code>bandit</code> pode verificar; validação completa do
-      requisito depende dessas checagens ainda pendentes.</p>
+      <p><strong>Ferramenta:</strong> <code>trivy</code> (Dockerfile), regra <code>DS-0002</code>. O
+      <code>Dockerfile</code> na raiz do repo (base <code>ghcr.io/astral-sh/uv:python3.12-bookworm-slim</code>)
+      nunca declara um <code>USER</code> não-root; o processo Django (<code>uv run manage.py runserver</code>)
+      roda como root dentro do container.</p>
+      <p><strong>CVSS 3.1:</strong> <code>AV:L/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H</code> ≈ 7.0 (Alta) — cenário-base
+      trivy assume escape de container completo. <strong>Contexto de exploração real:</strong> exige primeiro
+      uma vulnerabilidade de execução de código (RCE) na própria aplicação ou em alguma dependência para
+      sequer alcançar o processo root dentro do container — não é uma exposição diretamente explorável de fora
+      hoje, já que nenhum RCE foi encontrado nesta rodada nem nas anteriores. É, ainda assim, um endurecimento
+      de defesa em profundidade que reduz drasticamente o blast radius se outra vulnerabilidade aparecer no
+      futuro (privilege escalation viraria trivial sem essa mitigação).</p>
+      <p><strong>ATT&amp;CK → D3FEND:</strong> encadeamento aproximado seria T1611 (Escape to Host) após um RCE
+      inicial dentro do container (ex.: T1190, Exploit Public-Facing Application) — o container rodando como
+      root remove uma barreira que dificultaria a escalada. Controle D3FEND: <strong>Harden — Container
+      Hardening (D3-CH)</strong>, via a diretiva <code>USER</code> não-root no <code>Dockerfile</code>.</p>
     </section>
 
+    <section class="story" id="achado-3">
+      <div class="story-head">
+        <h3>A05:2021 — DEBUG=True hardcoded em produção potencial</h3>
+        <span class="badge badge-medium">🟡 Média — CVSS 6.5</span>
+      </div>
+      <p><strong>Ferramenta:</strong> <code>manage.py check --deploy</code>, warning <code>security.W018</code>.
+      <code>DEBUG = True</code> está hardcoded em <code>app/config/settings.py</code> (não lido de variável de
+      ambiente, ao contrário de <code>SECRET_KEY</code> já corrigido na task A019) — deliberadamente fora do
+      escopo daquela correção anterior. Se esse valor for para produção sem alteração, qualquer exceção não
+      tratada expõe stack trace completo, variáveis locais, e a própria <code>SECRET_KEY</code> em uso.</p>
+      <p><strong>CVSS 3.1:</strong> <code>AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N</code> ≈ 6.5 (Média) — requer que
+      uma exceção seja de fato disparada e alcançável remotamente para vazar a página de debug; hoje a
+      aplicação é essencialmente o scaffold do Django (poucas rotas), o que limita a superfície imediata, mas
+      não muda a classificação do controle em si estar ausente.</p>
+      <p><strong>ASVS:</strong> viola V14.2 (configuração de produção deve divergir de dev nesse eixo). Não
+      recebe tratamento ATT&amp;CK→D3FEND detalhado por não ser Crítico/Alto, mas fica registrado: a técnica
+      relevante seria T1592 (Gather Victim Host Information) via página de erro vazada.</p>
+    </section>
+
+    <section class="story" id="achado-4">
+      <div class="story-head">
+        <h3>A05:2021 — SECRET_KEY sem fallback seguro caso a env var não seja setada em produção</h3>
+        <span class="badge badge-medium">🟡 Média — CVSS 5.3</span>
+      </div>
+      <p><strong>Ferramenta:</strong> <code>manage.py check --deploy</code>, warning <code>security.W009</code>.
+      <strong>Isto não é uma regressão do achado da 1ª rodada</strong> (já corrigido pela task A019, commit
+      <code>5db4142</code>) — é um ângulo diferente que <code>check --deploy</code> cobre e que nenhum teste
+      anterior tinha verificado: o fallback de dev em <code>app/config/settings.py</code>
+      (<code>os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dev-only-...')</code>) ainda existe por
+      design, para permitir rodar localmente sem configurar <code>.env</code>. O <code>check --deploy</code> não
+      sabe distinguir "a env var está setada em produção" de "ninguém configurou a env var e o fallback
+      inseguro está silenciosamente em uso" — ele sinaliza o valor default por conter o prefixo
+      <code>django-insecure-</code>, que é exatamente o comportamento correto de um linter de config: soar o
+      alarme para o cenário de configuração ausente.</p>
+      <p><strong>CVSS 3.1:</strong> <code>AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N</code> ≈ 5.3 (Média) — só é
+      explorável se alguém de fato esquecer de setar <code>DJANGO_SECRET_KEY</code> num deploy real; o
+      mecanismo de mitigação (variável de ambiente) já existe e funciona, falta apenas uma trava que impeça o
+      fallback de ser aceito fora de <code>DEBUG=True</code>.</p>
+      <p><strong>ASVS:</strong> V6.4.1 continua atendido no caminho feliz (env var setada); esta é uma lacuna de
+      "fail-safe" — o app deveria recusar subir com o fallback inseguro quando <code>DEBUG=False</code>.</p>
+    </section>
+
+    <section class="story" id="achado-5">
+      <div class="story-head">
+        <h3>A05:2021 — ALLOWED_HOSTS vazio e cabeçalhos/flags de transporte e sessão não endurecidos</h3>
+        <span class="badge badge-low">🟢 Baixa — CVSS 3.1 (agrupado, 5 warnings)</span>
+      </div>
+      <p><strong>Ferramenta:</strong> <code>manage.py check --deploy</code>, warnings <code>security.W020</code>
+      (<code>ALLOWED_HOSTS = []</code> em <code>app/config/settings.py</code>), <code>W004</code>
+      (<code>SECURE_HSTS_SECONDS</code> não setado), <code>W008</code> (<code>SECURE_SSL_REDIRECT</code> não é
+      <code>True</code>), <code>W012</code> (<code>SESSION_COOKIE_SECURE</code> não é <code>True</code>),
+      <code>W016</code> (<code>CSRF_COOKIE_SECURE</code> não é <code>True</code>). Agrupados porque todos
+      compartilham a mesma causa raiz e o mesmo remédio: nenhum desses parâmetros foi configurado ainda porque a
+      aplicação nunca rodou atrás de TLS/domínio real — são flags padrão de "checklist de deploy" do próprio
+      Django, esperadas de estar pendentes numa aplicação que ainda só roda em <code>localhost</code> sem HTTPS.</p>
+      <p><strong>CVSS 3.1</strong> (pior caso do grupo, <code>ALLOWED_HOSTS</code> vazio permitindo Host header
+      injection): <code>AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N</code> ≈ 3.1 (Baixa) — <code>ALLOWED_HOSTS=[]</code>
+      na verdade bloqueia todo host em produção (comportamento fail-closed do Django quando <code>DEBUG=False</code>),
+      então o risco real hoje é operacional (app não sobe corretamente atrás de proxy real) mais do que uma
+      janela de exploração aberta; os quatro warnings de cookie/HSTS/SSL só importam quando a aplicação estiver
+      de fato servida via HTTPS, o que ainda não é o caso.</p>
+      <p><strong>ASVS:</strong> V14.2 (config de deploy) e V9.1 (comunicação segura) — nenhum viola hoje porque
+      a aplicação ainda está em fase pré-deploy real; ficam registrados como pré-requisitos a resolver antes do
+      primeiro deploy com domínio/TLS.</p>
+    </section>
+
+    <section class="story" id="achado-6">
+      <div class="story-head">
+        <h3>A05:2021 — Cabeçalhos de segurança HTTP ausentes (OWASP ZAP Baseline)</h3>
+        <span class="badge badge-low">🟢 Baixa — CVSS 2.6 (agrupado, 4 WARN-NEW)</span>
+      </div>
+      <p><strong>Ferramenta:</strong> OWASP ZAP Baseline, contra as 4 URLs testadas (<code>/</code>,
+      <code>/robots.txt</code> 404, <code>/sitemap.xml</code> 404). Quatro alertas <code>WARN-NEW</code>: Server
+      header vaza versão (<code>10036</code>), CSP não configurado (<code>10038</code>), Permissions-Policy
+      ausente (<code>10063</code>), Cross-Origin-Embedder-Policy ausente/inválido (<code>90004</code>). Um quinto
+      (Storable/Cacheable Content, <code>10049</code>) é informativo, não um cabeçalho de segurança em si.</p>
+      <p><strong>CVSS 3.1</strong> (pior caso do grupo, ausência de CSP habilitando XSS refletido caso surja no
+      futuro): <code>AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:N</code> ≈ 2.6 (Baixa) — não há XSS confirmado hoje (0
+      achados de injeção no scan de 62 PASS); CSP é defesa em profundidade contra um XSS que ainda não existe
+      no código atual (majoritariamente scaffold), não uma vulnerabilidade ativa. Vazamento de versão do
+      servidor (<code>Server</code> header) facilita reconhecimento de atacante mas não é explorável sozinho.</p>
+      <p><strong>ASVS:</strong> V14.4 (cabeçalhos de resposta HTTP). Resolução típica em Django: middleware
+      <code>django-csp</code> ou configuração manual de <code>SECURE_*</code> headers, mais
+      <code>ServerHeader</code> customizado no servidor WSGI real (não o <code>runserver</code> de dev usado
+      neste teste, que sempre expõe versão).</p>
+    </section>
+
+    <section class="story" id="achado-7">
+      <div class="story-head">
+        <h3>A06:2021 — 3 CVEs em <code>mcp</code>, dependência transitiva de dev (via <code>semgrep</code>)</h3>
+        <span class="badge badge-na">⚪ Informativa — CVSS base alto, exploitability real ≈ nula em produção</span>
+      </div>
+      <p><strong>Ferramenta:</strong> auditoria de dependências (pip-audit via <code>uv export</code>).
+      <code>mcp 1.23.3</code> tem 3 CVEs conhecidas (<code>PYSEC-2026-3481/3482/3483</code>, fix em
+      <code>1.27.2</code>/<code>1.28.1</code>). <strong>Contexto de exploitability que muda tudo:</strong>
+      <code>mcp</code> não é dependência do Django em produção — <code>app/pyproject.toml</code> declara apenas
+      <code>dependencies = ["django==6.0.7"]</code> em <code>[project]</code>; <code>mcp</code> é dependência
+      transitiva de <code>semgrep</code> (listada em <code>[dependency-groups] dev = ["ruff", "bandit",
+      "semgrep"]</code>, confirmado em <code>app/uv.lock</code> no bloco <code>[[package]] name = "semgrep"</code>).
+      Ou seja: <code>mcp</code> nunca é importado pelo código Django, nunca roda em produção, e só existe na
+      venv de desenvolvimento porque o próprio <code>semgrep</code> o usa internamente (provavelmente para seu
+      recurso de servidor MCP). O vetor de ataque do CVSS-base de qualquer CVE em <code>mcp</code> pressupõe que
+      um servidor/cliente MCP esteja de fato em execução e acessível — isso nunca acontece neste projeto fora de
+      quando um humano roda <code>semgrep</code> manualmente numa máquina de dev, o que reduz o AV efetivo de
+      Network para praticamente Local-com-ação-do-usuário e o risco real a desprezível. Nota: o próprio
+      <code>trivy</code> escaneou <code>app/uv.lock</code> e não sinalizou nada (0 vulnerabilidades) — divergência
+      esperada entre bases de dados/timing de atualização de ferramentas diferentes, registrada aqui com
+      honestidade, não escondida.</p>
+      <p><strong>ASVS:</strong> V14.2.1 tecnicamente não atendido no papel (dependência com CVE conhecida
+      presente no lockfile), mas o requisito existe para proteger a superfície de produção, que este pacote
+      nunca toca — por isso a classificação final é Informativa e é o achado de menor prioridade real desta
+      rodada, apesar do CVSS-base de qualquer uma das três CVEs poder soar alto isoladamente.</p>
+    </section>
+
+    <section class="story" id="achado-8">
+      <div class="story-head">
+        <h3>A05:2021 — Dockerfile sem HEALTHCHECK</h3>
+        <span class="badge badge-low">🟢 Baixa — CVSS 0 (higiene operacional, não vulnerabilidade)</span>
+      </div>
+      <p><strong>Ferramenta:</strong> <code>trivy</code> (Dockerfile), regra <code>DS-0026</code>. Não é uma
+      vulnerabilidade de segurança propriamente dita — é uma recomendação de disponibilidade/observabilidade
+      (orquestradores conseguem detectar e reiniciar containers travados). Registrado por completude, sem CVSS
+      atribuível.</p>
+    </section>
+
+    <h2 id="bem">O que já está bem protegido</h2>
     <ul>
-      <li>Nenhum uso de função perigosa clássica sinalizado por <code>bandit</code> nesta rodada —
-      sem <code>eval</code>/<code>exec</code> sobre entrada externa, sem <code>subprocess</code> com
-      <code>shell=True</code>, sem construção de SQL por concatenação de string, sem
-      <code>pickle</code>/<code>yaml.load</code> inseguro — nenhuma dessas categorias apareceu no código
-      atual (que ainda é majoritariamente o scaffold padrão do <code>django-admin startproject</code>, sem
-      app de negócio implementado).</li>
-      <li>Zero achados nesta 2ª rodada nas 132 linhas escaneadas — inclusive o achado único que existia na 1ª
-      rodada foi corrigido e confirmado resolvido, como detalhado acima.</li>
+      <li><strong>RESOLVIDO — A02:2021 — SECRET_KEY hardcoded</strong> (achado original da 1ª rodada,
+      2026-08-01): confirmado corrigido pela task A019 (commit <code>5db4142</code>) e reconfirmado nesta 3ª
+      rodada por <code>bandit</code> (0 issues, 132 linhas) e por <code>semgrep</code> (0 findings, 154 regras
+      OWASP Top 10). Ver histórico completo em <code>git log -p docs/cybersec-report/2026-08-01.html</code>.</li>
+      <li><strong>Zero segredos versionados</strong> — <code>gitleaks</code> escaneou os 59 commits completos do
+      histórico do git (~1.41 MB) e não encontrou nenhum. Cobre o ângulo que <code>bandit</code> sozinho nunca
+      cobriu (segredo versionado fora de padrão de código Python, ex. em <code>.env</code> commitado por
+      engano) — confirmado limpo agora.</li>
+      <li><strong>Zero achados de SAST</strong> em duas ferramentas independentes com bases de regras
+      diferentes: <code>bandit</code> (132 linhas, 0 issues) e <code>semgrep --config p/owasp-top-ten</code>
+      (154 regras, 8 arquivos, 0 findings). Nenhuma função perigosa clássica (<code>eval</code>/<code>exec</code>
+      sobre entrada externa, SQL por concatenação, <code>pickle</code>/<code>yaml.load</code> inseguro,
+      <code>subprocess shell=True</code>).</li>
+      <li><strong>Zero vulnerabilidades de dependências que de fato tocam produção</strong> —
+      <code>trivy</code> escaneou <code>app/uv.lock</code> e não achou nada; a única dependência vulnerável
+      encontrada (pip-audit, <code>mcp</code>) é transitiva de ferramenta de dev, nunca chega a produção (ver
+      achado acima).</li>
+      <li><strong>DAST baseline limpo de injeção</strong> — OWASP ZAP Baseline: 62 PASS, 0 FAIL, contra as 4
+      URLs testadas; os 5 WARN-NEW são todos de cabeçalho ausente/informativo, não injeção/autenticação/sessão
+      quebrada.</li>
     </ul>
-    <p class="callout">Isto NÃO é uma afirmação de que o restante da aplicação está seguro — apenas que,
-    dentro do que <code>bandit</code> cobre (SAST estático de Python), nada foi sinalizado nesta rodada.
-    Segredos no histórico do git, dependências vulneráveis, configuração insegura de deploy e comportamento da
-    aplicação rodando (XSS refletido, cabeçalhos HTTP, etc.) não foram avaliados nesta rodada — nenhuma
-    conclusão pode ser tirada sobre eles a partir deste relatório.</p>
+    <p class="callout">Isto NÃO é uma afirmação de que toda a aplicação está segura — apenas que, dentro do que
+    os sete testes de <code>shortcuts/security-test.sh</code> cobrem, nada de Crítico foi encontrado nesta
+    rodada. A aplicação ainda é majoritariamente o scaffold do <code>django-admin startproject</code>, sem app
+    de negócio implementado — a superfície real de ataque crescerá conforme features forem adicionadas, e cada
+    rodada futura deve reavaliar contra o código novo, não assumir que "0 achados hoje" continua válido depois
+    de mudanças.</p>
 
     <h2 id="resolver">Para quem resolver</h2>
-    <p>Nenhuma ação nova de correção de código/config/dependência sai desta 2ª rodada — o único achado
-    histórico deste documento já foi corrigido (task A019) e confirmado aqui. Para fechar a lacuna de
-    cobertura, os seis testes não executados (<a href="#escopo">ver escopo</a>) seguem pendentes — rodar a
-    suíte completa de <code>shortcuts/security-test.sh</code> é o próximo passo natural, mas isso é decisão de
-    quando pedir <code>/cybersecurity-check</code> de novo, não uma correção a delegar ao <code>dev</code>.</p>
+    <p>Achados com correção de código/config real, para virar tarefa via <code>/kanban-sync</code> → "Criar
+    nova tarefa" → origem "A partir de achados de segurança" (todos vão para o <code>dev</code>, não há agente
+    de infra separado):</p>
+    <ul>
+      <li><strong>Alta:</strong> adicionar <code>USER</code> não-root ao <code>Dockerfile</code> (achado
+      Dockerfile-como-root).</li>
+      <li><strong>Média:</strong> configuração de produção — <code>DEBUG=False</code> via env var (mesmo padrão
+      já usado para <code>SECRET_KEY</code>); recusar subir com o fallback de <code>SECRET_KEY</code> inseguro
+      quando <code>DEBUG=False</code>.</li>
+      <li><strong>Baixa:</strong> configurar <code>ALLOWED_HOSTS</code>, <code>SECURE_HSTS_SECONDS</code>,
+      <code>SECURE_SSL_REDIRECT</code>, <code>SESSION_COOKIE_SECURE</code>, <code>CSRF_COOKIE_SECURE</code> —
+      todos dependem de a aplicação estar de fato atrás de domínio real com TLS antes de fazer sentido ativar
+      (ativar <code>SECURE_SSL_REDIRECT</code>/cookies seguros sem TLS quebra a aplicação em dev); registrar
+      isso na tarefa para não virar um "liga tudo" cego. Cabeçalhos HTTP do ZAP (CSP, Permissions-Policy,
+      Cross-Origin-Embedder-Policy, ocultar versão do servidor) e <code>HEALTHCHECK</code> no
+      <code>Dockerfile</code> também entram aqui.</li>
+      <li><strong>Informativa:</strong> atualizar <code>semgrep</code> (que puxaria <code>mcp</code> mais novo)
+      quando conveniente — não é urgente dado que nunca toca produção; não recomendado abrir tarefa dedicada só
+      para isso, pode ir junto de uma atualização de rotina de dependências de dev.</li>
+    </ul>
+    <p>Nenhuma decisão de compliance formal (ex.: LGPD) nem de release-readiness sai deste relatório — isso é do
+    <code>product-owner</code> e do <code>scrum-master</code>, respectivamente.</p>
 
     <h2 id="apendice">Apêndice</h2>
-    <p><strong>Comandos exatos executados nesta 2ª rodada:</strong></p>
+    <p><strong>Comando exato desta rodada:</strong></p>
     <pre>docker compose up -d --build
 curl http://localhost:8000/                       # HTTP 200, confirma app real rodando
-./shortcuts/security-test.sh bandit               # único teste pedido nesta rodada
-cd app &amp;&amp; uv run bandit -r . -x ./.venv      # confirmação manual sem -q, saída completa abaixo</pre>
-    <p><strong>Versões:</strong> <code>bandit 1.9.4</code> (Python 3.14.0 — mesma versão da 1ª rodada); Django
-    6.0.7.</p>
-    <p><strong>Diferença desde a 1ª rodada (2026-08-01, mesma data, mais cedo):</strong> task A019 implementada
-    e aprovada pelo QA (commit <code>5db4142</code> em <code>main</code>) — <code>SECRET_KEY</code> deixou de
-    ser hardcoded, achado 1 corrigido. Nenhum outro código novo foi adicionado além dessa correção (132 linhas
-    escaneadas nesta rodada vs. 128 na 1ª).</p>
-    <p><strong>Testes não executados nesta rodada</strong> (a pedido explícito do usuário, não por falha de
-    ambiente — docker estava disponível): <code>gitleaks</code>, <code>semgrep</code>, auditoria de
-    dependências (<code>uv audit</code>/pip-audit), <code>trivy</code>, <code>manage.py check --deploy</code>,
-    OWASP ZAP Baseline. Nenhum desses seis deve ser lido como "passou" a partir deste documento — a mesma
-    lacuna da 1ª rodada continua aberta.</p>
+./shortcuts/security-test.sh                       # todos os 7 testes, sem argumentos</pre>
+    <p><strong>Versões:</strong> <code>bandit 1.9.4</code>, <code>semgrep</code> (regras <code>p/owasp-top-ten</code>,
+    154 regras/560 disponíveis na origem Community), <code>gitleaks</code> e <code>trivy</code> via imagens
+    Docker oficiais, OWASP ZAP Baseline via imagem Docker oficial, <code>uv 0.9.4</code> (sem <code>uv audit</code>
+    nativo — fallback para <code>uv export</code> + pip-audit sobre o lockfile exportado), Django 6.0.7, Python
+    3.12 (imagem base do Dockerfile) / 3.14.0 (venv local de dev).</p>
+    <p><strong>Evidência bruta:</strong> relatório HTML completo do ZAP (62 PASS detalhados) em
+    <code>docs/cybersec-report/zap/zap-baseline-2026-08-01.html</code>.</p>
+    <p><strong>Diferença desde a 2ª rodada (mesma data, mais cedo):</strong> nenhuma mudança de código entre as
+    rodadas — apenas a suíte completa de testes rodou pela primeira vez, revelando achados em superfícies que
+    <code>bandit</code> sozinho nunca cobriu (config de deploy, Dockerfile, dependências transitivas, runtime
+    HTTP).</p>
 
     <p class="page-footer">Este relatório não corrige nada — é um parecer honesto e acionável. Ações sobre os
     achados (correção de código/config/dependência) são sempre um comando separado
