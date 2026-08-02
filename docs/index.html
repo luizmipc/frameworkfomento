@@ -573,6 +573,10 @@
         <h3>Cybersec — 2026-08-02</h3>
         <p>Auditoria de segurança de <code>app/</code> — 1ª rodada, suíte completa (7 testes). 0 🔴 Crítica, 0 🟠 Alta, 0 🟡 Média — todos os achados do dia anterior seguem corrigidos e reconfirmados. 3 🟢 Baixa: <code>Cross-Origin-Resource-Policy</code> ausente, gap de <code>.env</code> no próprio script de auditoria (<code>manage.py check --deploy</code> não rodou de fato), self-check da task A023 não conectado a gate automatizado.</p>
       </a>
+      <a class="doc-card" href="deploy-report/2026-08-01.html">
+        <h3>Deploy — 2026-08-01</h3>
+        <p>Auditoria de prontidão operacional de deploy de <code>app/</code> — 1ª rodada. Nível 0 de maturidade CI/CD (sem <code>.github/workflows/</code>). 3 🔴 Bloqueante/Alto: nenhum pipeline de CI/CD, <code>runserver</code> de dev como processo de produção, sem estágio de release (<code>migrate</code>/<code>collectstatic</code> ausentes). 1 🟡 Média: shutdown não gracioso (<code>CMD</code> shell-form, confirmado por <code>docker stop</code> demorando 10s e saindo com <code>SIGKILL</code>). 1 🟢 Baixa: imagem de produção (1.37GB) carrega dependências de dev.</p>
+      </a>
     </div>
   </main>
 

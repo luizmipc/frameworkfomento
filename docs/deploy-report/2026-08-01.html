@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Prontidão de Deploy — devops (1ª rodada) — frameworkfomento</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <p class="kicker group-label">docs/deploy-report</p>
+    <a href="#top">2026-08-01 (1ª rodada)</a>
+    <a href="#sumario">Sumário executivo</a>
+    <a href="#escopo">Escopo e metodologia</a>
+    <a href="#achados">Achados desta rodada</a>
+    <a href="#achado-1">Achado 1 — Nível 0 de CI/CD</a>
+    <a href="#achado-2">Achado 2 — <code>runserver</code> em produção</a>
+    <a href="#achado-3">Achado 3 — sem estágio de release</a>
+    <a href="#achado-4">Achado 4 — shutdown não gracioso</a>
+    <a href="#achado-5">Achado 5 — imagem carrega deps de dev</a>
+    <a href="#bem">O que já está pronto para produção</a>
+    <a href="#resolver">Para quem resolver</a>
+    <a href="#apendice">Apêndice</a>
+
+    <p class="kicker group-label">frameworkfomento</p>
+    <a href="../index.html">Documentação</a>
+  </nav>
+
+  <main>
+    <p class="kicker">devops · docs/deploy-report · 1ª rodada</p>
+    <h1 id="top">Relatório de Prontidão de Deploy — devops</h1>
+    <p class="lede">Primeira auditoria de prontidão operacional de deploy do <code>/check-deployment</code> neste
+    repositório, em 2026-08-01. Testado: a aplicação real (<code>app/</code>, Django 6.0.7) subida via
+    <code>docker compose up -d --build</code>, o <code>Dockerfile</code> (build limpo <code>--no-cache</code>),
+    o <code>docker-compose.yml</code> (<code>docker compose config</code>) e <code>.github/workflows/</code>.
+    Não há rodada anterior deste relatório para comparar — esta é a primeira vez que o skill roda neste repo.</p>
+
+    <h2 id="sumario">Sumário executivo</h2>
+    <table>
+      <thead><tr><th>Impacto</th><th>Qtde</th></tr></thead>
+      <tbody>
+        <tr><td>🔴 Bloqueante/Alto</td><td>3</td></tr>
+        <tr><td>🟡 Médio</td><td>1</td></tr>
+        <tr><td>🟢 Baixo</td><td>1</td></tr>
+        <tr><td>⚪ Informativo</td><td>0</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Maturidade de pipeline CI/CD: Nível 0 — nenhuma automação.</strong> <code>.github/workflows/</code>
+    não existe no repositório; não há build, lint, teste ou deploy automatizado disparado por push/PR/tag. O
+    projeto já tem um gate local disciplinado (<code>./run_tests.sh</code>, lint + suíte Django, exigido antes de
+    todo commit por convenção em <code>CLAUDE.md</code>) e um script de auditoria de segurança completo
+    (<code>shortcuts/security-test.sh</code>, dono do <code>cybersecurity-blue</code>) — mas nenhum dos dois roda
+    de forma automatizada em CI hoje; ambos dependem de alguém lembrar de rodar localmente. Isso é o que separa o
+    Nível 0 do Nível 1 (build/lint automatizado): a disciplina existe como script, não como pipeline.</p>
+
+    <h2 id="escopo">Escopo e metodologia</h2>
+    <p>Suíte completa rodou nesta rodada (nenhuma restrição por <code>$ARGUMENTS</code>):</p>
+    <table>
+      <thead><tr><th>Checagem</th><th>O que cobre</th><th>Status nesta rodada</th></tr></thead>
+      <tbody>
+        <tr><td>CI/CD (<code>.github/workflows/</code>)</td><td>Existência e conteúdo de pipeline automatizado</td><td>✅ Rodou — diretório <code>.github/</code> não existe</td></tr>
+        <tr><td><code>docker compose config</code></td><td>Validade de sintaxe/variáveis do compose</td><td>✅ Rodou sem erro</td></tr>
+        <tr><td>Build de imagem (<code>docker build --no-cache</code>)</td><td>Reprodutibilidade e tamanho</td><td>✅ Rodou — sucesso, 1.37GB, ~44s</td></tr>
+        <tr><td><code>HEALTHCHECK</code>/<code>docker inspect</code></td><td>Disposability em runtime</td><td>✅ Rodou — <code>healthy</code> confirmado; shutdown testado à parte (achado 4)</td></tr>
+        <tr><td>Inspeção do <code>CMD</code></td><td>Servidor de produção vs. dev, passo de release (migrate/collectstatic)</td><td>✅ Rodou</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Fronteira explícita:</strong> misconfiguração de <code>Dockerfile</code>/<code>docker-compose.yml</code>
+    com CVE/CVSS (via <code>trivy</code>) e configuração de deploy do Django (via
+    <code>manage.py check --deploy</code>) são escopo do <code>/cybersecurity-check</code>, já rodado em
+    <a href="../cybersec-report/2026-08-02.html">docs/cybersec-report/2026-08-02.html</a> (0 misconfigurações no
+    <code>Dockerfile</code> reportadas por <code>trivy</code>, 5 warnings esperados de dev sem TLS no
+    <code>check --deploy</code>) — não reexecutados nem duplicados aqui.</p>
+    <p><strong>Nota sobre <code>.specify/workflows/speckit/workflow.yml</code>:</strong> esse arquivo existe no
+    repo mas é automação do Spec Kit (spec → plan → tasks), sem relação com deploy da aplicação — não confundir
+    com <code>.github/workflows/</code>, que é o que este relatório audita.</p>
+
+    <h2 id="achados">Achados desta rodada</h2>
+
+    <section class="story" id="achado-1">
+      <div class="story-head">
+        <h3>Nível 0 de maturidade CI/CD: nenhum pipeline automatizado</h3>
+        <span class="badge badge-high">🔴 Bloqueante/Alto</span>
+      </div>
+      <p><strong>O que foi encontrado:</strong> <code>.github/workflows/</code> não existe no repositório —
+      nenhum build, lint ou teste roda automaticamente em push/PR, e não há pipeline de deploy nem rollback.</p>
+      <p><strong>Evidência:</strong></p>
+      <pre>$ find .github/workflows -type f 2>/dev/null; echo "exit:$?"
+exit:1
+$ ls -la .github
+ls: cannot access '.github': No such file or directory</pre>
+      <p><strong>Impacto:</strong> todo gate de qualidade (lint, testes, futuramente auditoria de segurança) depende
+      hoje de alguém rodar <code>./run_tests.sh</code> localmente antes de commitar — não há rede de segurança se
+      esse passo for esquecido ou pulado, e não há forma automatizada de saber se um push quebrou o build antes de
+      alguém notar manualmente.</p>
+      <p><strong>Recomendação:</strong> criar um workflow mínimo em <code>.github/workflows/</code> que rode
+      <code>./run_tests.sh</code> (lint + suíte Django) em todo push/PR — Nível 1 de maturidade. Evoluir depois para
+      Nível 2 (mesmo workflow, mas como gate obrigatório de PR) e só então considerar Nível 3 (deploy automatizado
+      com rollback), quando houver ambiente de deploy real.</p>
+      <p><strong>Janela recomendada de correção:</strong> até 30 dias.</p>
+      <p><strong>Fator do 12-Factor violado:</strong> nenhum fator específico do 12-Factor cobre CI/CD em si — este
+      achado é a régua de maturidade de pipeline descrita nas Táticas de deployment do <code>devops</code>, não uma
+      violação de um dos Doze Fatores.</p>
+    </section>
+
+    <section class="story" id="achado-2">
+      <div class="story-head">
+        <h3>Servidor de desenvolvimento do Django (<code>runserver</code>) como processo de produção</h3>
+        <span class="badge badge-high">🔴 Bloqueante/Alto</span>
+      </div>
+      <p><strong>O que foi encontrado:</strong> o <code>CMD</code> do <code>Dockerfile</code> roda
+      <code>uv run manage.py runserver</code> — o servidor de desenvolvimento single-threaded do Django, não um
+      servidor WSGI/ASGI de produção (gunicorn/daphne/uvicorn).</p>
+      <p><strong>Evidência:</strong></p>
+      <pre>Dockerfile:25:CMD uv run manage.py runserver ${DJANGO_HOST:-0.0.0.0}:${DJANGO_PORT:-8000}</pre>
+      <p><strong>Impacto:</strong> <code>runserver</code> não foi projetado para produção — não lida bem com
+      concorrência real, recarrega código a cada request em modo autoreload, e não tem as garantias de robustez de
+      um servidor WSGI/ASGI dedicado. O comando "funciona" (a aplicação responde HTTP 200 e passa o
+      <code>HEALTHCHECK</code>), mas isso não substitui ter o mesmo tipo de processo em dev e produção — o ângulo
+      de segurança desse mesmo achado (exposição de banner de servidor, headers) já está documentado no
+      <a href="../cybersec-report/2026-08-02.html">cybersec-report</a>, não repetido aqui.</p>
+      <p><strong>Recomendação:</strong> trocar o <code>CMD</code> de produção por um servidor WSGI/ASGI real
+      (gunicorn ou uvicorn, conforme a stack), mantendo <code>runserver</code> apenas para o fluxo de
+      desenvolvimento local (fora do <code>Dockerfile</code> de produção, ou por variável/target de build
+      separado).</p>
+      <p><strong>Janela recomendada de correção:</strong> antes do próximo deploy real.</p>
+      <p><strong>Fator do 12-Factor violado:</strong> X. Dev/prod parity — mesmo backing service, mas não o mesmo
+      tipo de processo entre dev e produção.</p>
+    </section>
+
+    <section class="story" id="achado-3">
+      <div class="story-head">
+        <h3>Sem estágio de release automatizado (<code>migrate</code>/<code>collectstatic</code> ausentes)</h3>
+        <span class="badge badge-high">🔴 Bloqueante/Alto</span>
+      </div>
+      <p><strong>O que foi encontrado:</strong> nem o <code>CMD</code> do <code>Dockerfile</code> nem nenhum
+      entrypoint dedicado rodam <code>manage.py migrate</code> ou <code>collectstatic</code> antes do processo
+      subir — não existe nenhum script de entrypoint no repositório.</p>
+      <p><strong>Evidência:</strong></p>
+      <pre>$ find . -iname "entrypoint*" -o -iname "docker-entrypoint*"
+./app/.venv/lib/python3.14/site-packages/semgrep/console_scripts/entrypoint.py   # da lib semgrep, não da app
+$ cat Dockerfile   # CMD é só "uv run manage.py runserver ...", sem migrate/collectstatic antes</pre>
+      <p><strong>Impacto:</strong> o estágio de <em>release</em> (build + config do ambiente, incluindo migração
+      de schema) fica implícito/manual — alguém precisa lembrar de rodar <code>migrate</code> à parte antes ou
+      depois de subir o container. Hoje o schema é trivial (scaffold Django, SQLite) e isso passa despercebido,
+      mas assim que houver migrations reais de app de negócio, um deploy sem esse passo sobe com schema
+      desatualizado sem nenhum aviso.</p>
+      <p><strong>Recomendação:</strong> adicionar um passo de release explícito — <code>migrate</code> (e
+      <code>collectstatic</code>, quando houver arquivos estáticos de produção) rodando automaticamente antes do
+      processo principal, via entrypoint script ou etapa dedicada do pipeline de CI/CD do achado 1.</p>
+      <p><strong>Janela recomendada de correção:</strong> antes do próximo deploy real.</p>
+      <p><strong>Fator do 12-Factor violado:</strong> separação build/release/run — o estágio de release (que
+      inclui migração de banco) não existe como passo distinto e automatizado.</p>
+    </section>
+
+    <section class="story" id="achado-4">
+      <div class="story-head">
+        <h3>Shutdown não gracioso: <code>CMD</code> em shell-form não repassa <code>SIGTERM</code></h3>
+        <span class="badge badge-medium">🟡 Médio</span>
+      </div>
+      <p><strong>O que foi encontrado:</strong> o <code>CMD</code> do <code>Dockerfile</code> está em shell-form
+      (<code>CMD uv run manage.py runserver ...</code>, não a forma JSON <code>["uv", "run", ...]</code>), o que
+      faz o processo real rodar como filho de um <code>/bin/sh -c</code> — sinais como <code>SIGTERM</code>
+      enviados pelo Docker no <code>docker stop</code> não chegam garantidamente ao processo Django.</p>
+      <p><strong>Evidência:</strong> confirmado tanto pelo warning do próprio <code>docker build</code> quanto por
+      teste real de <code>docker stop</code> nesta rodada:</p>
+      <pre>$ docker build --no-cache -t frameworkfomento-deploy-check:2026-08-01 .
+...
+1 warning found (use docker --debug to expand):
+ - JSONArgsRecommended: JSON arguments recommended for CMD to prevent unintended behavior related to OS signals (line 25)
+
+$ docker compose up -d --build && time docker stop frameworkfomento-app-1
+docker stop frameworkfomento-app-1  0.01s user 0.01s system 0% cpu 10.283 total
+$ docker inspect frameworkfomento-app-1 --format='ExitCode:{{.State.ExitCode}}'
+ExitCode:137</pre>
+      <p><strong>Impacto:</strong> <code>docker stop</code> levou os 10s completos do período de graça padrão e
+      terminou com <code>ExitCode 137</code> (o container foi morto a força via <code>SIGKILL</code>, não encerrado
+      graciosamente via <code>SIGTERM</code>). Em produção, isso significa que todo redeploy/scale-down mata
+      requests em andamento em vez de drená-las — nenhum shutdown gracioso de fato acontece, mesmo a aplicação
+      "funcionando" no dia a dia.</p>
+      <p><strong>Recomendação:</strong> trocar o <code>CMD</code> para a forma JSON/exec
+      (<code>CMD ["uv", "run", "manage.py", "runserver", ...]</code>, ajustando conforme o servidor de produção
+      escolhido no achado 2) para que o processo principal receba sinais do Docker diretamente como PID 1.</p>
+      <p><strong>Janela recomendada de correção:</strong> até 30 dias.</p>
+      <p><strong>Fator do 12-Factor violado:</strong> IX. Disposability — shutdown deve ser gracioso ao receber
+      <code>SIGTERM</code>, não depender do container ser morto à força após o timeout.</p>
+    </section>
+
+    <section class="story" id="achado-5">
+      <div class="story-head">
+        <h3>Imagem de produção carrega dependências de desenvolvimento</h3>
+        <span class="badge badge-low">🟢 Baixo</span>
+      </div>
+      <p><strong>O que foi encontrado:</strong> o <code>Dockerfile</code> roda <code>uv sync --locked</code> (sem
+      <code>--no-dev</code>) na etapa final, instalando também o grupo <code>dev</code> de
+      <code>app/pyproject.toml</code> (<code>ruff</code>, <code>bandit</code>, <code>semgrep</code> — este último
+      traz de tabela <code>mcp</code>, <code>opentelemetry-*</code> e dezenas de outras dependências transitivas)
+      dentro da imagem que também roda em produção.</p>
+      <p><strong>Evidência:</strong></p>
+      <pre>$ cat app/pyproject.toml
+[dependency-groups]
+dev = [
+    "ruff>=0.16.1",
+    "bandit>=1.8.0",
+    "semgrep>=1.170.0",
+]
+
+$ docker build --no-cache -t frameworkfomento-deploy-check:2026-08-01 .
+...
+ + mcp==1.23.3
+ + opentelemetry-api==1.37.0
+ + opentelemetry-sdk==1.37.0
+ + semgrep==1.172.0
+ (... 76 pacotes resolvidos ao todo)
+
+$ docker images frameworkfomento-deploy-check:2026-08-01
+IMAGE                                      DISK USAGE
+frameworkfomento-deploy-check:2026-08-01   1.37GB</pre>
+      <p><strong>Impacto:</strong> a imagem que roda em produção é bem maior do que precisaria ser — o app real
+      depende só de <code>django==6.0.7</code>. Isto é uma medição de baseline honesta (o repo não define um
+      budget de tamanho de imagem, então não há um limite "estourado" aqui), não uma auditoria de vulnerabilidade
+      — quantidade de pacotes instalados como fator de superfície de ataque é ângulo do <code>trivy</code>/
+      <code>cybersecurity-blue</code> (já rodou e reportou 0 vulnerabilidades em <code>app/uv.lock</code> nesta
+      mesma imagem, ver <a href="../cybersec-report/2026-08-02.html">cybersec-report</a>).</p>
+      <p><strong>Recomendação:</strong> usar <code>uv sync --locked --no-dev</code> (ou equivalente por grupo) na
+      etapa final do <code>Dockerfile</code> de produção, mantendo o grupo <code>dev</code> só para o ambiente de
+      desenvolvimento/CI.</p>
+      <p><strong>Janela recomendada de correção:</strong> até 90 dias.</p>
+    </section>
+
+    <h2 id="bem">O que já está pronto para produção</h2>
+    <ul>
+      <li><strong>Usuário não-root confirmado</strong> — <code>Dockerfile</code> cria <code>appuser</code> (uid
+      1000) e roda o processo com <code>USER appuser</code>, não root.</li>
+      <li><strong><code>HEALTHCHECK</code> configurado e confirmado <code>healthy</code></strong> — subiu via
+      <code>docker compose up -d --build</code> e, após o <code>--start-period=5s</code>, <code>docker inspect</code>
+      reportou <code>{"Status":"healthy","FailingStreak":0,...}</code> nesta rodada.</li>
+      <li><strong>Config/segredos só via variável de ambiente (Fator III)</strong> — <code>DJANGO_SECRET_KEY</code>,
+      <code>DJANGO_DEBUG</code>, <code>DJANGO_ALLOWED_HOSTS</code>, <code>DJANGO_HOST</code>,
+      <code>DJANGO_PORT</code> todos lidos de env var, todos com exemplo documentado em <code>.env.example</code>
+      — nenhuma lacuna encontrada nesta rodada.</li>
+      <li><strong><code>docker compose config</code> resolveu sem erro</strong> — sintaxe válida, todas as
+      variáveis do <code>docker-compose.yml</code> resolvidas contra <code>.env</code>.</li>
+      <li><strong>Build reprodutível do zero</strong> — <code>docker build --no-cache</code> completou com
+      sucesso em ~44s, sem falha de dependência ou de camada.</li>
+      <li><strong>Aplicação responde de verdade</strong> — <code>curl http://localhost:8000/</code> devolveu HTTP
+      200 nesta rodada, subida via <code>docker compose</code> igual a como um deploy real subiria.</li>
+    </ul>
+
+    <h2 id="resolver">Para quem resolver</h2>
+    <p>Todos os achados desta rodada são de prontidão operacional — roteados ao <code>dev</code> via
+    <code>/kanban-sync</code> → "Criar nova tarefa" → "A partir de um relatório existente" →
+    <code>docs/deploy-report/</code>. Nenhum achado aqui se sobrepõe à lente de segurança já coberta pelo
+    <code>cybersecurity-blue</code> (ver <a href="../cybersec-report/2026-08-02.html">cybersec-report</a>).</p>
+    <ul>
+      <li><a href="#achado-1">Achado 1</a> — criar workflow mínimo em <code>.github/workflows/</code> (Nível 1 de
+      maturidade CI/CD).</li>
+      <li><a href="#achado-2">Achado 2</a> — trocar <code>runserver</code> por servidor WSGI/ASGI de produção.</li>
+      <li><a href="#achado-3">Achado 3</a> — automatizar <code>migrate</code>/<code>collectstatic</code> como
+      estágio de release.</li>
+      <li><a href="#achado-4">Achado 4</a> — mudar <code>CMD</code> para forma JSON/exec para shutdown gracioso.</li>
+      <li><a href="#achado-5">Achado 5</a> — separar dependências de dev da imagem de produção
+      (<code>--no-dev</code>).</li>
+    </ul>
+    <p>Nenhuma decisão de release-readiness sai deste relatório — isso é do <code>scrum-master</code>, que usa
+    este documento como insumo, não como gate em si.</p>
+
+    <h2 id="apendice">Apêndice</h2>
+    <p><strong>Comandos exatos executados nesta rodada</strong> (executados diretamente por este agente):</p>
+    <pre>find .github/workflows -type f 2>/dev/null
+cp .env.example .env
+docker compose up -d --build
+curl -o /dev/null -w "%{http_code}" http://localhost:8000/                          # 200
+docker inspect --format='{{json .State.Health}}' frameworkfomento-app-1             # healthy
+docker compose config
+docker compose down
+docker build --no-cache -t frameworkfomento-deploy-check:2026-08-01 .               # sucesso, ~44s
+docker images frameworkfomento-deploy-check:2026-08-01                              # 1.37GB
+docker rmi frameworkfomento-deploy-check:2026-08-01                                 # imagem de teste removida
+docker compose up -d --build
+time docker stop frameworkfomento-app-1                                             # 10.283s, ExitCode 137
+docker compose down
+rm .env   # arquivo local de teste, já no .gitignore, removido ao final</pre>
+    <p><strong>Tamanho da imagem buildada nesta rodada:</strong> 1.37GB (<code>frameworkfomento-deploy-check:2026-08-01</code>,
+    removida ao final do build limpo — sem budget de tamanho definido pelo repo, valor registrado como baseline).</p>
+    <p><strong>Versões:</strong> Docker 29.5.3, Docker Compose v5.1.4, imagem base
+    <code>ghcr.io/astral-sh/uv:python3.12-bookworm-slim</code>, Django 6.0.7.</p>
+
+    <p class="page-footer">Este relatório não corrige nada — é um parecer honesto e acionável sobre prontidão
+    operacional de deploy. Ações sobre os achados (workflow de CI, troca de servidor, passo de release) são
+    sempre um comando separado (<code>/quick-task</code>, <code>/kanban-sync</code> → "Criar nova tarefa"),
+    decidido pelo usuário depois de ler este documento. Achados de CVE/CVSS e misconfiguração de segurança de
+    <code>Dockerfile</code>/<code>docker-compose.yml</code>/Django não são deste relatório — são do
+    <code>cybersecurity-blue</code> (<a href="../cybersec-report/2026-08-02.html">cybersec-report</a>).
+    Release-readiness não é decidida aqui — isso é do <code>scrum-master</code>.</p>
+
+  </main>
+
+</div>
+<script src="../assets/script.js" defer></script>
+</body>
+</html>
