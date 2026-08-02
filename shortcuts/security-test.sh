@@ -9,6 +9,17 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 APP_DIR="$REPO_ROOT/app"
 
+# Mesmo .env que docker-compose/run_tests.sh usam (KEY=VALUE, não `source` —
+# valores como DJANGO_SECRET_KEY contêm caracteres (&()*) que quebrariam sob
+# `source`), para django-check não cair no default seguro DEBUG=False e
+# disparar o fail-safe da task A023 antes do check --deploy rodar de verdade.
+if [ -f "$REPO_ROOT/.env" ]; then
+  while IFS='=' read -r key value; do
+    [[ -z "$key" || "$key" == \#* ]] && continue
+    export "$key=$value"
+  done < "$REPO_ROOT/.env"
+fi
+
 # Ordem deliberada: segredo vazado é o achado mais barato de checar e mais
 # crítico se existir (roda primeiro, contra o repo inteiro) → SAST (código) →
 # SCA (dependências/imagem) → configuração da aplicação → DAST (mais lento,

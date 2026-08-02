@@ -18,3 +18,6 @@ echo "==> shortcuts/lint.sh"
 
 echo "==> testes Django"
 cd app && uv run manage.py test
+
+echo "==> self-check de segurança (config/tests.py)"
+uv run python config/tests.py

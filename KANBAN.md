@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-02T01:17Z
+**Última sincronização**: 2026-08-02T01:28Z
 
 ## To Do
 
@@ -144,16 +144,6 @@ todas as colunas.
 
 ### (avulsas)
 
-- [ ] A027 A05:2021 — `manage.py check --deploy` não roda: gap de tooling no
-  próprio script de auditoria (via relatório de segurança
-  docs/cybersec-report/2026-08-02.html#achado-9).
-- [ ] A028 Self-check de segurança da task A023 não é executado
-  automaticamente (via relatório de segurança
-  docs/cybersec-report/2026-08-02.html#achado-10).
-- [ ] A029 A05:2021 — Cross-Origin-Resource-Policy header ausente,
-  residual do ZAP (via relatório de segurança
-  docs/cybersec-report/2026-08-02.html#achado-11).
-
 - [ ] A001 Página com tabela de todos os editais abertos no momento
   (descrição, nome da chamada, instituição responsável, link para a chamada
   e datas importantes), com quadro Kanban para o captador de recursos mover
@@ -270,3 +260,20 @@ _Nenhuma tarefa em progresso._
   segurança docs/cybersec-report/2026-08-01.html#achado-8). Corrigida:
   `HEALTHCHECK` via `python3 -c urllib.request` (imagem base sem
   curl/wget). QA aprovado em 2026-08-01 (`docker inspect` → `healthy`).
+- [x] A027 A05:2021 — `manage.py check --deploy` não roda: gap de tooling no
+  próprio script de auditoria (via relatório de segurança
+  docs/cybersec-report/2026-08-02.html#achado-9). Corrigida:
+  `shortcuts/security-test.sh` agora carrega `.env` (mesmo padrão de
+  `run_tests.sh`) antes de rodar os testes. QA aprovado em 2026-08-02
+  (`django-check` isolado produz warnings reais em vez de crashar).
+- [x] A028 Self-check de segurança da task A023 não é executado
+  automaticamente (via relatório de segurança
+  docs/cybersec-report/2026-08-02.html#achado-10). Corrigida: `run_tests.sh`
+  agora chama `uv run python config/tests.py` ao final. QA aprovado em
+  2026-08-02 (regressão forçada e revertida, gate pega a falha de verdade).
+- [x] A029 A05:2021 — Cross-Origin-Resource-Policy header ausente,
+  residual do ZAP (via relatório de segurança
+  docs/cybersec-report/2026-08-02.html#achado-11). Corrigida:
+  `Cross-Origin-Resource-Policy: same-origin` adicionado em
+  `app/config/middleware.py`. QA aprovado em 2026-08-02 (`curl -I`
+  confirma o header, `/admin/login/` intacto).

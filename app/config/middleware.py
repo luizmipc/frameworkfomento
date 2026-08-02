@@ -23,6 +23,7 @@ def security_headers_middleware(get_response):
             'geolocation=(), microphone=(), camera=()',
         )
         response.setdefault('Cross-Origin-Embedder-Policy', 'require-corp')
+        response.setdefault('Cross-Origin-Resource-Policy', 'same-origin')
         response.setdefault('Content-Security-Policy-Report-Only', _CSP_REPORT_ONLY)
         return response
 
