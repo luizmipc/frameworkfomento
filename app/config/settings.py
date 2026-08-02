@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 import os
 from pathlib import Path
 
+from django.core.exceptions import ImproperlyConfigured
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,18 +22,42 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
+# SECURITY WARNING: don't run with debug turned on in production!
+# Read from the environment; defaults to False (secure fail-safe) so a
+# forgotten DJANGO_DEBUG in production never accidentally leaks debug pages.
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
+
 # SECURITY WARNING: keep the secret key used in production secret!
 # Read from the environment; the fallback below is for local dev only
 # (never used if DJANGO_SECRET_KEY is set, which it must be in production).
-SECRET_KEY = os.environ.get(
-    'DJANGO_SECRET_KEY',
-    'django-insecure-dev-only-fpf8sylbc-do-not-use-in-production',
-)
+_INSECURE_SECRET_KEY_FALLBACK = 'django-insecure-dev-only-fpf8sylbc-do-not-use-in-production'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', _INSECURE_SECRET_KEY_FALLBACK)
 
-ALLOWED_HOSTS = []
+# Fail-safe: refuse to boot with the dev-only secret key outside of DEBUG mode
+# instead of silently running production with a publicly known secret.
+if not DEBUG and SECRET_KEY == _INSECURE_SECRET_KEY_FALLBACK:
+    raise ImproperlyConfigured(
+        'DJANGO_SECRET_KEY must be set via environment variable when DEBUG=False. '
+        'Refusing to start with the insecure development fallback in production.'
+    )
+
+# Comma-separated list of allowed hosts, e.g. "example.com,www.example.com".
+# Defaults to localhost/127.0.0.1 for local dev; production must set this.
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    if host.strip()
+]
+
+# Transport/session hardening only makes sense once the app is actually
+# served over HTTPS behind a real domain (not yet the case for local
+# runserver dev, where forcing these would break plain http://localhost).
+if not DEBUG:
+    SECURE_HSTS_SECONDS = 31536000  # 1 year, standard HSTS baseline
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 
 # Application definition
@@ -47,6 +73,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'config.middleware.security_headers_middleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

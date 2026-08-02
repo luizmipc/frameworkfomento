@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-01T23:15Z
+**Última sincronização**: 2026-08-02T00:47Z
 
 ## To Do
 
@@ -223,3 +223,40 @@ _Nenhuma tarefa em progresso._
   `DJANGO_HOST`/`DJANGO_PORT`. QA aprovado em 2026-08-01 (bandit limpo,
   `docker compose up` responde 200, `./run_tests.sh` verde, 3 testes de
   regressão em `app/config/tests.py`).
+- [x] A021 A05:2021 — Security Misconfiguration: Dockerfile roda como root,
+  sem `USER` não-root (via relatório de segurança
+  docs/cybersec-report/2026-08-01.html#achado-2). Corrigida: usuário
+  `appuser` (uid 1000) não-root criado e usado antes do `CMD`. QA aprovado
+  em 2026-08-01 (`whoami`/`id` confirmados dentro e fora do bind mount,
+  `migrate` grava normalmente).
+- [x] A022 A05:2021 — `DEBUG=True` hardcoded em produção potencial (via
+  relatório de segurança docs/cybersec-report/2026-08-01.html#achado-3).
+  Corrigida: `DEBUG` lido de `DJANGO_DEBUG` (default `False`,
+  secure-by-default). QA aprovado em 2026-08-01.
+- [x] A023 A05:2021 — `SECRET_KEY` sem fallback seguro (fail-safe) caso a
+  env var não seja setada em produção (via relatório de segurança
+  docs/cybersec-report/2026-08-01.html#achado-4). Corrigida: levanta
+  `ImproperlyConfigured` na importação se `DEBUG=False` e o valor ainda for
+  o fallback hardcoded. QA aprovado em 2026-08-01 (4 cenários testados
+  independentemente).
+- [x] A024 A05:2021 — `ALLOWED_HOSTS` vazio e cabeçalhos/flags de
+  transporte e sessão não endurecidos (via relatório de segurança
+  docs/cybersec-report/2026-08-01.html#achado-5). Corrigida:
+  `ALLOWED_HOSTS` lido de `DJANGO_ALLOWED_HOSTS`; HSTS/SSL
+  redirect/cookies secure só ativos quando `DEBUG=False`. QA aprovado em
+  2026-08-01 (`check --deploy` simulando produção: 7 warnings originais →
+  2 restantes, fora de escopo declarado).
+- [x] A025 A05:2021 — Cabeçalhos de segurança HTTP ausentes, achados do
+  OWASP ZAP Baseline (via relatório de segurança
+  docs/cybersec-report/2026-08-01.html#achado-6). Corrigida parcialmente
+  por design: `Permissions-Policy`/`Cross-Origin-Embedder-Policy` enforced
+  + `Content-Security-Policy-Report-Only` (retry pedido pelo usuário após
+  QA sinalizar a lacuna) via novo `app/config/middleware.py`. CSP enforced
+  fica pendente para quando houver templates reais (documentado no
+  docstring do middleware); vazamento de versão via header `Server` não é
+  corrigível via `runserver` de dev. QA aprovado em 2026-08-01 (headers
+  confirmados via `curl -I`, `/admin/login/` intacto).
+- [x] A026 A05:2021 — Dockerfile sem `HEALTHCHECK` (via relatório de
+  segurança docs/cybersec-report/2026-08-01.html#achado-8). Corrigida:
+  `HEALTHCHECK` via `python3 -c urllib.request` (imagem base sem
+  curl/wget). QA aprovado em 2026-08-01 (`docker inspect` → `healthy`).
