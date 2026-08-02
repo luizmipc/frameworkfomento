@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-02T02:22Z
+**Última sincronização**: 2026-08-02T03:01Z
 
 ## To Do
 
