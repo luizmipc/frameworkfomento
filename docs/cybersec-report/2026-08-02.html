@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relatório de Segurança — cybersecurity-blue (1ª rodada, completa) — frameworkfomento</title>
+<title>Relatório de Segurança — cybersecurity-blue (2ª rodada, completa) — frameworkfomento</title>
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
@@ -11,7 +11,7 @@
 
   <nav class="toc">
     <p class="kicker group-label">docs/cybersec-report</p>
-    <a href="#top">2026-08-02 (1ª rodada, completa)</a>
+    <a href="#top">2026-08-02 (2ª rodada, completa)</a>
     <a href="#sumario">Sumário executivo</a>
     <a href="#escopo">Escopo e metodologia</a>
     <a href="#achados">Achados desta rodada</a>
@@ -24,66 +24,61 @@
   </nav>
 
   <main>
-    <p class="kicker">cybersecurity-blue · docs/cybersec-report · 1ª rodada (completa)</p>
+    <p class="kicker">cybersecurity-blue · docs/cybersec-report · 2ª rodada (completa)</p>
     <h1 id="top">Relatório de Segurança — cybersecurity-blue</h1>
     <p class="lede">Auditoria de segurança da aplicação real (<code>app/</code>, Django 6.0.7), em 2026-08-02 —
-    arquivo novo, primeira rodada deste dia. Aplicação subida via <code>docker compose up -d --build</code>,
-    confirmada respondendo HTTP 200 em <code>http://localhost:8000/</code> e <code>docker inspect</code>
-    reportando <code>healthy</code> via o <code>HEALTHCHECK</code> adicionado no dia anterior. Os sete testes de
-    <code>shortcuts/security-test.sh</code> rodaram sem argumentos, na ordem canônica do script
-    (<code>gitleaks → bandit → semgrep → deps → trivy → django-check → zap</code>), executados diretamente por
-    este agente contra o ambiente local (não a partir de um relato de terceiros). Acompanha o dia anterior
-    (<a href="2026-08-01.html">2026-08-01.html</a>, arquivo separado, não alterado), onde <code>SECRET_KEY</code>
-    hardcoded, Dockerfile rodando como root, ausência de <code>HEALTHCHECK</code>, <code>DEBUG</code> hardcoded,
-    fail-safe de <code>SECRET_KEY</code>, <code>ALLOWED_HOSTS</code>/cookies não endurecidos e cabeçalhos
-    <code>Permissions-Policy</code>/<code>Cross-Origin-Embedder-Policy</code> foram corrigidos ao longo de 3
-    rodadas e confirmados via commits <code>88a3131</code> e <code>6323e29</code>.</p>
+    2ª rodada do mesmo dia, mesmo arquivo atualizado (não um documento novo). Aplicação subida via
+    <code>docker compose up -d --build</code>, confirmada respondendo HTTP 200 em
+    <code>http://localhost:8000/</code> e <code>docker inspect</code> reportando <code>healthy</code>. Os sete
+    testes de <code>shortcuts/security-test.sh</code> rodaram sem argumentos, na ordem canônica do script
+    (<code>gitleaks → bandit → semgrep → deps → trivy → django-check → zap</code>). Entre a 1ª rodada (mais
+    cedo hoje) e esta, as tasks <strong>A027, A028 e A029</strong> — criadas a partir dos achados 9, 10 e 11
+    da 1ª rodada — foram implementadas, revisadas por QA e mergeadas no commit
+    <code>87e2e0b</code>: <code>shortcuts/security-test.sh</code> agora carrega <code>.env</code> antes de
+    rodar os testes (A027); <code>run_tests.sh</code> agora chama <code>uv run python config/tests.py</code> ao
+    final, com QA confirmando que o gate pega regressão real (forçando e revertendo uma falha) (A028); e
+    <code>app/config/middleware.py</code> ganhou <code>Cross-Origin-Resource-Policy: same-origin</code> (A029).
+    Acompanha o dia anterior (<a href="2026-08-01.html">2026-08-01.html</a>, arquivo separado, não alterado).</p>
 
     <h2 id="sumario">Sumário executivo</h2>
-    <p><strong>Nenhum achado Crítico ou Alto nesta rodada</strong> — confirmado pelos sete testes rodando de
-    fato (não apenas relatado): <code>bandit</code> (8 Low, 0 Medium/High), <code>semgrep</code> (0 findings),
-    <code>gitleaks</code> (0 leaks em 61 commits), <code>trivy</code> (0 vulnerabilidades em
-    <code>app/uv.lock</code>, 0 misconfigurações no <code>Dockerfile</code> — confirma que as correções de root
-    e <code>HEALTHCHECK</code> do dia anterior seguem em vigor), auditoria de dependências (as mesmas 3 CVEs
-    conhecidas em <code>mcp</code>, dependência transitiva de dev do <code>semgrep</code>, nunca em produção) e
-    OWASP ZAP Baseline (63 PASS, 4 WARN-NEW, 0 FAIL). Todos os itens Médios do dia anterior (DEBUG hardcoded,
-    fail-safe de SECRET_KEY, ALLOWED_HOSTS/cookies) seguem corrigidos — nada regrediu. Os achados desta rodada
-    são de menor severidade (Baixa/Informativa): um cabeçalho HTTP residual ainda faltando
-    (<code>Cross-Origin-Resource-Policy</code>), um gap de tooling no próprio script de auditoria
-    (<code>manage.py check --deploy</code> não roda de fato porque o script não carrega <code>.env</code> antes),
-    e um gap de processo descoberto nesta rodada (o self-check <code>config/tests.py</code> criado para a
-    task A023 nunca é executado automaticamente — nem por <code>manage.py test</code>, nem por
-    <code>run_tests.sh</code> — confirmado rodando <code>manage.py test</code> localmente: "0 tests ran").</p>
+    <p><strong>Zero achados ativos nesta rodada</strong> — os três achados Baixa da 1ª rodada (9, 10, 11) foram
+    todos resolvidos pelas tasks A027–A029 e reconfirmados pelas próprias ferramentas que os haviam encontrado
+    (ver seção "O que já está bem protegido" abaixo), e nenhum achado novo apareceu. Confirmado pelos sete testes:
+    <code>gitleaks</code> (0 leaks em 64 commits), <code>bandit</code> (8 Low, 0 Medium/High — idênticos à 1ª
+    rodada, mesmas localizações em código de dev/teste), <code>semgrep</code> (0 findings), auditoria de
+    dependências (as mesmas 3 CVEs conhecidas em <code>mcp</code>, dependência transitiva de dev do
+    <code>semgrep</code>, nunca em produção), <code>trivy</code> (0 vulnerabilidades em <code>app/uv.lock</code>,
+    0 misconfigurações no <code>Dockerfile</code>), <code>manage.py check --deploy</code> (agora roda de verdade
+    pela primeira vez — ver achado-9 resolvido) e OWASP ZAP Baseline (64 PASS, 3 WARN-NEW, 0 FAIL — subiu de 63
+    para 64 PASS porque a regra 90004, família Cross-Origin-*, agora passa por completo).</p>
     <table>
-      <thead><tr><th>Severidade</th><th>CVSS</th><th>Qtde (1ª rodada, 2026-08-02)</th></tr></thead>
+      <thead><tr><th>Severidade</th><th>CVSS</th><th>Qtde (2ª rodada, 2026-08-02)</th></tr></thead>
       <tbody>
         <tr><td>🔴 Crítica</td><td>9.0–10.0</td><td>0</td></tr>
         <tr><td>🟠 Alta</td><td>7.0–8.9</td><td>0</td></tr>
         <tr><td>🟡 Média</td><td>4.0–6.9</td><td>0</td></tr>
-        <tr><td>🟢 Baixa</td><td>0.1–3.9</td><td>3 <span class="badge badge-low">CORP header ausente; gap de <code>.env</code> no script de auditoria; self-check A023 não executado automaticamente</span></td></tr>
-        <tr><td>⚪ Informativa</td><td>—</td><td>3 <span class="badge badge-na">8 bandit Low em código de dev/teste; 3 CVEs em <code>mcp</code> (dev-only, sem mudança); CSP report-only/Server header/Storable-Cacheable, sem mudança de design</span></td></tr>
+        <tr><td>🟢 Baixa</td><td>0.1–3.9</td><td>0 <span class="badge badge-low">os 3 achados Baixa da 1ª rodada (CORP header, gap de .env no script, self-check A023 não automatizado) foram todos resolvidos — ver "O que já está bem protegido"</span></td></tr>
+        <tr><td>⚪ Informativa</td><td>—</td><td>3 <span class="badge badge-na">8 bandit Low em código de dev/teste (inalterado); 3 CVEs em <code>mcp</code> (dev-only, inalterado); CSP report-only/Server header/Storable-Cacheable (inalterado)</span></td></tr>
       </tbody>
     </table>
     <p><strong>Postura atual pelo NIST CSF:</strong></p>
     <ul>
-      <li><strong>Identify:</strong> ativos e superfícies mapeados nesta rodada seguem os mesmos do dia
-      anterior — nenhuma superfície nova (nenhum código de negócio novo foi adicionado desde a última auditoria
-      completa). O único ativo novo observado é o próprio script de auditoria (<code>shortcuts/security-test.sh</code>)
-      ter um ponto cego de configuração que impede medir <code>check --deploy</code> — um "ativo" de tooling que
-      passou a existir como efeito colateral do endurecimento de segurança em si.</li>
-      <li><strong>Protect:</strong> continua forte — Dockerfile não-root e com <code>HEALTHCHECK</code>
-      (confirmado 0 misconfigurações no <code>trivy</code>), <code>DEBUG</code>/<code>SECRET_KEY</code> lidos de
-      env var com fail-safe, a maioria dos cabeçalhos HTTP recomendados pelo ZAP já presentes (63 PASS, incluindo
-      <code>Permissions-Policy</code> e CSP report-only, que eram WARN no dia anterior). Resta 1 cabeçalho
-      (<code>Cross-Origin-Resource-Policy</code>) e o enforcement real de CSP (hoje deliberadamente report-only).</li>
-      <li><strong>Detect:</strong> ponto fraco identificado nesta rodada — o self-check de segurança
-      (<code>config/tests.py</code>, task A023) não está conectado a nenhum gate automatizado
-      (<code>run_tests.sh</code> só chama <code>lint.sh</code> + <code>manage.py test</code>, e
-      <code>manage.py test</code> não descobre funções soltas, só <code>TestCase</code>). Uma regressão futura no
-      fail-safe do <code>SECRET_KEY</code> não seria pega automaticamente, apesar do teste existir no repo.</li>
-      <li><strong>Respond:</strong> ciclo de resposta seguiu funcional — todos os 7 achados do dia anterior
-      (A021–A026 e o achado 1 original) foram corrigidos e reconfirmados nesta rodada pelas mesmas ferramentas
-      que os encontraram (<code>trivy</code> para Dockerfile, ZAP para <code>Permissions-Policy</code>).</li>
+      <li><strong>Identify:</strong> nenhuma superfície nova — nenhum código de negócio novo foi adicionado
+      desde a última rodada. O ponto cego de tooling identificado na 1ª rodada (script de auditoria sem
+      visibilidade sobre <code>check --deploy</code>) deixou de existir como ativo de risco — foi corrigido, não
+      apenas contornado.</li>
+      <li><strong>Protect:</strong> fortalecido nesta rodada — <code>Cross-Origin-Resource-Policy: same-origin</code>
+      fecha o último gap da família Cross-Origin-* apontada pelo ZAP (regra 90004 agora 100% PASS). Restam apenas
+      os mesmos itens já contextualizados e sem mudança de design planejada: Server header (limitação do
+      <code>runserver</code> de dev), CSP report-only (enforcement é decisão futura, não bug).</li>
+      <li><strong>Detect:</strong> este é o ponto de maior ganho da rodada — <code>manage.py check --deploy</code>
+      agora roda de fato (era um "não foi possível medir" na 1ª rodada, virou "medido e com resultado esperado"),
+      e o self-check de segurança da task A023 (<code>config/tests.py</code>) está conectado a
+      <code>run_tests.sh</code> desde a task A028, com QA confirmando via regressão forçada e revertida que o
+      gate realmente pega uma quebra real — não é mais um teste "de papel" que existe mas nunca roda.</li>
+      <li><strong>Respond:</strong> ciclo de resposta seguiu funcional e rápido — os 3 achados da 1ª rodada deste
+      mesmo dia foram triagem → task → implementação → QA → merge (<code>87e2e0b</code>) → reconfirmação pela
+      auditoria, tudo no mesmo dia.</li>
       <li><strong>Recover:</strong> não avaliado — fora do escopo dos sete testes do script.</li>
     </ul>
 
@@ -91,147 +86,95 @@
     <table>
       <thead><tr><th>Teste</th><th>Cobertura OWASP Top 10 2021</th><th>Status</th></tr></thead>
       <tbody>
-        <tr><td><code>gitleaks</code></td><td>Segredos vazados no código e no histórico do git</td><td>✅ 61 commits, 0 achados</td></tr>
-        <tr><td><code>bandit</code></td><td>SAST, código Python — A02, A03, A05</td><td>✅ 8 Low, 0 Medium/High</td></tr>
+        <tr><td><code>gitleaks</code></td><td>Segredos vazados no código e no histórico do git</td><td>✅ 64 commits, 0 achados</td></tr>
+        <tr><td><code>bandit</code></td><td>SAST, código Python — A02, A03, A05</td><td>✅ 8 Low, 0 Medium/High (idêntico à 1ª rodada)</td></tr>
         <tr><td><code>semgrep</code> (<code>p/owasp-top-ten</code>)</td><td>SAST, regras mais amplas que <code>bandit</code></td><td>✅ 0 findings</td></tr>
         <tr><td>Auditoria de dependências (pip-audit via <code>uv export</code>)</td><td>A06:2021 — Vulnerable and Outdated Components</td><td>✅ 3 CVEs em <code>mcp</code> (dev-only, inalterado)</td></tr>
         <tr><td><code>trivy</code></td><td>A06:2021 (SCA) e A05:2021 (misconfiguração de <code>Dockerfile</code>)</td><td>✅ 0 vuln. em <code>uv.lock</code>, 0 misconfigs no <code>Dockerfile</code></td></tr>
-        <tr><td><code>manage.py check --deploy</code></td><td>A05:2021 — Security Misconfiguration</td><td>⚠️ Rodou e crashou antes de checar (gap de tooling, ver achado) — sem visibilidade real nesta rodada</td></tr>
-        <tr><td>OWASP ZAP Baseline</td><td>DAST, contra a aplicação real rodando</td><td>✅ 63 PASS, 4 WARN-NEW, 0 FAIL</td></tr>
+        <tr><td><code>manage.py check --deploy</code></td><td>A05:2021 — Security Misconfiguration</td><td>✅ Roda de verdade agora (A027 resolveu o gap de tooling) — 5 warnings esperados de dev sem TLS, ver achado-9 resolvido</td></tr>
+        <tr><td>OWASP ZAP Baseline</td><td>DAST, contra a aplicação real rodando</td><td>✅ 64 PASS, 3 WARN-NEW, 0 FAIL</td></tr>
       </tbody>
     </table>
     <p>Régua de "OK": <strong>OWASP ASVS nível 1</strong> (adequado ao estágio atual — sem dado sensível de
     usuário real em produção ainda). Requisitos citados abaixo: <strong>V14.4</strong> (cabeçalhos de resposta
     HTTP), <strong>V14.1</strong> (build/config de deployment), <strong>V7.4</strong> (logging/observabilidade de
     controles de segurança).</p>
+    <p><strong>Mudança de metodologia desde a 1ª rodada:</strong> <code>manage.py check --deploy</code> agora tem
+    visibilidade real (A027 resolveu o problema de <code>.env</code> não carregado) — a auditoria deste teste
+    deixa de ser "não foi possível medir" e passa a ser "medido, com resultado avaliado".</p>
     <p><strong>Comando canônico:</strong> <code>./shortcuts/security-test.sh</code> (sem argumentos). Docker
     estava disponível e foi usado para <code>gitleaks</code>, <code>trivy</code> e ZAP (imagens oficiais) — nenhum
-    teste pulado por falta de ferramenta. Cada teste desta rodada foi executado diretamente por este agente
-    (não copiado de um relato externo), incluindo subir e derrubar a aplicação via <code>docker compose</code>.</p>
+    teste pulado por falta de ferramenta.</p>
 
     <h2 id="achados">Achados desta rodada</h2>
-
-    <section class="story" id="achado-9">
-      <div class="story-head">
-        <h3>A05:2021 — <code>manage.py check --deploy</code> não roda: gap de tooling no próprio script de auditoria</h3>
-        <span class="badge badge-low">🟢 Baixa — CVSS 0 (gap de observabilidade, não vulnerabilidade do app)</span>
-      </div>
-      <p><strong>Ferramenta:</strong> execução direta de <code>shortcuts/security-test.sh django-check</code>,
-      reproduzida por este agente. O comando crasha antes de rodar o check de verdade:</p>
-      <pre>django.core.exceptions.ImproperlyConfigured: DJANGO_SECRET_KEY must be set via
-environment variable when DEBUG=False. Refusing to start with the insecure
-development fallback in production.</pre>
-      <p>Causa raiz confirmada lendo <code>shortcuts/security-test.sh</code> (função <code>run_django_check</code>,
-      linha ~80): ela chama <code>uv run manage.py check --deploy</code> sem carregar <code>.env</code> primeiro.
-      Sem <code>DJANGO_DEBUG</code>/<code>DJANGO_SECRET_KEY</code> no ambiente do shell, <code>DEBUG</code> cai no
-      default seguro (<code>False</code>, por design da task A022) e o fail-safe da task A023 dispara antes do
-      <code>check --deploy</code> sequer rodar. Isto é <strong>efeito colateral do próprio endurecimento de
-      segurança</strong>: o script de auditoria perdeu cobertura de um dos sete testes que ele mesmo define, sem
-      avisar de forma clara que o resultado é "não foi possível medir" e não "0 warnings, passou limpo".
-      <code>run_tests.sh</code> já resolve o mesmo problema para a suíte de testes Django (carrega
-      <code>.env</code> linha a linha antes de rodar) — <code>shortcuts/security-test.sh</code> deveria fazer o
-      mesmo antes de <code>run_django_check()</code>.</p>
-      <p><strong>ASVS:</strong> não é uma violação de requisito da aplicação em si — é um gap de processo de
-      verificação (a ferramenta de auditoria, não o alvo auditado). Sem visibilidade sobre os warnings reais de
-      <code>check --deploy</code> nesta rodada, portanto: <strong>não afirmamos que esse teste passou</strong>,
-      apenas que não pôde ser medido.</p>
-    </section>
-
-    <section class="story" id="achado-10">
-      <div class="story-head">
-        <h3>Observação (não coberta por nenhum teste do script) — self-check de segurança da task A023 não é executado automaticamente</h3>
-        <span class="badge badge-low">🟢 Baixa — CVSS 0 (gap de detecção/regressão, não vulnerabilidade ativa)</span>
-      </div>
-      <p><strong>Como foi encontrado:</strong> STRIDE leve sobre o fluxo de verificação de segurança em si
-      (Repudiation/Detection) — não veio de nenhuma ferramenta do <code>security-test.sh</code>. Confirmado
-      rodando <code>uv run manage.py test</code> localmente com <code>.env</code> carregado:
-      <code>Ran 0 tests in 0.000s / NO TESTS RAN</code>. <code>app/config/tests.py</code> (o self-check
-      <code>demo()</code> da task A023, que valida o fail-safe do <code>SECRET_KEY</code> via subprocess) é um
-      script standalone, não uma <code>django.test.TestCase</code> — o descobridor de testes do Django só coleta
-      subclasses de <code>TestCase</code>, então esse arquivo nunca roda via <code>manage.py test</code>. E
-      <code>run_tests.sh</code> (lido nesta rodada) também não o chama diretamente — só roda
-      <code>lint.sh</code> e <code>manage.py test</code>. Resultado: o único self-check automatizado da correção
-      mais importante do dia anterior (fail-safe de <code>SECRET_KEY</code>) existe no repo mas nunca é executado
-      por nenhum gate automatizado — só se um humano lembrar de rodar
-      <code>uv run python config/tests.py</code> manualmente.</p>
-      <p><strong>Recomendação concreta:</strong> ou (a) adicionar uma chamada a
-      <code>uv run python config/tests.py</code> em <code>run_tests.sh</code> (menor diff, mesma dependência
-      zero), ou (b) converter <code>demo()</code> em um método de <code>django.test.TestCase</code> real para
-      que <code>manage.py test</code> o descubra nativamente (mais idiomático, sem precisar tocar
-      <code>run_tests.sh</code>). Qualquer uma resolve; não há uma "certa" — é decisão do <code>dev</code>.</p>
-      <p><strong>ASVS:</strong> V7.4 (verificação de segurança deveria fazer parte de gate automatizado, não
-      depender de execução manual lembrada).</p>
-    </section>
-
-    <section class="story" id="achado-11">
-      <div class="story-head">
-        <h3>A05:2021 — Cross-Origin-Resource-Policy header ausente (residual do ZAP)</h3>
-        <span class="badge badge-low">🟢 Baixa — CVSS 2.6</span>
-      </div>
-      <p><strong>Ferramenta:</strong> OWASP ZAP Baseline, alerta <code>90004</code> (família "Cross-Origin-*"),
-      <code>WARN-NEW</code> x1 em <code>http://localhost:8000/</code>. Este é um achado <strong>residual e
-      diferente</strong> do que aparecia no dia anterior sob o mesmo ID de regra: antes era
-      "Cross-Origin-Embedder-Policy Header Missing" (2 hits) — corrigido pela task A025, que adicionou
-      <code>Cross-Origin-Embedder-Policy: require-corp</code> em <code>app/config/middleware.py</code>. Agora o
-      ZAP reclama de um cabeçalho <strong>diferente da mesma família</strong>:
-      <code>Cross-Origin-Resource-Policy</code> (CORP), que o middleware atual não seta — confirmado lendo
-      <code>app/config/middleware.py</code>, que só define <code>Permissions-Policy</code>,
-      <code>Cross-Origin-Embedder-Policy</code> e <code>Content-Security-Policy-Report-Only</code>.</p>
-      <p><strong>CVSS 3.1:</strong> <code>AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:N</code> ≈ 2.6 (Baixa) — defesa em
-      profundidade contra vazamento cross-origin de recursos que hoje não existem (scaffold sem API/assets
-      sensíveis ainda); mesmo raciocínio de exploitability do achado de CSP do dia anterior.</p>
-      <p><strong>ASVS:</strong> V14.4 (cabeçalhos de resposta HTTP). Resolução: adicionar
-      <code>Cross-Origin-Resource-Policy: same-origin</code> (ou <code>same-site</code>, a decidir pelo
-      <code>dev</code> conforme necessidade de assets cross-origin) no mesmo middleware que já seta os outros
-      dois.</p>
-    </section>
+    <p>Nenhum achado novo (Crítico, Alto, Médio ou Baixo) nesta rodada — verificado teste a teste acima, não
+    presumido. Os três achados da 1ª rodada (9, 10, 11) foram todos resolvidos; ver detalhamento completo,
+    preservado, na seção "O que já está bem protegido".</p>
 
     <h2 id="bem">O que já está bem protegido</h2>
     <ul>
       <li><strong>RESOLVIDO e reconfirmado — Dockerfile root + sem HEALTHCHECK</strong> (achados A021/A026,
-      2026-08-01): <code>trivy</code> agora reporta 0 misconfigurações no <code>Dockerfile</code> (eram 2) — a
-      mesma ferramenta que achou o problema confirma a correção. <code>docker inspect</code> reporta
-      <code>healthy</code> nesta rodada.</li>
+      2026-08-01): <code>trivy</code> continua reportando 0 misconfigurações no <code>Dockerfile</code>.
+      <code>docker inspect</code> reporta <code>healthy</code> nesta rodada.</li>
       <li><strong>RESOLVIDO e reconfirmado — DEBUG/SECRET_KEY/ALLOWED_HOSTS/cookies</strong> (achados A022–A024,
       2026-08-01): lidos de variável de ambiente com defaults seguros; fail-safe de <code>SECRET_KEY</code>
-      testado ao vivo nesta rodada (o crash do achado A05 acima É o fail-safe funcionando corretamente — só não
-      dava para medir o <code>check --deploy</code> por causa dele).</li>
-      <li><strong>Melhoria real e mensurável em cabeçalhos HTTP</strong> — ZAP foi de 62 PASS/5 WARN-NEW (dia
-      anterior) para 63 PASS/4 WARN-NEW nesta rodada; <code>Permissions-Policy</code> e CSP (report-only) saíram
-      da lista de WARN e viraram PASS, confirmando que o middleware novo (task A025) funciona.</li>
-      <li><strong>Zero segredos versionados, zero SAST, zero SCA relevante</strong> — <code>gitleaks</code> (61
+      seguem em vigor.</li>
+      <li><strong>RESOLVIDO — achado-9 (1ª rodada): <code>manage.py check --deploy</code> não rodava de verdade.</strong>
+      Correção aplicada: task A027, commit <code>87e2e0b</code> — <code>shortcuts/security-test.sh</code> agora
+      carrega <code>.env</code> (mesmo parsing linha a linha KEY=VALUE que <code>run_tests.sh</code> já usava,
+      não <code>source</code>, porque <code>DJANGO_SECRET_KEY</code> contém caracteres como <code>&amp;()*</code>
+      que quebram sourcing de shell) antes de rodar o check. Confirmado nesta rodada: o comando roda de ponta a
+      ponta e devolve 5 warnings honestos e esperados de ambiente de dev sem TLS
+      (<code>security.W004</code> HSTS, <code>W008</code> SSL redirect, <code>W012</code> session cookie secure,
+      <code>W016</code> CSRF cookie secure, <code>W018</code> DEBUG=True) — todos coerentes com
+      <code>DJANGO_DEBUG=True</code> no <code>.env</code> local, por design das tasks A022/A024 (esses controles
+      só ativam quando <code>DEBUG=False</code>). Não há mais o warning de <code>ALLOWED_HOSTS</code> vazio
+      (era <code>W020</code> em rodadas anteriores) porque a task A024 já configurou um default
+      (<code>localhost,127.0.0.1</code>). Isto é confirmação de que a auditoria tem visibilidade real sobre esse
+      teste agora — não são "5 problemas novos", são os mesmos avisos de ambiente dev já contextualizados desde
+      o achado-5 de 2026-08-01.</li>
+      <li><strong>RESOLVIDO — achado-10 (1ª rodada): self-check de segurança da task A023 não era executado
+      automaticamente.</strong> Esta não era uma saída de ferramenta do <code>security-test.sh</code>, e sim uma
+      observação STRIDE (Detection) da 1ª rodada. Correção aplicada: task A028, commit <code>87e2e0b</code> —
+      <code>run_tests.sh</code> agora chama <code>uv run python config/tests.py</code> ao final da suíte. QA
+      confirmou que o gate pega regressão real forçando uma falha no fail-safe do <code>SECRET_KEY</code> e
+      revertendo em seguida — não é apenas "o código está lá", é "o gate realmente falha quando deveria". Fonte
+      desta resolução: a task A028 em si (QA), não uma saída de ferramenta desta rodada — nenhum dos sete testes
+      de <code>security-test.sh</code> mede isso diretamente.</li>
+      <li><strong>RESOLVIDO — achado-11 (1ª rodada): <code>Cross-Origin-Resource-Policy</code> header ausente.</strong>
+      Correção aplicada: task A029, commit <code>87e2e0b</code> — <code>app/config/middleware.py</code> ganhou
+      <code>Cross-Origin-Resource-Policy: same-origin</code> junto dos outros cabeçalhos já setados ali
+      (<code>Permissions-Policy</code>, <code>Cross-Origin-Embedder-Policy</code>). Confirmado pela mesma
+      ferramenta que achou o problema: a regra ZAP <code>90004</code> (família Cross-Origin-*) que gerava
+      WARN-NEW na 1ª rodada agora aparece na lista de PASS ("Insufficient Site Isolation Against Spectre
+      Vulnerability [90004]") — o ZAP subiu de 63 para 64 PASS nesta rodada, exatamente o esperado.</li>
+      <li><strong>Melhoria real e mensurável em cabeçalhos HTTP, acumulada ao longo do dia</strong> — ZAP foi de
+      62 PASS/5 WARN-NEW (2026-08-01) → 63 PASS/4 WARN-NEW (1ª rodada, 2026-08-02) → 64 PASS/3 WARN-NEW (esta
+      rodada). Os 3 WARN-NEW restantes seguem os mesmos, sem mudança de design: Server header (limitação do
+      <code>runserver</code> de dev, não corrigível sem servidor de produção real), CSP (report-only por design
+      da task A025, enforcement é decisão futura), Storable/Cacheable (informativo).</li>
+      <li><strong>Zero segredos versionados, zero SAST, zero SCA relevante</strong> — <code>gitleaks</code> (64
       commits, 0), <code>bandit</code> (0 Medium/High) e <code>semgrep</code> (0 findings) confirmam que o
       código-fonte segue limpo; <code>trivy</code> confirma 0 vulnerabilidades em <code>app/uv.lock</code>.</li>
       <li><strong>DAST baseline limpo de injeção</strong> — 0 FAIL em 4 URLs testadas; todos os WARN restantes são
       de cabeçalho ausente ou informativos, não injeção/autenticação/sessão quebrada.</li>
     </ul>
     <p class="callout">Isto NÃO é uma afirmação de que toda a aplicação está segura — apenas que, dentro do que
-    os sete testes de <code>shortcuts/security-test.sh</code> cobrem (e, nesta rodada, um deles não cobriu de
-    fato — ver achado A05), nada de Crítico ou Alto foi encontrado. A aplicação ainda é majoritariamente o
-    scaffold do Django, sem app de negócio implementado — a superfície real de ataque crescerá conforme features
-    forem adicionadas.</p>
+    os sete testes de <code>shortcuts/security-test.sh</code> cobrem, nada de Crítico, Alto, Médio ou Baixo segue
+    ativo nesta rodada. A aplicação ainda é majoritariamente o scaffold do Django, sem app de negócio
+    implementado — a superfície real de ataque crescerá conforme features forem adicionadas.</p>
 
     <h2 id="resolver">Para quem resolver</h2>
-    <p>Achados com correção de código/config real, para virar tarefa via <code>/kanban-sync</code> → "Criar nova
-    tarefa" → origem "A partir de achados de segurança de <code>docs/cybersec-report/</code>" (todos vão para o
-    <code>dev</code>):</p>
+    <p>Nenhum achado ativo nesta rodada — nada para rotear ao <code>dev</code> desta vez. Os 3 achados Baixa da
+    1ª rodada já viraram tasks (A027, A028, A029), foram implementados, aprovados por QA e mergeados
+    (<code>87e2e0b</code>) antes desta 2ª rodada rodar.</p>
     <ul>
-      <li><strong>Baixa:</strong> carregar <code>.env</code> em <code>shortcuts/security-test.sh</code> antes de
-      <code>run_django_check()</code>, mesmo padrão já usado em <code>run_tests.sh</code> — sem isso,
-      <code>manage.py check --deploy</code> nunca roda de verdade contra este projeto outra vez.</li>
-      <li><strong>Baixa:</strong> conectar o self-check <code>config/tests.py</code> (task A023) a um gate
-      automatizado — chamada em <code>run_tests.sh</code> ou conversão para <code>TestCase</code> real, decisão
-      do <code>dev</code>.</li>
-      <li><strong>Baixa:</strong> adicionar <code>Cross-Origin-Resource-Policy</code> ao middleware em
-      <code>app/config/middleware.py</code>, junto dos outros cabeçalhos já setados ali.</li>
       <li><strong>Informativa, sem tarefa dedicada recomendada:</strong> os 8 achados <code>bandit</code> Low em
-      <code>config/tests.py</code>/<code>settings.py</code> são ruído esperado de um script de auto-verificação
-      de dev (subprocess com args fixos, <code>assert</code> em script standalone, valores de teste que não são
-      segredos reais) — não recomendamos ação isolada só para silenciar o bandit aqui; se o achado acima (conectar
-      a um gate real) for implementado como conversão para <code>TestCase</code>, os <code>assert</code>
-      naturalmente virariam <code>self.assertX</code>, resolvendo isso de graça.</li>
+      <code>config/tests.py</code>/<code>settings.py</code> seguem ruído esperado de um script de
+      auto-verificação de dev (subprocess com args fixos, <code>assert</code> em script standalone, valores de
+      teste que não são segredos reais) — inalterado desde a 1ª rodada.</li>
       <li><strong>Informativa:</strong> atualizar <code>semgrep</code> (puxaria <code>mcp</code> mais novo) quando
-      conveniente, junto de rotina de dependências de dev — inalterado desde o dia anterior.</li>
+      conveniente, junto de rotina de dependências de dev — inalterado desde a 1ª rodada.</li>
     </ul>
     <p>Nenhuma decisão de compliance formal (ex.: LGPD) nem de release-readiness sai deste relatório — isso é do
     <code>product-owner</code> e do <code>scrum-master</code>, respectivamente.</p>
@@ -248,13 +191,12 @@ docker compose down</pre>
     (<code>ghcr.io/zaproxy/zaproxy:stable</code> para o ZAP), <code>uv 0.9.4</code> (sem <code>uv audit</code>
     nativo — fallback para <code>uv export</code> + pip-audit sobre o lockfile exportado, nunca sobre o
     ambiente virtual), Django 6.0.7, Docker 29.5.3.</p>
-    <p><strong>Evidência bruta:</strong> relatório HTML completo do ZAP (63 PASS detalhados) em
-    <code>docs/cybersec-report/zap/zap-baseline-2026-08-02.html</code>.</p>
-    <p><strong>Diferença desde 2026-08-01 (3ª rodada, arquivo anterior):</strong> nenhuma regressão — todos os 7
-    achados do dia anterior seguem corrigidos e reconfirmados pelas mesmas ferramentas. Os 3 achados novos desta
-    rodada (Baixa) são um cabeçalho HTTP residual (CORP, família diferente do COEP já corrigido), um gap de
-    tooling no próprio script de auditoria, e um gap de processo (self-check não conectado a gate automatizado)
-    — nenhum é regressão do que já foi corrigido, todos são superfícies não avaliadas antes.</p>
+    <p><strong>Evidência bruta:</strong> relatório HTML completo do ZAP em
+    <code>docs/cybersec-report/zap/zap-baseline-2026-08-02.html</code> (sobrescrito com o resultado desta
+    2ª rodada).</p>
+    <p><strong>Diferença desde a 1ª rodada deste mesmo dia (2026-08-02):</strong> os 3 achados Baixa (9, 10, 11)
+    foram todos resolvidos pelas tasks A027–A029, commit <code>87e2e0b</code>, e reconfirmados pelas mesmas
+    ferramentas/processos que os haviam identificado. Nenhum achado novo apareceu. Achados ativos: 0.</p>
 
     <p class="page-footer">Este relatório não corrige nada — é um parecer honesto e acionável. Ações sobre os
     achados (correção de código/config/dependência) são sempre um comando separado
