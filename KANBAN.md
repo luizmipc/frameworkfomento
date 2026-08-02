@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-02T02:20Z
+**Última sincronização**: 2026-08-02T02:22Z
 
 ## To Do
 
@@ -152,8 +152,6 @@ todas as colunas.
   `specs/001-manage-call-for-proposals/` (ver T011-T021) — mantida aqui como
   avulsa por não ter `tasks.md` próprio; considerar fechar manualmente
   quando US1 for concluída.
-- [ ] A031 Nível 0 de maturidade CI/CD: nenhum pipeline automatizado (via
-  relatório de deploy docs/deploy-report/2026-08-01.html#achado-1).
 - [ ] A032 Servidor de desenvolvimento do Django (`runserver`) como
   processo de produção (via relatório de deploy
   docs/deploy-report/2026-08-01.html#achado-2).
@@ -288,3 +286,11 @@ _Nenhuma tarefa em progresso._
   `Cross-Origin-Resource-Policy: same-origin` adicionado em
   `app/config/middleware.py`. QA aprovado em 2026-08-02 (`curl -I`
   confirma o header, `/admin/login/` intacto).
+- [x] A031 Nível 0 de maturidade CI/CD: nenhum pipeline automatizado (via
+  relatório de deploy docs/deploy-report/2026-08-01.html#achado-1).
+  Corrigida: novo `.github/workflows/ci.yml` — dispara em push/PR para
+  `main`, roda `checkout` + `setup-uv` + `cp .env.example .env` +
+  `./run_tests.sh` (lint + testes Django + self-check de segurança).
+  Nível 1 de maturidade, sem pular para deploy automatizado (sem ambiente
+  real ainda). QA aprovado em 2026-08-02 (YAML válido, ordem dos passos
+  reproduz o fluxo local, `run_tests.sh` roda limpo de ponta a ponta).
