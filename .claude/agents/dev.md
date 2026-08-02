@@ -104,6 +104,15 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
   `speckit-analyze` antes de você começar `speckit-implement` a sério; trate
   qualquer inconsistência que ele apontar entre `spec.md`/`plan.md`/`tasks.md`
   como bloqueante até você (ou o `product-owner`) resolvê-la.
+- Do `cybersecurity-blue` e do `devops`: achados de segurança
+  (`docs/cybersec-report/`) e de prontidão de deploy (`docs/deploy-report/`)
+  chegam a você via `/kanban-sync` → "Criar nova tarefa" → "A partir de um
+  relatório existente" — trate cada um como uma task normal (só você edita
+  `Dockerfile`/`docker-compose.yml`/`.github/workflows/`, nunca eles). A
+  checagem/config com lente de segurança é sempre do `cybersecurity-blue`;
+  prontidão operacional (CI, build, servidor de produção, 12-factor) é
+  sempre do `devops` — eles não duplicam achados entre si, e você não
+  precisa reconciliar sobreposição.
 - Nunca reescreva o conteúdo de negócio de `spec.md` nem tome a decisão final
   de UX você mesmo — encaminhe pelo agente correto.
 - Vindo de `/kanban-start`: se travar por dependência não resolvida ou

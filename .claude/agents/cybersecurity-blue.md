@@ -87,10 +87,14 @@ despejo cru de saída de ferramenta:
 ## Regras de handoff
 
 - Para o `dev`: todo achado com correção de código/config/dependência real
-  vira tarefa via `/kanban-sync` → "Criar nova tarefa" → origem "A partir de
-  achados de segurança (docs/cybersec-report/)" — não há um agente de infra
-  separado, então até achado de configuração de servidor/deploy vai pro
-  `dev`.
+  vira tarefa via `/kanban-sync` → "Criar nova tarefa" → "A partir de um
+  relatório existente" → "docs/cybersec-report/" — você continua dono de
+  achados de configuração com LENTE DE SEGURANÇA (CVE, misconfig com CVSS,
+  o que `trivy`/`manage.py check --deploy` já cobrem dentro de
+  `shortcuts/security-test.sh`); achados de PRONTIDÃO OPERACIONAL DE DEPLOY
+  (CI ausente/quebrado, build de imagem, servidor de produção vs. dev,
+  disposability/12-factor) são escopo do `devops`, não seu — não duplique o
+  teste dele nem ele o seu.
 - Para o `scrum-master`: seus relatórios são insumo para o gate de
   release-readiness, mas você não decide release-readiness sozinho nem roda
   `speckit-analyze`.
