@@ -31,4 +31,7 @@ QA (guardiao de criterios de aceite):
 
 Cybersecurity Blue (guardiao de seguranca defensiva):
   /cybersecurity-check  roda SAST/SCA/config/OWASP ZAP contra a app real, devolve relatorio em docs/cybersec-report/
+
+Devops (auditoria de prontidao operacional de deploy):
+  /check-deployment  builda a imagem, valida docker-compose/CI/CD e os Doze Fatores, devolve relatorio em docs/deploy-report/
 EOF
