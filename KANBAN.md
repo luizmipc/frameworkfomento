@@ -152,15 +152,6 @@ todas as colunas.
   `specs/001-manage-call-for-proposals/` (ver T011-T021) — mantida aqui como
   avulsa por não ter `tasks.md` próprio; considerar fechar manualmente
   quando US1 for concluída.
-- [ ] A032 Servidor de desenvolvimento do Django (`runserver`) como
-  processo de produção (via relatório de deploy
-  docs/deploy-report/2026-08-01.html#achado-2).
-- [ ] A033 Sem estágio de release automatizado (`migrate`/`collectstatic`
-  ausentes) (via relatório de deploy
-  docs/deploy-report/2026-08-01.html#achado-3).
-- [ ] A034 Shutdown não gracioso: `CMD` em shell-form não repassa
-  `SIGTERM` (via relatório de deploy
-  docs/deploy-report/2026-08-01.html#achado-4).
 
 ## In Progress
 
@@ -294,3 +285,38 @@ _Nenhuma tarefa em progresso._
   Nível 1 de maturidade, sem pular para deploy automatizado (sem ambiente
   real ainda). QA aprovado em 2026-08-02 (YAML válido, ordem dos passos
   reproduz o fluxo local, `run_tests.sh` roda limpo de ponta a ponta).
+- [x] A032 Servidor de desenvolvimento do Django (`runserver`) como
+  processo de produção (via relatório de deploy
+  docs/deploy-report/2026-08-01.html#achado-2). Corrigida junto com
+  A033/A034 (mesmo trecho do `Dockerfile`): novo `entrypoint.sh` na raiz
+  do repo (`migrate` + `exec uv run --no-dev gunicorn
+  config.wsgi:application`), `gunicorn` adicionado como dependência
+  principal. Retry pedido pelo usuário após retrospectiva: entrypoint
+  movido de `app/entrypoint.sh` para a raiz (achado extra do dev: dentro
+  de `app/` ficava escondido pelo bind-mount `./app:/app` do
+  `docker-compose.yml` em runtime) e build/runtime passaram a usar
+  `--no-dev`, cortando a imagem de 1.38GB para 270MB (`ruff`/`bandit`/
+  `semgrep` saíram da imagem/venv de produção). QA reaprovado em
+  2026-08-02 após as duas correções, medido do zero
+  (`docker top`/`/proc/<pid>/cmdline` confirmam gunicorn, não `runserver`,
+  `curl /admin/login/` → 200, tamanho de imagem remedido
+  independentemente).
+- [x] A033 Sem estágio de release automatizado (`migrate`/`collectstatic`
+  ausentes) (via relatório de deploy
+  docs/deploy-report/2026-08-01.html#achado-3). Corrigida: `migrate
+  --noinput` roda no `entrypoint.sh` (raiz do repo) antes do `exec` do
+  gunicorn. `collectstatic` propositalmente adiado (sem `STATIC_ROOT`
+  configurado ainda em `settings.py`), documentado com comentário
+  `ponytail:` no entrypoint. QA aprovado em 2026-08-02 (logs confirmam
+  migrate rodando antes do gunicorn subir, sem regressão após o retry).
+- [x] A034 Shutdown não gracioso: `CMD` em shell-form não repassa
+  `SIGTERM` (via relatório de deploy
+  docs/deploy-report/2026-08-01.html#achado-4). Corrigida: `CMD` do
+  `Dockerfile` em forma JSON/exec (`CMD ["/entrypoint.sh"]`). QA aprovado
+  em 2026-08-02, medido de forma independente 3x ao longo do ciclo
+  (`docker stop` entre 0.45s-0.5s, `ExitCode 0` sempre, contra baseline de
+  10.3s/`ExitCode 137`) — nota do QA: `uv run gunicorn` não vira PID 1 via
+  exec-replace literal (fica supervisor fino com gunicorn como filho), mas
+  repassa `SIGTERM` corretamente na prática; decisão do usuário foi manter
+  como está, sem
+  aprofundar para PID 1 puro.

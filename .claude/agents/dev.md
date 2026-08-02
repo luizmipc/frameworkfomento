@@ -120,3 +120,21 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
   task fica presa em In Progress até resolver. Ao terminar, `/kanban-start`
   aciona o `qa` automaticamente como gate; se ele reprovar, você recebe o
   relatório dele de volta uma única vez para corrigir.
+
+## Lições aprendidas
+
+- 2026-08-02: ao corrigir achados de `docs/deploy-report/` que tocam
+  `Dockerfile`/`docker-compose.yml` (A032/A033/A034), a primeira entrega
+  colocou um `entrypoint.sh` novo dentro de `app/` e não separou
+  dependências de produção das de dev (`ruff`/`bandit`/`semgrep`) na
+  imagem — o usuário pediu correção antes do commit. Duas regras
+  concretas para a próxima vez que mexer em Docker: (1) qualquer script
+  novo que a imagem precise rodar (entrypoint, healthcheck script, etc.)
+  vai na raiz do repo, nunca dentro de `app/` — o `docker-compose.yml` faz
+  bind-mount `./app:/app`, então qualquer arquivo colocado ali pela imagem
+  fica invisível em runtime, escondido pelo mount do host; (2) `uv
+  sync`/`uv run` no `Dockerfile` e em qualquer entrypoint sempre com
+  `--no-dev`, tanto no build quanto no runtime (senão `uv run` resincroniza
+  o grupo `dev` inteiro no volume a cada subida do container, reintroduzindo
+  o peso que o build tinha acabado de cortar) — isso sozinho reduziu a
+  imagem de 1.38GB para 270MB sem precisar de multi-stage build.
