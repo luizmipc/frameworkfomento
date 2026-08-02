@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-02T01:28Z
+**Última sincronização**: 2026-08-02T02:20Z
 
 ## To Do
 
@@ -152,6 +152,17 @@ todas as colunas.
   `specs/001-manage-call-for-proposals/` (ver T011-T021) — mantida aqui como
   avulsa por não ter `tasks.md` próprio; considerar fechar manualmente
   quando US1 for concluída.
+- [ ] A031 Nível 0 de maturidade CI/CD: nenhum pipeline automatizado (via
+  relatório de deploy docs/deploy-report/2026-08-01.html#achado-1).
+- [ ] A032 Servidor de desenvolvimento do Django (`runserver`) como
+  processo de produção (via relatório de deploy
+  docs/deploy-report/2026-08-01.html#achado-2).
+- [ ] A033 Sem estágio de release automatizado (`migrate`/`collectstatic`
+  ausentes) (via relatório de deploy
+  docs/deploy-report/2026-08-01.html#achado-3).
+- [ ] A034 Shutdown não gracioso: `CMD` em shell-form não repassa
+  `SIGTERM` (via relatório de deploy
+  docs/deploy-report/2026-08-01.html#achado-4).
 
 ## In Progress
 
