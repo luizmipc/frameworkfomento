@@ -569,6 +569,10 @@
         <h3>Cybersec — 2026-08-01</h3>
         <p>Auditoria de segurança de <code>app/</code> — 1ª rodada, PARCIAL (só <code>bandit</code>, a pedido): 1 🟡 Média (CVSS 5.9) — <code>SECRET_KEY</code> hardcoded em <code>config/settings.py</code>. Outros 6 testes da suíte não executados nesta rodada.</p>
       </a>
+      <a class="doc-card" href="cybersec-report/2026-08-02.html">
+        <h3>Cybersec — 2026-08-02</h3>
+        <p>Auditoria de segurança de <code>app/</code> — 1ª rodada, suíte completa (7 testes). 0 🔴 Crítica, 0 🟠 Alta, 0 🟡 Média — todos os achados do dia anterior seguem corrigidos e reconfirmados. 3 🟢 Baixa: <code>Cross-Origin-Resource-Policy</code> ausente, gap de <code>.env</code> no próprio script de auditoria (<code>manage.py check --deploy</code> não rodou de fato), self-check da task A023 não conectado a gate automatizado.</p>
+      </a>
     </div>
   </main>
 
