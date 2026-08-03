@@ -243,9 +243,9 @@ QA rodaram e passaram corretamente?"**
   "Other"). Depois:
   1. Identifique o arquivo dono provável do problema: um agente em
      `.claude/agents/*.md` (`product-owner`, `dev`, `designer`,
-     `scrum-master`, `fundraiser`, `qa`) ou uma das nossas skills
-     (`kanban-sync`, `kanban-start`, `docs-sync`, `quick-task`, todas em
-     `.claude/skills/`). **Nunca edite** skills
+     `scrum-master`, `fundraiser`, `coordenador-de-pesquisa`, `qa`) ou uma
+     das nossas skills (`kanban-sync`, `kanban-start`, `docs-sync`,
+     `quick-task`, todas em `.claude/skills/`). **Nunca edite** skills
      `speckit-*` nem nada em `.specify/`.
   2. Adicione (ou crie) uma seção `## Lições aprendidas` ao final do arquivo
      identificado, com uma entrada curta e datada (`date -u +%Y-%m-%d`): o

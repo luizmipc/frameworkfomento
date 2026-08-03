@@ -20,10 +20,16 @@ Kanban e atalhos:
   /quick-task     atalho: cria e ja implementa uma tarefa pequena
   /docs-sync      atualiza docs/ a partir do estado real do projeto
 
-Fundraiser (persona de captador de recursos):
+Fundraiser (persona de captador de recursos, lente individual):
   /fundraiser-test                  testa o prototipo estatico, devolve parecer em docs/persona/
   /fundraiser-production-test       testa a aplicacao real ja implementada, devolve parecer em docs/persona/
   /fundraiser-submission-timeline   cria checklist HTML gated de submissao a partir dos PDFs de um edital, em docs/submissions/
+
+Coordenador de Pesquisa (persona institucional, lente de portfolio/estrategia):
+  /coordenador-test                 testa o prototipo estatico, devolve parecer em docs/persona/
+  /coordenador-production-test      testa a aplicacao real ja implementada, devolve parecer em docs/persona/
+  /coordenador-edital-fit           avalia se um edital real serve a agenda do instituto, devolve parecer em docs/edital-fit/
+  (tambem conduz a "Reuniao estrategica" de /kanban-sync — leitura holistica do projeto, nao tarefa por tarefa)
 
 QA (guardiao de criterios de aceite):
   /qa-test             testa o prototipo estatico, devolve relatorio em docs/qa-report/
