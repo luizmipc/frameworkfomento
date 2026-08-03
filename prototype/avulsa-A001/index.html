@@ -125,13 +125,21 @@
         <h2>Validação <span class="col-count" data-status="validacao">0</span></h2>
         <div class="card-list" data-status="validacao"></div>
       </div>
-      <!-- A036 (docs/persona/avulsa-A001.html#dor-2): "Concluído" aqui é ambíguo —
-           não deixa claro se é "submetido" ou "resultado já saiu". Decisão de
-           produto pendente (product-owner: 5º estágio, campo complementar, ou
-           limitação documentada) — nenhuma mudança visual feita nesta task. -->
-      <div class="column" data-status="concluido">
-        <h2>Concluído <span class="col-count" data-status="concluido">0</span></h2>
-        <div class="card-list" data-status="concluido"></div>
+      <!-- A038 / FR-002: resolve a A036 — "Concluído" virou 3 estágios
+           terminais mutuamente exclusivos (alcançados a partir de
+           "Submetido", não sequenciais entre si). Transição entre colunas
+           continua livre/sem guarda, igual às demais. -->
+      <div class="column" data-status="submetido">
+        <h2>Submetido <span class="col-count" data-status="submetido">0</span></h2>
+        <div class="card-list" data-status="submetido"></div>
+      </div>
+      <div class="column" data-status="aprovado">
+        <h2>Aprovado <span class="col-count" data-status="aprovado">0</span></h2>
+        <div class="card-list" data-status="aprovado"></div>
+      </div>
+      <div class="column" data-status="nao_aprovado">
+        <h2>Não aprovado <span class="col-count" data-status="nao_aprovado">0</span></h2>
+        <div class="card-list" data-status="nao_aprovado"></div>
       </div>
     </div>
   </section>

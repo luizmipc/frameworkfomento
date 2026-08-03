@@ -1,7 +1,11 @@
 // Protótipo não-funcional — task A001
 // Dados mockados em memória; nenhuma chamada de API real, nenhuma persistência.
 
-const STATUSES = ["backlog", "andamento", "validacao", "concluido"];
+// A038 / FR-002: "Concluído" virou 3 estágios terminais mutuamente exclusivos
+// (Submetido → Aprovado / Não aprovado), resolvendo a ambiguidade da A036
+// ("submetido" vs. "resultado já saiu"). Transição continua livre entre
+// quaisquer colunas (sem guarda), mesmo comportamento de antes.
+const STATUSES = ["backlog", "andamento", "validacao", "submetido", "aprovado", "nao_aprovado"];
 
 const editais = [
   {
@@ -48,7 +52,31 @@ const editais = [
     abertura: "2026-04-10",
     fechamento: "2026-06-15",
     link: "https://exemplo.edu.br/extensao/comunitaria",
-    status: "concluido",
+    // A038 / FR-002: proposta já foi enviada ao financiador, resultado ainda
+    // não saiu — era "concluido" antes da 3ª coluna terminal existir.
+    status: "submetido",
+  },
+  {
+    id: "e6",
+    chamada: "Edital de Pesquisa em Saúde Digital",
+    descricao: "Financiamento de soluções digitais para ampliar acesso a serviços de saúde em regiões remotas.",
+    instituicao: "FAPESP (fictício)",
+    abertura: "2026-02-01",
+    fechamento: "2026-04-30",
+    link: "https://exemplo.org/editais/saude-digital",
+    // A038 / FR-002: resultado saiu e a proposta foi aprovada pelo financiador.
+    status: "aprovado",
+  },
+  {
+    id: "e7",
+    chamada: "Programa de Bolsas para Pesquisa em Biodiversidade",
+    descricao: "Apoio a pesquisas de campo sobre conservação da biodiversidade em biomas brasileiros.",
+    instituicao: "CNPq (fictício)",
+    abertura: "2026-01-15",
+    fechamento: "2026-03-20",
+    link: "https://exemplo.gov.br/chamadas/biodiversidade",
+    // A038 / FR-002: resultado saiu e a proposta não foi aprovada.
+    status: "nao_aprovado",
   },
   {
     id: "e5",
@@ -72,15 +100,16 @@ const editais = [
   },
 ];
 
-// A036 (docs/persona/avulsa-A001.html#dor-2): "Concluído" mistura dois
-// sentidos possíveis ("proposta submetida" vs. "resultado do edital já
-// saiu") sem distinção visual/textual. Decisão de produto pendente — não
-// resolvida nesta task, só documentada aqui para quem revisitar.
+// A038 / FR-002: resolve a A036 (docs/persona/avulsa-A001.html#dor-2) —
+// "Concluído" misturava "proposta submetida" e "resultado do edital já saiu"
+// sem distinção. Agora são 3 estágios terminais mutuamente exclusivos.
 const STATUS_LABEL = {
   backlog: "Backlog",
   andamento: "Em andamento",
   validacao: "Validação",
-  concluido: "Concluído",
+  submetido: "Submetido",
+  aprovado: "Aprovado",
+  nao_aprovado: "Não aprovado",
 };
 
 function formatDate(iso) {

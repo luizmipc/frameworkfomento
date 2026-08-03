@@ -164,6 +164,26 @@ todas as colunas.
   deveria preservar a visão atual e só limpar busca/instituição. Protótipo:
   `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-3`.
+- [ ] A038 Atualizar o protótipo do quadro Kanban de editais para refletir o
+  novo fluxo de submissão: colunas Backlog, Em andamento, Validação,
+  Submetido, Aprovado, Não aprovado (substitui "Concluído" por três colunas
+  terminais) — conforme FR-002 atualizado em
+  `specs/001-manage-call-for-proposals/spec.md`. Resolve a A036 (a coluna
+  "Concluído" não distinguia edital submetido de resultado já decidido).
+  Protótipo: `prototype/avulsa-A001/`. Formalizado via `/kanban-sync` →
+  "Atualizar spec" em 2026-08-03.
+  Feito em 2026-08-03: `prototype/avulsa-A001/` atualizado — `STATUSES` e
+  `STATUS_LABEL` (script.js) e as colunas do quadro (index.html) agora têm
+  as 6 colunas na ordem Backlog → Em andamento → Validação → Submetido →
+  Aprovado / Não aprovado; dados mockados redistribuídos (e4 → "submetido",
+  novos e6 "aprovado" e e7 "nao_aprovado", cada coluna nova com exemplo
+  realista); `style.css` `.board` ajustado de `repeat(4, ...)` para
+  `repeat(6, ...)`, mesma filosofia de responsividade (sem breakpoint novo).
+  Comentários da A036 atualizados/resolvidos nos três arquivos. Não testado
+  ao vivo no browser (subagente sem acesso às ferramentas do
+  claude-in-chrome nesta sessão) — confirmado por leitura de código: mover/
+  drag-and-drop, contadores de coluna e botões de mover já iteravam sobre
+  `STATUSES` genericamente, sem lógica hardcoded a 4 colunas.
 
 ### (avulsas)
 
