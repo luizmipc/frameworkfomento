@@ -46,10 +46,9 @@ Documentação viva do projeto:
 | `/speckit-tasks` | Quebra o plano em tasks (`T001`, `T002`...) |
 | `/speckit-analyze` | Checa consistência entre spec/plano/tasks antes de implementar |
 | `/speckit-implement` | Executa as tasks (uso manual; o dia a dia normalmente passa pelo `/kanban-start`) |
-| `/kanban-sync` | "Reunião de scrum": sincroniza o quadro, cria uma tarefa avulsa, ou formaliza um gap como requisito em `spec.md` |
+| `/kanban-sync` | "Reunião de scrum": sincroniza o quadro, cria uma tarefa avulsa, formaliza um gap como requisito em `spec.md`, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova/grande |
 | `/kanban-start` | Escolhe uma tarefa do quadro (aqui no chat) e a implementa de ponta a ponta |
 | `/docs-sync` | Revisa e atualiza `docs/` a partir do estado real do projeto |
-| `/feature-start` | Atalho: roda specify→clarify→checklist→plan→tasks→kanban-sync numa tacada só, para uma feature grande/nova |
 | `/quick-task` | Atalho: cria uma tarefa avulsa e já a implementa (kanban-sync + kanban-start em um comando), para ajustes pequenos |
 | `/fundraiser-test` | O `fundraiser` vira um captador de recursos real e testa um protótipo estático, devolvendo um documento de Persona com parecer/dores em `docs/persona/` |
 | `/fundraiser-production-test` | Igual ao anterior, mas testa a aplicação real já implementada (rodando de verdade), não o protótipo |
@@ -61,7 +60,7 @@ Documentação viva do projeto:
 
 ### Por onde começar, de acordo com a intenção
 
-- **"Quero começar uma feature nova"** → `/feature-start` (roda specify → clarify → checklist → plan → tasks → kanban-sync por trás; se preferir controlar cada etapa manualmente, os mesmos comandos `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` → `/kanban-sync` continuam disponíveis um a um). Depois, `/kanban-start` repetido até esvaziar o To Do da feature.
+- **"Quero começar uma feature nova"** → `/kanban-sync` → "Começar feature grande (spec completa)" (roda specify → clarify → checklist → plan → tasks por trás; se preferir controlar cada etapa manualmente, os mesmos comandos `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` continuam disponíveis um a um). Depois, `/kanban-start` repetido até esvaziar o To Do da feature.
 - **"Quero corrigir/ajustar algo pequeno, sem spec formal, e já implementar"** → `/quick-task` (cria a tarefa avulsa e já a inicia; equivale a `/kanban-sync` → "Criar nova tarefa" → `/kanban-start` em um só passo).
 - **"Quero ver o que está pendente/em andamento"** → `/kanban-sync` → escolha "Acompanhamento".
 - **"Quero implementar a próxima tarefa do quadro"** → `/kanban-start` (a seleção é feita aqui mesmo no chat, com opções clicáveis).
@@ -78,7 +77,7 @@ Documentação viva do projeto:
 
 O `/kanban-start` já cuida de acionar o `dev` para implementar, o `qa` como gate obrigatório (testes de UI e lógica antes de fechar a task) e, ao final, pergunta se algo deu errado — se sim, registra a lição aprendida no arquivo do agente/skill responsável, para o processo melhorar com o tempo. Depois dessa retrospectiva, pergunta também se deve commitar ou commitar e dar push — sempre em Conventional Commits, com uma mensagem detalhada o suficiente para o commit servir como documentação da mudança (o quê, por quê, decisões tomadas na implementação e resultado do QA).
 
-Cada feature ganha seu próprio branch (nome igual ao slug em `specs/<feature>/`), criado/trocado automaticamente por `/feature-start` e `/kanban-start`/`/kanban-sync`; tarefas avulsas (`A\d{3}`) sempre rodam em `main`. Quando todas as tasks de uma feature terminam e o branch já foi commitado e enviado, `/kanban-start` pergunta se quer abrir um PR para `main`.
+Cada feature ganha seu próprio branch (nome igual ao slug em `specs/<feature>/`), criado/trocado automaticamente por `/kanban-start`/`/kanban-sync`; tarefas avulsas (`A\d{3}`) sempre rodam em `main`. Quando todas as tasks de uma feature terminam e o branch já foi commitado e enviado, `/kanban-start` pergunta se quer abrir um PR para `main`.
 
 ## Segurança
 

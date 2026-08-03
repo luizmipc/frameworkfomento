@@ -1,6 +1,6 @@
 ---
 name: "kanban-sync"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro, ou formaliza um gap/insight como requisito real em spec.md via product-owner."
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
 compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, e docs/ (ver item 0 do plano de implementação)"
 metadata:
@@ -23,8 +23,8 @@ modelo — só quando o usuário digitar `/kanban-sync`.
 
 **Duas formas de usar este arquivo:**
 - **Ritual completo** (`/kanban-sync` chamado pelo usuário, ou por
-  `/quick-task`/`/feature-start`): Passo 0 → um dos três Modos → termina em
-  Retrospectiva. Faz a pergunta de tipo de reunião e a checagem de escopo.
+  `/quick-task`): Passo 0 → um dos quatro Modos → termina em Retrospectiva.
+  Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
   `/quick-task` só para atualizar `KANBAN.md` a partir de `tasks.md`, sem
   ritual): rode **apenas** a seção `## Sincronização` abaixo — sem Passo 0,
@@ -33,7 +33,7 @@ modelo — só quando o usuário digitar `/kanban-sync`.
 
 ## Passo 0 — Tipo de reunião
 
-Pergunte via `AskUserQuestion` (3 opções): **"Que tipo de reunião de scrum é
+Pergunte via `AskUserQuestion` (4 opções): **"Que tipo de reunião de scrum é
 essa?"**
 - **"Acompanhamento"** — sincronizar o quadro a partir do estado real das
   tasks.
@@ -41,12 +41,16 @@ essa?"**
 - **"Atualizar spec"** — descrever um gap/insight (de um teste de persona,
   de observação direta do quadro, ou de qualquer outra origem) e formalizá-lo
   como requisito em `spec.md`, sem necessariamente criar task avulsa junto.
+- **"Começar feature grande (spec completa)"** — rodar o fluxo completo do
+  Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que
+  merece spec própria, carregando as tasks geradas direto no quadro.
 
 Se `$ARGUMENTS` já contiver claramente uma descrição de tarefa nova (frase em
 linguagem natural, não um slug/caminho existente), pule esta pergunta e siga
 direto para o modo "Criar nova tarefa" com essa descrição — "Atualizar spec"
-só é alcançado escolhendo-o explicitamente na pergunta, nunca por inferência
-do `$ARGUMENTS`.
+e "Começar feature grande (spec completa)" só são alcançados escolhendo
+explicitamente na pergunta, nunca por inferência do `$ARGUMENTS` (texto livre
+não distingue de forma confiável um ajuste pequeno de uma feature grande).
 
 ## Modo "Acompanhamento"
 
@@ -99,6 +103,38 @@ do `/kanban-sync` em vez de uma ação avulsa.
      na feature no passo 3 acima). Ao terminar aquele modo, não rode a
      Retrospectiva de novo — ela já roda uma vez só, no passo 6 abaixo.
    - **"Não"** — siga direto ao passo 6.
+6. Rode a **Retrospectiva**.
+
+## Modo "Começar feature grande (spec completa)"
+
+Fluxo completo do Spec Kit para uma feature nova que merece spec própria:
+specify → clarify → checklist → plan → tasks, carregando as tasks geradas
+direto no quadro. Equivalente ao antigo `/feature-start`, agora como um
+caminho suportado do `/kanban-sync` em vez de comando próprio.
+
+1. Se `$ARGUMENTS` não trouxer uma descrição clara da feature, pergunte no
+   chat (texto livre): "Qual a descrição dessa feature nova?"
+2. Acione o subagente `product-owner` (`subagent_type: "product-owner"`) com
+   a descrição, pedindo que rode em sequência:
+   - `speckit-specify` com a descrição — cria/atualiza
+     `specs/<slug>/spec.md`.
+   - `speckit-clarify` — resolve ambiguidades; não deve sobrar marcador
+     `[NEEDS CLARIFICATION]`.
+   - `speckit-checklist` — seu próprio gate de Definition-of-Ready.
+
+   Só considere este passo concluído quando o `product-owner` reportar a
+   spec limpa (clarify sem pendências, checklist passando ou com exceções
+   documentadas). Se ele reportar bloqueio, repasse ao usuário e **pare
+   aqui** — não rode Sincronização nem Retrospectiva (a reunião não chegou
+   a se concluir), mesmo padrão do ramo "Abandonar" da Checagem de escopo.
+3. Rode o procedimento canônico **Branch da feature** de
+   `kanban-start/SKILL.md` (seção "Branch da feature (canônico)"), com alvo
+   o slug gerado no passo 2 — cria o branch (ainda não existe, feature nova)
+   e troca para ele, sem perguntar confirmação.
+4. Acione o subagente `dev` (`subagent_type: "dev"`) com o caminho exato de
+   `specs/<slug>/spec.md` gerado no passo 2, pedindo que rode em sequência:
+   `speckit-plan` (produz `plan.md`) e `speckit-tasks` (produz `tasks.md`).
+5. Rode a **Sincronização** (para carregar as tasks novas em `KANBAN.md`).
 6. Rode a **Retrospectiva**.
 
 ## Modo "Criar nova tarefa"
@@ -401,7 +437,7 @@ Procedimento canônico definido em `kanban-start/SKILL.md`, seção
 reunião?" em vez de "Está funcionando?") e, se houver problema reportado,
 registre a lição aprendida no arquivo correto (um agente em
 `.claude/agents/*.md`, ou uma das nossas skills — `kanban-sync`,
-`kanban-start`, `docs-sync`, `feature-start`, `quick-task` — nunca em
+`kanban-start`, `docs-sync`, `quick-task` — nunca em
 `speckit-*`/`.specify/`).
 
 ## Done When
@@ -417,6 +453,10 @@ registre a lição aprendida no arquivo correto (um agente em
       acionar o `product-owner`, requisito formalizado em
       `spec.md`/`docs/index.html`, e a task avulsa (se aceita) seguiu o
       Modo "Criar nova tarefa" a partir do passo 2
+- [ ] Se "começar feature grande": `spec.md` limpo em clarify/checklist,
+      branch da feature criado e ativo antes de gerar `plan.md`/`tasks.md`,
+      `plan.md` e `tasks.md` existem, e `KANBAN.md` reflete as tasks novas em
+      To Do
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
       a escolha do usuário (abandonar ou atualizar docs)
 - [ ] Retrospectiva rodou e, se houve problema reportado, o arquivo correto

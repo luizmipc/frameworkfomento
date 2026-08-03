@@ -15,9 +15,8 @@ Spec Kit:
   /speckit-taskstoissues  converte tasks em issues do GitHub
 
 Kanban e atalhos:
-  /kanban-sync    reuniao de scrum: sincroniza o quadro ou cria tarefa avulsa
+  /kanban-sync    reuniao de scrum: sincroniza o quadro, cria tarefa avulsa, ou comeca feature grande (specify->clarify->plan->tasks)
   /kanban-start   escolhe e implementa uma tarefa do quadro (aqui no chat)
-  /feature-start  atalho: specify->clarify->plan->tasks->kanban-sync numa tacada
   /quick-task     atalho: cria e ja implementa uma tarefa pequena
   /docs-sync      atualiza docs/ a partir do estado real do projeto
 
