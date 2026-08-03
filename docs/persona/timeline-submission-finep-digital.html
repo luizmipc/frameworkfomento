@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persona — Yuki Almeida (docs/submissions/timeline-submission-finep-digital) — frameworkfomento</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <p class="kicker group-label">docs/persona</p>
+    <a href="#top">Yuki Almeida</a>
+    <a href="#canvas">Quem é essa persona</a>
+    <a href="#tarefas">Tarefas testadas</a>
+    <a href="#dores">Dores identificadas</a>
+    <a href="#bem">O que funcionou bem</a>
+    <a href="#resolver">Para quem resolver</a>
+
+    <p class="kicker group-label">frameworkfomento</p>
+    <a href="../index.html">Documentação</a>
+  </nav>
+
+  <main>
+    <p class="kicker">docs/persona · teste de <code>docs/submissions/timeline-submission-finep-digital.html</code>, por leitura de código (extensão do Chrome não disponível neste contexto de subagente) — checklist operacional real, não protótipo, para a submissão ao edital FINEP "Mais Inovação Brasil — Rodada 2 — Tecnologias Digitais"</p>
+    <h1 id="top">Yuki Almeida</h1>
+    <p class="quote">"Aprovado no mérito não é a mesma coisa que contratado — eu já vivi isso na pele com o Finep anterior: quatro meses correndo atrás de certidão em cima de certidão, com um relógio que ninguém tinha me avisado que existia."</p>
+    <p class="lede">Teste do arquivo real (não protótipo) <code>docs/submissions/timeline-submission-finep-digital.html</code>, em 2026-08-02. As ferramentas de browser (claude-in-chrome) não estavam disponíveis neste contexto de subagente, então a avaliação foi feita por <strong>leitura de código linha a linha</strong> — HTML/CSS/JS do arquivo inteiro (818 linhas) — simulando mentalmente cada interação (marcar os 16 critérios, escolher Arranjo em Rede e o sub-teste financeiro certo, tentar liberar os dois gates antes da hora), e <strong>cruzando cada um dos 16 critérios da Fase 1, os itens de Riscos, Pós-aprovação e os dois itens marcados <code>[?]</code> da Fase 2 contra o Regulamento (14 páginas) e o Anexo 1 (7 páginas) reais</strong> em <code>docs/finep-ref-digital/</code>, lidos na íntegra nesta mesma sessão. A mecânica em si (gate 0/16 → GO, gate da Fase 4, persistência via <code>localStorage</code>, exportação AcroForm) já havia sido validada por teste automatizado antes deste teste — aqui o foco foi exclusivamente: o conteúdo é correto, completo, e de fato ajuda quem vai submeter esta proposta específica?</p>
+
+    <h2 id="canvas">Quem é essa persona</h2>
+    <table>
+      <tbody>
+        <tr><th>Papel</th><td>Head de Parcerias e Captação (não fundadora) de uma scale-up de infraestrutura de IA — orquestração de GPUs e ferramentas de MLOps, mirando a Linha Temática 1.2 (camadas de ferramentas e software de sistema da Pilha de IA)</td></tr>
+        <tr><th>Organização</th><td>~40 pessoas, já tem um contrato Finep ativo de uma rodada anterior (outro edital, ainda em fase de prestação de contas) — o que a torna a pessoa certa para notar o que falta pensar sobre <strong>depois</strong> da aprovação, não só sobre a submissão em si. Está estruturando, para esta proposta, um <strong>Arranjo em Rede</strong> com duas outras startups coexecutoras + uma ICT parceira</td></tr>
+        <tr><th>Editais/programas acompanhados hoje</th><td>5 simultaneamente — este edital, a fase de contratação do Finep anterior (que já a ensinou, na marra, sobre prazos pós-aprovação), dois editais estaduais de inovação, e um programa de fomento do CNPq em fase de decisão interna</td></tr>
+        <tr><th>Ferramentas atuais</th><td>Planilha de compliance compartilhada com o contador, um board no Notion para acompanhar entregáveis da contratação em andamento, e reuniões semanais de 30 min com o sócio técnico e a ICT parceira para revisar pendências</td></tr>
+        <tr><th>Familiaridade técnica</th><td>Alta com processo Finep (é a segunda vez que ela lidera uma captação Finep) — o que lhe dá vocabulário e memória institucional suficientes para notar quando um checklist omite algo que ela já sofreu na prática, mesmo que o Regulamento deste edital específico seja novo para ela</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Objetivos</h3>
+    <ul>
+      <li>Confirmar, antes de investir semanas de FAP e orçamento, que o Arranjo em Rede que está montando (2 coexecutoras + 1 ICT) atende a todos os requisitos específicos desse formato — não quer descobrir uma condição de exclusão de grupo econômico ou de faturamento mínimo faltando na reta final.</li>
+      <li>Ter clareza total sobre o que é exigido <strong>para submeter</strong> versus o que só vira relevante <strong>depois de aprovada</strong> — porque já perdeu tempo real, na rodada anterior, indo atrás de certidão que não era necessária ainda.</li>
+      <li>Não deixar a equipe (e a própria diretoria) achar que "aprovado no mérito" significa "dinheiro garantido" — ela sabe, pela experiência anterior, que a etapa de contratação tem prazo próprio e pode falhar por razões que nada têm a ver com a qualidade técnica do projeto.</li>
+      <li>Delegar com segurança: números financeiros para o contador, cláusulas de arranjo para o sócio jurídico, sem perder o controle de quem já resolveu o quê.</li>
+    </ul>
+    <h3>Frustrações atuais (antes de usar este checklist)</h3>
+    <ul>
+      <li>Na rodada Finep anterior, só descobriu o prazo de 4 meses para assinar o Termo de Outorga depois da aprovação (contando a partir da decisão, não da comunicação) quando já tinha "torrado" seis semanas organizando a comemoração interna em vez de já preparar a documentação de contratação.</li>
+      <li>Já se confundiu, num edital estadual anterior, sobre se um documento financeiro do grupo econômico da empresa era "em vez de" ou "além de" o balanço assinado pelo contador — perdeu um dia inteiro em dúvida e ligou para o órgão para confirmar.</li>
+      <li>Tem memória viva de aprender, tarde, que "proposta aprovada" e "proposta contratada" não são a mesma coisa quando o orçamento do edital está perto do teto — já viu um caso parecido acontecer com uma empresa parceira em outro programa.</li>
+    </ul>
+
+    <h2 id="tarefas">Tarefas testadas</h2>
+    <ol>
+      <li>Percorrer os 16 critérios da Fase 1 como se fosse marcá-los para a empresa dela, escolhendo o ramo <strong>Arranjo em Rede</strong> (caso real: 2 coexecutoras + 1 ICT) e conferir se os 5 sub-itens (<code>f1-9-r1</code> a <code>f1-9-r5</code>) batem exatamente, cláusula por cláusula, com o item 3.ii do Anexo 1 — inclusive a nota sazonal jan-mar sobre receita operacional bruta.</li>
+      <li>Escolher, no sub-teste financeiro (<code>f1-12</code>, radio b.1/b.2/b.3), o cenário que se aplicaria à empresa dela e conferir se a explicação "💬 Em outras palavras" é suficiente para decidir sem precisar reler o item 7.1.7 do Regulamento do zero.</li>
+      <li>Ler os dois itens marcados <code>[?]</code> da Fase 2 (<code>f2-2</code>, TRL; <code>f2-3</code>, arranjo) e cruzar cada um contra os itens 7.1.6, 7.2.4, 7.2.5 do Regulamento e os itens 1, 3 e 9 do Anexo 1, para confirmar se a ambiguidade apontada é real ou inventada para parecer mais completa.</li>
+      <li>Ler a caixa de Riscos inteira, inclusive o novo item <code>[?]</code> sobre as sub-linhas 1.1/1.2/1.3, e perguntar, com a lente de quem já viveu uma contratação Finep: "o que eu sei, pela experiência real, que deveria estar aqui e não está?"</li>
+      <li>Conferir a lista de Pós-aprovação (15 itens) documento por documento contra o item 9.5.ii do Regulamento, e o critério <code>f3-1</code> (documentação financeira) contra o item 6.10.b e seus subitens b.1 a b.4.</li>
+    </ol>
+
+    <h2 id="dores">Parecer — dores identificadas</h2>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-1">Dor 1 — nem a caixa de Riscos nem a seção Pós-aprovação avisam que "aprovado no mérito" não é sinônimo de "contrato garantido"</h3>
+        <span class="badge badge-medium">🟡 média</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> cruzando os 7 itens de <code>riscos</code> e os 15 itens de <code>posAprovacao</code> contra o Regulamento inteiro, dois itens relevantes — e categoricamente diferentes dos 15 documentos listados em Pós-aprovação — não aparecem em lugar nenhum do arquivo. Item 8.2: "As propostas aprovadas pela Diretoria da Finep deverão ser contratadas em até 4 (quatro) meses, contados da decisão aprobatória. Findo esse prazo sem concretizar a contratação, a proposta, a critério da Finep, poderá ser cancelada." E item 9.9: "Na hipótese de o valor das propostas aprovadas na análise de mérito ultrapassar o limite de recursos disponíveis conforme o item 4 do Anexo 1, a contratação destas propostas dependerá de nova disponibilidade de recursos e ocorrerá segundo a ordem de recebimento das propostas."</p>
+      <p><strong>Por que é um problema:</strong> a seção Pós-aprovação lista muito bem <strong>o que</strong> apresentar (as 14 certidões/declarações do item 9.5.ii, mais o vídeo do item 9.2), mas não diz nada sobre <strong>o relógio</strong> que passa a correr a partir da aprovação, nem sobre a possibilidade concreta — real neste edital de fluxo contínuo com teto de R$300M — de a contratação em si depender de sobra de orçamento. Para a Yuki, isso não é uma nuance abstrata: é exatamente o tipo de coisa que ela já viveu e que mudaria como o time se planeja assim que a notícia de aprovação chegar — em vez de comemorar por seis semanas, começar imediatamente a reunir a documentação de contratação, sabendo que o prazo já está contando. Sem esse aviso, quem usa o checklist só pela ordem em que ele apresenta as informações pode achar que "Pós-aprovação" é só uma lista de documentos para juntar com calma.</p>
+      <p><strong>Recomendação:</strong> adicionar os itens 8.2 e 9.9 ao array <code>riscos</code> (não a <code>posAprovacao</code>, já que não são documentos a providenciar, e sim prazos/condições a monitorar) — com âncoras "item 8.2" e "item 9.9" — ou, alternativamente, uma nota de abertura na seção Pós-aprovação alertando sobre o prazo de 4 meses. Decisão de conteúdo, sem impacto na mecânica do checklist.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-2">Dor 2 — <code>f3-1</code> descreve a documentação financeira do grupo econômico como uma alternativa, quando o Regulamento a trata como exigência adicional</h3>
+        <span class="badge badge-medium">🟡 média</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> o rótulo de <code>f3-1</code> diz: "Balanço Patrimonial e Demonstrativo de Resultado do último ano, assinados por contador com nº de registro no CRC — <strong>ou, alternativamente</strong>, documentação financeira consolidada do grupo econômico (se aplicável) ou documentos auditados por auditoria independente / Sped-ECF". O texto real do Regulamento (item 6.10.b.2) diz algo diferente: "No caso de proponente e/ou coexecutora pertencente a um grupo econômico, <strong>também deverá ser enviada</strong> a documentação financeira consolidada do grupo econômico." "Também" — não "ou, alternativamente". Só o item b.4 (auditoria independente / Sped-ECF) é, de fato, uma alternativa ao balanço assinado com CRC (b.1). A consolidação do grupo (b.2) é um documento a mais, exigido em cima do resto, quando a empresa pertence a um grupo econômico — não um substituto para ele.</p>
+      <p><strong>Por que é um problema:</strong> a Yuki já viveu exatamente essa confusão num edital estadual anterior ("já se confundiu... 'em vez de' ou 'além de'"). Se a empresa dela (ou uma das coexecutoras do Arranjo em Rede) pertence a um grupo econômico, ler este critério como está poderia levar a marcar a caixa achando que mandar só a documentação consolidada do grupo já resolve — quando na verdade falta ainda o balanço/DRE individual assinado pelo contador. Curiosamente, o texto "🧭 Como preencher" do mesmo critério já acerta essa nuance ("Se a empresa faz parte de um grupo econômico, pergunte ao contador se a documentação consolidada <strong>também</strong> é necessária") — só o rótulo principal do critério é que está desalinhado com sua própria explicação didática.</p>
+      <p><strong>Recomendação:</strong> reescrever o trecho para separar as duas coisas — algo como "...assinados por contador com nº de registro no CRC (ou, alternativamente, documentos auditados por auditoria independente / Sped-ECF); se a empresa pertencer a um grupo econômico, enviar também a documentação financeira consolidada do grupo" — reservando "alternativamente" só para o que de fato é opcional (b.4).</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-3">Dor 3 — <code>f1-10</code> (anuência formal da ICT) é marcado como eliminatório com âncora no item 2.6, que não menciona esse documento</h3>
+        <span class="badge badge-low">🟢 baixa</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> todos os outros 15 critérios da Fase 1 têm uma âncora que, ao abrir o Regulamento ou o Anexo 1 no item citado, mostra literalmente o requisito descrito no checklist. <code>f1-10</code> ("Anuência formal da ICT parceira obtida") é âncorado em "item 2.6", que na verdade só diz: "É obrigatória a participação de Instituições Científicas, Tecnológicas e de Inovação (ICTs) como parceiras nos projetos..." — nada no Regulamento ou no Anexo 1 lidos nesta sessão menciona explicitamente uma "carta de anuência formal" como documento de submissão.</p>
+      <p><strong>Por que é um problema:</strong> não é necessariamente errado — na prática, uma ICT precisa mesmo confirmar formalmente que topa participar, e isso provavelmente está detalhado no Manual da Plataforma (não incluído nos PDFs revisados) ou é simplesmente exigido pelo formulário da própria plataforma da Finep. Mas, diferente dos outros 15 itens, este é o único cuja âncora não sustenta literalmente o texto do critério — e para alguém como a Yuki, que confia no sistema de âncoras exatamente para não precisar reabrir o PDF, essa é a única linha em que reabrir o PDF e não achar o texto citado poderia gerar dúvida sobre a confiabilidade do restante do checklist.</p>
+      <p><strong>Recomendação:</strong> ou marcar este item como inferência prática (nota indicando que não há trecho textual explícito no Regulamento/Anexo 1, e que a exigência provém do fluxo real da plataforma), ou, se existir base textual no Manual da Plataforma da Finep, trocar a âncora para apontar para lá.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-4">Dor 4 — <code>f3-4</code> atribui ao Anexo 1 uma regra que está, na verdade, só no Regulamento</h3>
+        <span class="badge badge-low">🟢 baixa</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> o critério <code>f3-4</code> ("Se Arranjo em Rede: ao menos 5% do orçamento destinado à(s) ICT(s), registrado exclusivamente na rubrica Serviços de Consultoria") está âncorado só em "item 3.ii, Anexo 1". Mas o Anexo 1, item 3.ii, diz apenas "Pelo menos 5% do valor total do projeto deve ser destinado a ICT(s)" — sem mencionar a rubrica. A exigência de registrar isso "exclusivamente na rubrica Serviços de Consultoria" está no Regulamento, item 4.3.3, não no Anexo 1.</p>
+      <p><strong>Por que é um problema:</strong> baixa severidade — o conteúdo do critério está correto, só a âncora está incompleta. Mas para a Yuki, que delega o preenchimento do orçamento ao contador e usa a âncora como referência rápida para ele conferir, mandar o contador direto ao item 3.ii do Anexo 1 não mostra a frase sobre a rubrica — ele precisaria saber, por conta própria, ir procurar no Regulamento.</p>
+      <p><strong>Recomendação:</strong> somar "; 4.3.3" à âncora existente.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-5">Dor 5 — o risco sobre alteração do Regulamento (item 11.5) simplifica a proteção mais forte que o item 11.5.1 realmente dá</h3>
+        <span class="badge badge-low">🟢 baixa</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> o item de Riscos diz: "O Regulamento pode ser alterado a qualquer momento durante o fluxo contínuo, <strong>com efeito imediato para quem ainda não foi avaliado</strong>". O item 11.5.1 do Regulamento é mais protetor do que essa frase sugere: "Eventual mudança nos critérios e parâmetros utilizados na avaliação das propostas só poderá ser efetivada nos casos em que <strong>nenhuma das propostas recebidas tenha sido avaliada na etapa que sofreu alteração</strong>, salvo nos casos de alteração por força de lei." Ou seja: uma mudança nos critérios de avaliação de uma etapa só vale se, na data da mudança, absolutamente nenhuma proposta ainda tiver sido avaliada naquela etapa específica — não basta "eu ainda não fui avaliada", é preciso que ninguém tenha sido.</p>
+      <p><strong>Por que é um problema:</strong> severidade baixa porque o efeito prático (mais cautela nunca prejudica quem está submetendo) é inofensivo, e o item 11.5 (efeito geral) de fato existe e é real. Mas a frase atual pode assustar mais do que deveria — dá a entender que qualquer proposta ainda não avaliada está exposta a mudanças de critério a qualquer momento, quando o item 11.5.1 na prática blinda bastante essa situação específica (mudança de critério só vale se o "placar" daquela etapa ainda estiver zerado).</p>
+      <p><strong>Recomendação:</strong> ajustar a frase para refletir a nuance de 11.5.1: mudanças no Regulamento em geral valem imediatamente, mas mudanças nos <em>critérios de avaliação</em> de uma etapa só valem se nenhuma proposta ainda foi avaliada nessa etapa.</p>
+    </section>
+
+    <h2 id="bem">O que funcionou bem</h2>
+    <ul>
+      <li><strong>Os 16 critérios da Fase 1 mapeiam, um a um, para os 7 itens substantivos da Habilitação (7.1.1–7.1.7):</strong> conferido item por item contra o Regulamento — 7.1.1 (elegibilidade, seção 2 inteira) vira 8 critérios granulares (<code>f1-1</code> a <code>f1-7</code>, <code>f1-10</code>), 7.1.2 vira <code>f1-8</code>, 7.1.3 vira <code>f1-13</code>, 7.1.4 vira <code>f1-14</code>, 7.1.5 vira <code>f1-15</code>, 7.1.6 vira <code>f1-9</code> (arranjo) + <code>f1-16</code> (TRL), 7.1.7 vira <code>f1-11</code> + <code>f1-12</code>. Nada do Regulamento ficou de fora, nada foi inventado.</li>
+      <li><strong>Os 5 sub-itens do Arranjo em Rede (<code>f1-9-r1</code> a <code>f1-9-r5</code>) batem exatamente com o item 3.ii do Anexo 1, cláusula por cláusula</strong> — inclusive a nota sazonal jan-mar sobre receita operacional bruta, corretamente vinculada só ao sub-item de faturamento (não aos outros quatro, que não dependem de exercício fiscal). Para a Yuki, que está de fato montando um Arranjo em Rede, essa é a parte mais crítica de toda a Fase 1 — e ela conferiu cada bullet sem achar nenhuma discrepância.</li>
+      <li><strong>Os dois itens <code>[?]</code> da Fase 2 (<code>f2-2</code>, <code>f2-3</code>) apontam para uma ambiguidade real, não inventada:</strong> confirmado contra o texto — o item 7.1.6 (Habilitação) cita os itens 1 e 3 do Anexo 1 (TRL e arranjo) como parte da "aderência" checada na Fase 1; os itens 7.2.4/7.2.5 (Análise de Mérito) citam os itens 3 e 9 do Anexo 1 (arranjo de novo, e "Adequação dos TRLs estipulados no item 1") como critério de reprovação na Fase 2. A mesma dupla checagem (TRL e arranjo) aparece nas duas etapas, com o próprio Regulamento não esclarecendo se é reafirmação ou reavaliação mais rigorosa — os badges <code>[?]</code> estão corretamente colocados.</li>
+      <li><strong>A ambiguidade das sub-linhas 1.1/1.2/1.3 é um achado genuíno:</strong> o Anexo 1 de fato define "Linha Temática 1" com três subdivisões nomeadas (1.1, 1.2, 1.3), cada uma com finalidades prioritárias próprias, mas o item 4 fala em teto "por Grupo de Concorrência (linha temática)" sem esclarecer se cada sub-linha conta como grupo separado — a nota de risco descreve essa lacuna com precisão e sem exagero.</li>
+      <li><strong>Todos os valores numéricos batem, exatos, com o Anexo 1:</strong> R$5M–R$25M (Simples) / R$5M–R$40M (Rede) no item 5; tabela de contrapartida 5%–50% por porte × arranjo no item 6, incluindo a lacuna real de percentual não-definido para Micro/Pequena Empresa em Arranjo em Rede; R$16M de faturamento mínimo no item 3.ii; R$300M/R$90M/R$100M no item 4; 36 meses no item 7; faixa de TRL 3–8 (com a regra "quem mira TRL 8 começa entre TRL 3 e 6") no item 1.</li>
+      <li><strong>O gate de "pronto para envio" da Fase 4 corrige exatamente o problema que a versão anterior deste tipo de checklist (Saúde, <code>docs/persona/timeline-submissao-finep.html</code>, Dor 4) tinha:</strong> lá, o botão só checava a Fase 1 e liberava mesmo com os 5 itens da própria Fase 4 desmarcados. Aqui, <code>updateGateUI()</code> exige <code>complete1 && complete4</code> — cadastro prévio, plataforma, LGPD, limite de propostas e data planejada de envio todos precisam estar marcados, e a mensagem de bloqueio (<code>gate-note</code>) diz exatamente quantos itens faltam em cada fase. Uma lição da rodada anterior foi de fato incorporada.</li>
+    </ul>
+
+    <h2 id="resolver">Para quem resolver</h2>
+    <p><a href="#dor-1">Dor 1</a> (ausência dos itens 8.2 e 9.9 sobre prazo de contratação e disponibilidade orçamentária pós-mérito) é uma lacuna de conteúdo real — ajuste direto no array <code>riscos</code> de <code>docs/submissions/timeline-submission-finep-digital.html</code>.</p>
+    <p><a href="#dor-2">Dor 2</a> (rótulo de <code>f3-1</code> trata "também" como "ou, alternativamente") é uma correção pontual de texto no array <code>fases[2].criterios</code>, sem impacto na mecânica.</p>
+    <p><a href="#dor-3">Dor 3</a> (âncora de <code>f1-10</code> não sustenta literalmente o rótulo) e <a href="#dor-4">Dor 4</a> (âncora de <code>f3-4</code> mistura Anexo 1 com Regulamento) são ajustes de precisão de âncora, baixa prioridade.</p>
+    <p><a href="#dor-5">Dor 5</a> (risco sobre 11.5 simplifica a proteção de 11.5.1) é um ajuste de nuance no texto do risco, baixa prioridade.</p>
+
+    <p class="page-footer">Este documento não corrige nada — é insumo para quem mantém <code>docs/submissions/timeline-submission-finep-digital.html</code> agir sobre o parecer, a critério de quem revisa. Testado por leitura de código e cruzamento linha a linha contra o Regulamento (14 páginas) e o Anexo 1 (7 páginas) reais, não ao vivo em browser (ver nota no topo).</p>
+  </main>
+
+</div>
+<script src="../assets/script.js" defer></script>
+</body>
+</html>
