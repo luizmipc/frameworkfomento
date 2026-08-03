@@ -94,6 +94,10 @@ que nenhum outro agente cobre hoje:
   miram a spec e o portfólio, não a implementação — confirme o estado real
   de `app/` (`find app -mindepth 1 -maxdepth 1 -type d -not -name config`)
   antes de assumir que algo já existe além do scaffold.
+- Material de referência bruto de um edital real (PDFs de Regulamento/
+  Anexos) fica em `ref/<edital>/` — é aí que `/coordenador-edital-fit`
+  busca por padrão. Pastas antigas fora de `ref/` (ex.: `docs/finep-ref*/`)
+  são histórico de execuções passadas, não o padrão atual.
 
 ## Regras de handoff
 

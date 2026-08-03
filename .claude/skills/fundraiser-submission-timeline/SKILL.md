@@ -1,7 +1,7 @@
 ---
 name: "fundraiser-submission-timeline"
 description: "Transforma o Regulamento/Anexos reais de um edital de fomento (qualquer instituição — não hardcoded para FINEP) num checklist HTML preenchível, imprimível e com portão de elegibilidade funcional em docs/submissions/, mais um roteiro para montar um Google Forms equivalente. Extrai critérios eliminatórios com âncora de item, valida com o subagente fundraiser duas vezes (antes e depois de construir), e nunca inventa dado que não esteja no documento-fonte. Use quando a intenção for 'preciso de um checklist de submissão real e confiável para este edital'. Para testar UX de protótipo/produção já existente, use /fundraiser-test ou /fundraiser-production-test — este comando é para CRIAR um novo checklist a partir de PDFs de edital."
-argument-hint: "<pasta-de-referência-do-edital> [nome-do-arquivo-de-saída.html] — ex.: docs/finep-ref-digital/ timeline-submission-finep-digital.html"
+argument-hint: "<pasta-de-referência-do-edital> [nome-do-arquivo-de-saída.html] — ex.: ref/finep-digital/ timeline-submission-finep-digital.html"
 compatibility: "Requires .claude/agents/fundraiser.md, docs/submissions/jspdf.umd.min.js (vendorizado; criado na 1ª execução se ausente), docs/assets/style.css (para o relatório de persona) e uma pasta com os PDFs do Regulamento/Anexos do edital"
 metadata:
   author: "frameworkfomento"
@@ -26,7 +26,9 @@ de validação em `docs/persona/`. Zero invenção: toda exigência (`[L]`) tem
 ## Passo 1 — Ingestão
 
 1. Se `$ARGUMENTS` já traz a pasta de referência e o nome de saída, use-os
-   direto. Senão, pergunte via `AskUserQuestion`.
+   direto. Senão, rode `ls ref/` — as subpastas de `ref/` são o local
+   canônico dos PDFs de edital; se houver uma candidata óbvia, confirme com
+   o usuário via `AskUserQuestion`; senão, pergunte o caminho direto.
 2. Rode `ls` na pasta de referência para listar os PDFs disponíveis
    (Regulamento, Anexos, FAQ). Confirme com `pdfinfo` a contagem de páginas
    de cada um antes de ler, para não perder conteúdo por paginação.

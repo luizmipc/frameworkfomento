@@ -1,7 +1,7 @@
 ---
 name: "coordenador-edital-fit"
 description: "Faz o subagente coordenador-de-pesquisa avaliar se um edital de fomento real vale a pena perseguir do ponto de vista da instituição — cruza a extração literal do Regulamento/Anexos com sinal informal/de relacionamento que o USUÁRIO fornecer sobre o financiador (nunca inventado) e com a agenda estratégica de pesquisa do instituto, devolvendo um veredito (perseguir / não perseguir / perseguir com ressalvas) em docs/edital-fit/. Use quando a intenção for 'quero saber se este edital realmente serve aos interesses do nosso instituto, além do que está escrito'. Para criar o checklist de submissão de um edital já decidido, use /fundraiser-submission-timeline — este comando é sobre DECIDIR se vale perseguir, não sobre como preencher."
-argument-hint: "<pasta-de-referência-do-edital> — ex.: docs/finep-ref-digital/"
+argument-hint: "<pasta-de-referência-do-edital> — ex.: ref/finep-digital/"
 compatibility: "Requires .claude/agents/coordenador-de-pesquisa.md e uma pasta com os PDFs do Regulamento/Anexos do edital"
 metadata:
   author: "frameworkfomento"
@@ -31,8 +31,10 @@ siga direto ao Passo 1.
 
 ## Passo 1 — Ingestão
 
-1. Se `$ARGUMENTS` já traz a pasta de referência, use-a direto. Senão,
-   pergunte via `AskUserQuestion`.
+1. Se `$ARGUMENTS` já traz a pasta de referência, use-a direto. Senão, rode
+   `ls ref/` — as subpastas de `ref/` são o local canônico dos PDFs de
+   edital; se houver uma candidata óbvia, confirme com o usuário via
+   `AskUserQuestion`; senão, pergunte o caminho direto.
 2. Rode `ls` na pasta de referência para listar os PDFs disponíveis
    (Regulamento, Anexos, histórico de edições anteriores se houver).
 3. Se a pasta não existir ou estiver vazia, informe isso ao usuário e pare
