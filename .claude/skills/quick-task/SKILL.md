@@ -18,8 +18,8 @@ $ARGUMENTS
 
 Este comando é o ponto de entrada para o caminho "ajuste pequeno" descrito no
 README: `kanban-sync (criar nova tarefa) → kanban-start`, em um só passo. Para
-uma feature grande que merece spec própria, use `/feature-start` em vez
-deste.
+uma feature grande que merece spec própria, use `/kanban-sync` → "Começar
+feature grande (spec completa)" em vez deste.
 
 **Regressão/bug encontrado numa task já Done**: não existe (nem deve existir)
 um comando para "reabrir" uma task — `tasks.md`/`KANBAN.md` são um registro

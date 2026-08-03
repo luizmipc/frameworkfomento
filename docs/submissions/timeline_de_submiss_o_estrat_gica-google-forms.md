@@ -74,4 +74,4 @@
 
 ---
 
-*Gerado a partir de `docs/submissions/timeline_de_submiss_o_estrat_gica.html`. Fonte primária: `docs/finep-ref/06_02_2026_Saude_Regulamento-1.pdf` e `06_02_2026_Saude_Anexo1.pdf`.*
+*Gerado a partir de `docs/submissions/timeline_de_submiss_o_estrat_gica.html`. Fonte primária: `ref/finep-ref/06_02_2026_Saude_Regulamento-1.pdf` e `06_02_2026_Saude_Anexo1.pdf`.*

@@ -125,9 +125,10 @@ adicionando o sufixo de proveniência (`feature`, caminho de `tasks.md` — ou
 
 ## Branch da feature (canônico)
 
-Procedimento usado por este comando (Passo 4) e referenciado por
-`feature-start/SKILL.md` e pelos modos "Atualizar spec" e "Criar nova tarefa"
-de `kanban-sync/SKILL.md` — troca automaticamente para o branch da feature (ou
+Procedimento usado por este comando (Passo 4) e referenciado pelos modos
+"Atualizar spec", "Criar nova tarefa" e "Começar feature grande (spec
+completa)" de `kanban-sync/SKILL.md` — troca automaticamente para o branch da
+feature (ou
 `main`, para trabalho avulso/sem feature), sem perguntar confirmação a cada
 troca; a troca em si aparece só como uma linha no relato da etapa que a
 chamou, nunca como uma `AskUserQuestion` própria.
@@ -242,8 +243,8 @@ QA rodaram e passaram corretamente?"**
   "Other"). Depois:
   1. Identifique o arquivo dono provável do problema: um agente em
      `.claude/agents/*.md` (`product-owner`, `dev`, `designer`,
-     `scrum-master`, `fundraiser`, `qa`) ou uma das nossas skills
-     (`kanban-sync`, `kanban-start`, `docs-sync`, `feature-start`,
+     `scrum-master`, `fundraiser`, `coordenador-de-pesquisa`, `qa`) ou uma
+     das nossas skills (`kanban-sync`, `kanban-start`, `docs-sync`,
      `quick-task`, todas em `.claude/skills/`). **Nunca edite** skills
      `speckit-*` nem nada em `.specify/`.
   2. Adicione (ou crie) uma seção `## Lições aprendidas` ao final do arquivo

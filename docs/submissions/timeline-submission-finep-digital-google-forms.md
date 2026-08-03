@@ -74,4 +74,4 @@
 
 ---
 
-*Gerado a partir de `docs/submissions/timeline-submission-finep-digital.html`. Fonte primária: `docs/finep-ref-digital/12_03_2026_TA_Regulamento.pdf` e `12_03_2026_TA_A1-3.pdf` (Anexo 1).*
+*Gerado a partir de `docs/submissions/timeline-submission-finep-digital.html`. Fonte primária: `ref/finep-ref-digital/12_03_2026_TA_Regulamento.pdf` e `12_03_2026_TA_A1-3.pdf` (Anexo 1).*

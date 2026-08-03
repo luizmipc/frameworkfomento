@@ -1,6 +1,6 @@
 ---
 name: "kanban-sync"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro, ou formaliza um gap/insight como requisito real em spec.md via product-owner."
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
 compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, e docs/ (ver item 0 do plano de implementação)"
 metadata:
@@ -23,8 +23,8 @@ modelo — só quando o usuário digitar `/kanban-sync`.
 
 **Duas formas de usar este arquivo:**
 - **Ritual completo** (`/kanban-sync` chamado pelo usuário, ou por
-  `/quick-task`/`/feature-start`): Passo 0 → um dos três Modos → termina em
-  Retrospectiva. Faz a pergunta de tipo de reunião e a checagem de escopo.
+  `/quick-task`): Passo 0 → um dos quatro Modos → termina em Retrospectiva.
+  Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
   `/quick-task` só para atualizar `KANBAN.md` a partir de `tasks.md`, sem
   ritual): rode **apenas** a seção `## Sincronização` abaixo — sem Passo 0,
@@ -33,7 +33,7 @@ modelo — só quando o usuário digitar `/kanban-sync`.
 
 ## Passo 0 — Tipo de reunião
 
-Pergunte via `AskUserQuestion` (3 opções): **"Que tipo de reunião de scrum é
+Pergunte via `AskUserQuestion` (4 opções): **"Que tipo de reunião de scrum é
 essa?"**
 - **"Acompanhamento"** — sincronizar o quadro a partir do estado real das
   tasks.
@@ -41,12 +41,25 @@ essa?"**
 - **"Atualizar spec"** — descrever um gap/insight (de um teste de persona,
   de observação direta do quadro, ou de qualquer outra origem) e formalizá-lo
   como requisito em `spec.md`, sem necessariamente criar task avulsa junto.
+- **"Ver mais opções"** — mostra as duas opções restantes (abaixo), fora do
+  limite de 4 do `AskUserQuestion`: pergunte de novo via `AskUserQuestion`
+  (2 opções): **"Que tipo de reunião de scrum é essa?"**
+  - **"Começar feature grande (spec completa)"** — rodar o fluxo completo do
+    Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova
+    que merece spec própria, carregando as tasks geradas direto no quadro.
+  - **"Reunião estratégica (coordenador de pesquisa)"** — leitura holística
+    e periódica do projeto inteiro pela lente do `coordenador-de-pesquisa`
+    (portfólio, alinhamento com a agenda de pesquisa do instituto, risco
+    institucional/reputacional) — nível estratégico, não tático/operacional
+    (isso é do modo "Acompanhamento") nem sobre uma task específica.
 
 Se `$ARGUMENTS` já contiver claramente uma descrição de tarefa nova (frase em
 linguagem natural, não um slug/caminho existente), pule esta pergunta e siga
-direto para o modo "Criar nova tarefa" com essa descrição — "Atualizar spec"
-só é alcançado escolhendo-o explicitamente na pergunta, nunca por inferência
-do `$ARGUMENTS`.
+direto para o modo "Criar nova tarefa" com essa descrição — "Atualizar spec",
+"Começar feature grande (spec completa)" e "Reunião estratégica" só são
+alcançados escolhendo explicitamente na pergunta, nunca por inferência do
+`$ARGUMENTS` (texto livre não distingue de forma confiável um ajuste pequeno
+de uma feature grande ou de uma leitura estratégica).
 
 ## Modo "Acompanhamento"
 
@@ -101,6 +114,89 @@ do `/kanban-sync` em vez de uma ação avulsa.
    - **"Não"** — siga direto ao passo 6.
 6. Rode a **Retrospectiva**.
 
+## Modo "Começar feature grande (spec completa)"
+
+Fluxo completo do Spec Kit para uma feature nova que merece spec própria:
+specify → clarify → checklist → plan → tasks, carregando as tasks geradas
+direto no quadro. Equivalente ao antigo `/feature-start`, agora como um
+caminho suportado do `/kanban-sync` em vez de comando próprio.
+
+1. Se `$ARGUMENTS` não trouxer uma descrição clara da feature, pergunte no
+   chat (texto livre): "Qual a descrição dessa feature nova?"
+2. Acione o subagente `product-owner` (`subagent_type: "product-owner"`) com
+   a descrição, pedindo que rode em sequência:
+   - `speckit-specify` com a descrição — cria/atualiza
+     `specs/<slug>/spec.md`.
+   - `speckit-clarify` — resolve ambiguidades; não deve sobrar marcador
+     `[NEEDS CLARIFICATION]`.
+   - `speckit-checklist` — seu próprio gate de Definition-of-Ready.
+
+   Só considere este passo concluído quando o `product-owner` reportar a
+   spec limpa (clarify sem pendências, checklist passando ou com exceções
+   documentadas). Se ele reportar bloqueio, repasse ao usuário e **pare
+   aqui** — não rode Sincronização nem Retrospectiva (a reunião não chegou
+   a se concluir), mesmo padrão do ramo "Abandonar" da Checagem de escopo.
+3. Rode o procedimento canônico **Branch da feature** de
+   `kanban-start/SKILL.md` (seção "Branch da feature (canônico)"), com alvo
+   o slug gerado no passo 2 — cria o branch (ainda não existe, feature nova)
+   e troca para ele, sem perguntar confirmação.
+4. Acione o subagente `dev` (`subagent_type: "dev"`) com o caminho exato de
+   `specs/<slug>/spec.md` gerado no passo 2, pedindo que rode em sequência:
+   `speckit-plan` (produz `plan.md`) e `speckit-tasks` (produz `tasks.md`).
+5. Rode a **Sincronização** (para carregar as tasks novas em `KANBAN.md`).
+6. Rode a **Retrospectiva**.
+
+## Modo "Reunião estratégica (coordenador de pesquisa)"
+
+Ao contrário de todos os outros modos, este nunca cria, edita nem move
+nenhuma task — é uma leitura consultiva do projeto inteiro, nunca um gate.
+
+1. **Checagem de estado vazio**: se não existir `KANBAN.md` **e**
+   `find specs -mindepth 1 -maxdepth 1 -type d` não achar nada, informe
+   "Ainda não há board nem specs para uma leitura estratégica — rode
+   `/kanban-sync` → Acompanhamento ou comece uma feature primeiro." e
+   **pare aqui** (sem Retrospectiva — mesmo padrão do ramo "Abandonar" da
+   Checagem de escopo, a reunião não chegou a acontecer).
+2. **Reúna o contexto holístico** (só leitura, nenhuma edição neste passo):
+   - `KANBAN.md` inteiro (todas as features/tasks, todas as colunas).
+   - `docs/index.html` (`#sl`, `#fr`).
+   - Cada `specs/<slug>/spec.md` existente.
+   - Todos os `docs/persona/*.html` (fundraiser + coordenador), listando
+     dores por severidade sem reabrir o parecer inteiro de cada um.
+   - O relatório mais recente de cada tipo, se existir: `docs/qa-report/`,
+     `docs/cybersec-report/`, `docs/deploy-report/`, `docs/edital-fit/`
+     (mais recente por data no nome do arquivo).
+   - `docs/persona/coordenador-instituto.html` § "Interesses estratégicos
+     de pesquisa" — se o arquivo ainda não existir, siga o mesmo bootstrap
+     do Passo 0 de `coordenador-test/SKILL.md` (pergunta via
+     `AskUserQuestion`, cria o doc canônico) antes de seguir.
+3. Acione o subagente `coordenador-de-pesquisa`
+   (`subagent_type: "coordenador-de-pesquisa"`) com os caminhos exatos do
+   passo 2 (não o conteúdo inteiro colado no prompt — o subagente lê os
+   arquivos). Instrução explícita e não-negociável: **síntese estratégica,
+   não replay tático** — não relitigue o estado de nenhuma task individual
+   (isso é do modo "Acompanhamento"), não repita achados item a item de
+   QA/segurança/deploy (isso é dos relatórios próprios, cite-os por link) —
+   cruze os padrões entre eles: o portfólio ainda serve à agenda de
+   pesquisa do instituto? há concentração de risco institucional/
+   reputacional em alguma frente? o ritmo observado sugere um desvio de
+   prioridade estratégica? Nunca bloqueia nem impede o fluxo normal do
+   Kanban — é sempre consultivo, mesmo padrão de "não corrige nada, só
+   reporta" do `cybersecurity-blue`/`devops`.
+4. O `coordenador-de-pesquisa` escreve
+   `docs/coordenador-report/<data-ISO>.html` (`date -u +"%Y-%m-%d"`, ex.:
+   `docs/coordenador-report/2026-08-03.html` — mesmo formato de
+   `docs/deploy-report/`/`docs/cybersec-report/`; reexecuções no mesmo dia
+   sobrescrevem o arquivo do dia), mesmo esqueleto/classes de
+   `docs/qa-report/*.html`/`docs/deploy-report/*.html` (achados com badge
+   de severidade, seção "Para quem resolver" por achado — `product-owner`
+   para desvio de agenda, `scrum-master` para reforçar gate de processo,
+   `dev` nunca é dono direto de um achado estratégico). Adiciona também uma
+   linha em `docs/persona/coordenador-instituto.html` § "Log de reuniões
+   estratégicas" e um card em `docs/index.html` (seção "Outras fontes",
+   grupo `docs/coordenador-report/`, criado se for a primeira reunião).
+5. Rode a **Retrospectiva**.
+
 ## Modo "Criar nova tarefa"
 
 1. **Origem da(s) descrição(ões)**:
@@ -112,7 +208,7 @@ do `/kanban-sync` em vez de uma ação avulsa.
      - **"Descrever manualmente"** (Recomendado) — pergunte no chat (texto
        livre): "Qual a descrição dessa tarefa nova?". Uma única descrição.
      - **"A partir de um relatório existente"** — pergunte via
-       `AskUserQuestion` (até 4 opções): **"De qual relatório?"**
+       `AskUserQuestion` (4 opções): **"De qual relatório?"**
        - **"Teste de persona (docs/persona/)"** — rode a sub-rotina
          **Origem: docs/persona/** (abaixo); ela devolve uma lista de uma
          ou mais descrições (uma por dor escolhida).
@@ -122,14 +218,20 @@ do `/kanban-sync` em vez de uma ação avulsa.
        - **"Achados de segurança (docs/cybersec-report/)"** — rode a
          sub-rotina **Origem: docs/cybersec-report/** (abaixo); ela devolve
          uma lista de uma ou mais descrições (uma por achado escolhido).
-       - **"Achados de prontidão de deploy (docs/deploy-report/)"** — rode
-         a sub-rotina **Origem: docs/deploy-report/** (abaixo); ela
-         devolve uma lista de uma ou mais descrições (uma por achado
-         escolhido).
-       Essa 2ª pergunta já cabe nas 4 opções permitidas por
-       `AskUserQuestion` — se uma 5ª origem de relatório existir no futuro,
-       pagine do mesmo jeito que o Passo 2 de `kanban-start/SKILL.md` (3
-       primeiras + "Ver mais").
+       - **"Ver mais origens"** — mostra as duas restantes, fora do limite
+         de 4: pergunte de novo via `AskUserQuestion` (2 opções): **"De
+         qual relatório?"**
+         - **"Achados de prontidão de deploy (docs/deploy-report/)"** —
+           rode a sub-rotina **Origem: docs/deploy-report/** (abaixo); ela
+           devolve uma lista de uma ou mais descrições (uma por achado
+           escolhido).
+         - **"Reunião estratégica (docs/coordenador-report/)"** — rode a
+           sub-rotina **Origem: docs/coordenador-report/** (abaixo); ela
+           devolve uma lista de uma ou mais descrições (uma por achado
+           escolhido).
+       Se uma 6ª origem de relatório existir no futuro, pagine do mesmo
+       jeito (3 primeiras + "Ver mais", igual ao Passo 2 de
+       `kanban-start/SKILL.md`).
    - Repita os passos 3 a 7 abaixo **para cada descrição** da lista resultante,
      na ordem, antes de seguir ao passo 8 (uma única Sincronização/Retrospectiva
      no final, mesmo que várias tarefas tenham sido criadas).
@@ -333,6 +435,40 @@ corrige nada nem edita o arquivo de relatório — só lê.
 6. Devolva a lista de descrições montadas ao passo 1 do Modo "Criar nova
    tarefa".
 
+## Origem: docs/coordenador-report/
+
+Sub-rotina do Modo "Criar nova tarefa" (passo 1) — transforma achados
+estratégicos documentados em `docs/coordenador-report/*.html` (gerados pelo
+Modo "Reunião estratégica") em uma ou mais descrições de tarefa avulsa. Não
+corrige nada nem edita o arquivo de relatório — só lê.
+
+1. Liste os arquivos: `find docs/coordenador-report -maxdepth 1 -name
+   '*.html'`. Se nenhum existir, informe "Nenhuma reunião estratégica
+   encontrada em docs/coordenador-report/ ainda — rode `/kanban-sync` →
+   Reunião estratégica primeiro." e volte à pergunta do passo 1 do Modo
+   "Criar nova tarefa" (o usuário escolhe manual ou desiste).
+2. Se houver mais de um arquivo, pergunte via `AskUserQuestion` (até 4
+   opções, rotuladas pela data no nome do arquivo) qual usar. Se houver só
+   um, use-o direto sem perguntar.
+3. Leia o arquivo escolhido e extraia cada achado da seção de achados (um
+   `<section class="story" id="achado-N">` por achado, com badge de
+   severidade, título em `<h3>` e o texto de "Impacto"/"Por que é um
+   problema") — reaproveite a seção "Para quem resolver" para já saber o
+   dono provável de cada item (`product-owner` para desvio de agenda,
+   `scrum-master` para reforçar gate de processo).
+4. Ofereça os achados via `AskUserQuestion` (`multiSelect: true`) para o
+   usuário escolher quais viram tarefa — mesma paginação do Passo 2 de
+   `kanban-start/SKILL.md`: até 4 por chamada (3 primeiras + "Ver mais" se
+   houver mais de 4), rótulo = título curto do achado, descrição = resumo
+   de 1 frase de "Impacto"/"Por que é um problema".
+5. Para cada achado selecionado, monte a descrição da tarefa: `<título do
+   achado> (via reunião estratégica
+   docs/coordenador-report/<data>.html#achado-N)` — o suficiente para quem
+   for implementar abrir o link e ler o parecer completo; não copie o
+   parecer inteiro para dentro do `KANBAN.md`.
+6. Devolva a lista de descrições montadas ao passo 1 do Modo "Criar nova
+   tarefa".
+
 ## Checagem de escopo
 
 Informe ao usuário, em prosa, o que motivou a suspeita de desvio de escopo
@@ -401,7 +537,7 @@ Procedimento canônico definido em `kanban-start/SKILL.md`, seção
 reunião?" em vez de "Está funcionando?") e, se houver problema reportado,
 registre a lição aprendida no arquivo correto (um agente em
 `.claude/agents/*.md`, ou uma das nossas skills — `kanban-sync`,
-`kanban-start`, `docs-sync`, `feature-start`, `quick-task` — nunca em
+`kanban-start`, `docs-sync`, `quick-task` — nunca em
 `speckit-*`/`.specify/`).
 
 ## Done When
@@ -417,6 +553,14 @@ registre a lição aprendida no arquivo correto (um agente em
       acionar o `product-owner`, requisito formalizado em
       `spec.md`/`docs/index.html`, e a task avulsa (se aceita) seguiu o
       Modo "Criar nova tarefa" a partir do passo 2
+- [ ] Se "começar feature grande": `spec.md` limpo em clarify/checklist,
+      branch da feature criado e ativo antes de gerar `plan.md`/`tasks.md`,
+      `plan.md` e `tasks.md` existem, e `KANBAN.md` reflete as tasks novas em
+      To Do
+- [ ] Se "reunião estratégica": checagem de estado vazio rodou primeiro,
+      nenhuma task individual foi tocada, e `docs/coordenador-report/<data>.html`
+      + a linha em `docs/persona/coordenador-instituto.html` § "Log de
+      reuniões estratégicas" existem ao final
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
       a escolha do usuário (abandonar ou atualizar docs)
 - [ ] Retrospectiva rodou e, se houve problema reportado, o arquivo correto
