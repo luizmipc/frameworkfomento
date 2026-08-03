@@ -82,8 +82,7 @@ bom no papel?"
   -name config`) antes de assumir que algo já existe além do scaffold.
 - Material de referência bruto de um edital real (PDFs de Regulamento/
   Anexos) fica em `ref/<edital>/` — é aí que `/fundraiser-submission-timeline`
-  busca por padrão. Pastas antigas fora de `ref/` (ex.: `docs/finep-ref*/`)
-  são histórico de execuções passadas, não o padrão atual.
+  busca por padrão (ex.: `ref/finep-ref/`, `ref/finep-ref-digital/`).
 
 ## Regras de handoff
 
