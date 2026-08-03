@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline de Submissão — FINEP Mais Inovação Saúde, Rodada 2 (Empresas)</title>
+<style>
+  :root {
+    --fg: #1a1d24;
+    --muted: #5a6070;
+    --accent: #3a5fd9;
+    --border: #dde1e8;
+    --bg: #f4f5f7;
+    --card-bg: #ffffff;
+    --red: #dc2626;
+    --blue: #2563eb;
+    --green: #059669;
+    --indigo: #4f46e5;
+    --amber: #b45309;
+    --amber-bg: #fffbeb;
+    --amber-border: #fde68a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1rem 4rem; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 20;
+    background: #fff; border-bottom: 1px solid var(--border);
+    display: flex; gap: 0.6rem; justify-content: flex-end;
+    padding: 0.6rem 1rem;
+  }
+  .topbar button {
+    background: var(--accent); color: #fff; border: none; border-radius: 0.4rem;
+    padding: 0.5rem 1rem; font-size: 0.85rem; cursor: pointer;
+  }
+  .topbar button.secondary { background: #fff; color: var(--accent); border: 1px solid var(--accent); }
+  .topbar button:hover { opacity: 0.9; }
+
+  header.hero { padding: 1.5rem 0 1rem; }
+  .kicker { color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.75rem; font-weight: 700; margin: 0 0 0.3rem; }
+  h1 { font-size: 1.6rem; margin: 0 0 0.5rem; line-height: 1.25; }
+  .lede { color: var(--muted); font-size: 0.95rem; margin: 0 0 1rem; }
+  .lede strong { color: var(--fg); }
+
+  .summary-bar {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.75rem;
+    background: var(--card-bg); border: 1px solid var(--border); border-radius: 0.6rem; padding: 1rem;
+  }
+  .summary-item .label { display: block; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 0.25rem; }
+  .summary-item .value { font-size: 1rem; font-weight: 700; }
+  .verdict { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 0.3rem; font-size: 0.95rem; }
+  .verdict-pending { background: #fee2e2; color: var(--red); }
+  .verdict-go { background: #dcfce7; color: #15803d; }
+
+  section { margin-top: 1.75rem; }
+  h2 { font-size: 1.05rem; margin: 0 0 0.6rem; }
+  .section-note { color: var(--muted); font-size: 0.85rem; margin: -0.3rem 0 0.8rem; }
+
+  .ident-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0.75rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 0.6rem; padding: 1rem; }
+
+  .riscos-box { background: var(--amber-bg); border: 1px solid var(--amber-border); border-radius: 0.6rem; padding: 1rem 1.2rem; }
+  .riscos-box h2 { color: var(--amber); margin: 0 0 0.5rem; }
+  .riscos-box ul { margin: 0; padding-left: 1.2rem; font-size: 0.87rem; }
+  .riscos-box li + li { margin-top: 0.5rem; }
+  .riscos-box .anchor { color: var(--muted); }
+
+  .fase-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 6px solid var(--fase-color, var(--accent)); border-radius: 0.6rem; margin-bottom: 1rem; overflow: hidden; }
+  .fase-head { padding: 1rem 1.2rem; cursor: pointer; display: flex; justify-content: space-between; gap: 1rem; align-items: flex-start; }
+  .fase-head:hover { background: #fafafa; }
+  .fase-num { display: inline-flex; align-items: center; justify-content: center; width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--fase-color, var(--accent)); color: #fff; font-weight: 700; font-size: 0.85rem; margin-right: 0.5rem; flex: none; }
+  .fase-title { font-size: 1.05rem; font-weight: 700; margin: 0; display: flex; align-items: center; }
+  .fase-sub { font-size: 0.78rem; font-weight: 600; color: var(--fase-color, var(--accent)); text-transform: uppercase; letter-spacing: 0.03em; margin: 0.15rem 0 0.4rem 2.1rem; }
+  .fase-window { font-size: 0.78rem; color: var(--muted); margin: 0 0 0.4rem 2.1rem; }
+  .fase-desc { font-size: 0.85rem; color: var(--muted); margin: 0 0 0 2.1rem; }
+  .fase-toggle { color: var(--muted); font-size: 0.8rem; flex: none; }
+
+  .fase-body { border-top: 1px solid var(--border); padding: 1rem 1.2rem; }
+  .fase-body[hidden] { display: none; }
+
+  .criterio { padding: 0.65rem 0; border-bottom: 1px dashed var(--border); }
+  .criterio:last-child { border-bottom: none; }
+  .crit-main { display: flex; align-items: flex-start; gap: 0.5rem; cursor: pointer; }
+  .crit-main input[type=checkbox] { margin-top: 0.2rem; width: 1rem; height: 1rem; flex: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .crit-label { margin: 0; }
+  .anchor { color: var(--muted); font-size: 0.8rem; }
+  .badge { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 0.05rem 0.35rem; border-radius: 0.25rem; margin-left: 0.25rem; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .badge-e { background: #fee2e2; color: var(--red); }
+  .badge-c { background: #e0e7ff; color: var(--indigo); }
+  .badge-q { background: #fef3c7; color: var(--amber); }
+
+  .mini { display: flex; flex-direction: column; font-size: 0.78rem; color: var(--muted); gap: 0.15rem; }
+  .mini input, .mini textarea, .mini select { font: inherit; font-size: 0.85rem; color: var(--fg); border: 1px solid var(--border); border-radius: 0.3rem; padding: 0.3rem 0.45rem; background: #fff; }
+  .mini.full { grid-column: 1 / -1; }
+  .extra-row { margin: 0.4rem 0 0.4rem 1.6rem; }
+  .didatico { margin: 0.4rem 0 0.4rem 1.6rem; font-size: 0.82rem; line-height: 1.4; }
+  .didatico p { margin: 0.2rem 0; }
+  .didatico .leigo { color: #1e3a8a; background: #eff6ff; border-left: 3px solid #93c5fd; padding: 0.35rem 0.6rem; border-radius: 0 0.3rem 0.3rem 0; }
+  .didatico .comofazer { color: #14532d; background: #f0fdf4; border-left: 3px solid #86efac; padding: 0.35rem 0.6rem; border-radius: 0 0.3rem 0.3rem 0; margin-top: 0.3rem; }
+  .resp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0.5rem 0 0 1.6rem; max-width: 420px; }
+  .radio-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0.4rem 0 0.4rem 0; }
+  .radio-opt { display: flex; align-items: flex-start; gap: 0.35rem; font-size: 0.85rem; max-width: 320px; cursor: pointer; }
+  .radio-opt input { margin-top: 0.2rem; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .branch { margin: 0.5rem 0 0.4rem 1.6rem; padding-left: 0.75rem; border-left: 2px solid var(--border); }
+  .crit-sub { display: flex; align-items: flex-start; gap: 0.5rem; padding: 0.3rem 0; cursor: pointer; }
+  .crit-sub input { margin-top: 0.2rem; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  .gate-box { margin-top: 0.75rem; padding: 0.9rem 1rem; border-radius: 0.5rem; background: #f4f5f7; border: 1px solid var(--border); }
+  .gate-box label { display: flex; align-items: center; gap: 0.5rem; font-weight: 700; }
+  #gate-note { font-size: 0.82rem; color: var(--muted); margin: 0.35rem 0 0 1.6rem; }
+
+  #pos-aprovacao ul { padding-left: 1.2rem; font-size: 0.87rem; }
+  #pos-aprovacao li + li { margin-top: 0.4rem; }
+
+  footer { margin-top: 2rem; padding-top: 1rem; border-top: 1px solid var(--border); font-size: 0.8rem; color: var(--muted); }
+
+  textarea { min-height: 2.4rem; resize: vertical; }
+
+  @media print {
+    .no-print, .topbar, .fase-toggle { display: none !important; }
+    body { background: #fff; }
+    .wrap { max-width: none; padding: 0; }
+    .fase-body[hidden] { display: block !important; }
+    .fase-card { break-inside: avoid; border: 1px solid #999; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    @page { size: A4; margin: 14mm 16mm; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar no-print">
+  <button type="button" class="secondary" id="btn-toggle-all">Expandir/recolher tudo</button>
+  <button type="button" class="secondary" id="btn-print">Imprimir</button>
+  <button type="button" id="btn-export-pdf">Baixar PDF preenchível</button>
+</div>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">frameworkfomento · docs/submissions</p>
+    <h1>Timeline de Submissão — FINEP "Mais Inovação Brasil - Rodada 2 - Saúde Empresas"</h1>
+    <p class="lede">Seleção Pública MCTI/Finep/FNDCT, Subvenção Econômica à Inovação em Fluxo Contínuo (<span class="anchor">Regulamento, item 1.1–1.2</span>). Checklist operacional para uso interno — <strong>não é o formulário oficial</strong> e não substitui a leitura do Regulamento e Anexos em <code>docs/finep-ref/</code>. Todo item aqui tem a âncora do item do documento-fonte; onde o edital não é claro, o item vem marcado <span class="badge badge-q">[?]</span>.</p>
+
+    <div class="summary-bar">
+      <div class="summary-item">
+        <span class="label">Fase 1 (elegibilidade)</span>
+        <span class="value verdict verdict-pending" id="verdict-badge">carregando…</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Prazo — 31/08/2026, 17h (Brasília) <span class="badge badge-q" data-open-question title="Regulamento item 6.3 diz 18h00; horário de 17h informado à parte — confirmar com a Finep">[?]</span></span>
+        <span class="value" id="countdown">calculando…</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Perguntas em aberto</span>
+        <span class="value" id="open-questions-count">–</span>
+      </div>
+    </div>
+  </header>
+
+  <section id="identificacao">
+    <h2>Identificação do proponente</h2>
+    <p class="section-note">Preencha só o que já se sabe — nada aqui é inventado pela ferramenta.</p>
+    <div class="ident-grid">
+      <label class="mini"><span>Empresa proponente (razão social)</span><input type="text" id="id-empresa" data-persist placeholder="<<PREENCHER>>"></label>
+      <label class="mini"><span>CNPJ</span><input type="text" id="id-cnpj" data-persist placeholder="<<PREENCHER>>"></label>
+      <label class="mini"><span>ICT parceira</span><input type="text" id="id-ict" data-persist placeholder="<<PREENCHER>>"></label>
+      <label class="mini"><span>Responsável pela captação</span><input type="text" id="id-responsavel" data-persist placeholder="<<PREENCHER>>"></label>
+    </div>
+  </section>
+
+  <section id="riscos">
+    <h2>⚠ Riscos e considerações do Regulamento</h2>
+    <ul id="riscos-list"></ul>
+  </section>
+
+  <section id="fases-container"></section>
+
+  <section id="pos-aprovacao">
+    <h2>Pós-aprovação / Contratação <span class="badge badge-c">não bloqueia o envio</span></h2>
+    <p class="section-note">Estes documentos só são exigidos <strong>depois</strong> da proposta aprovada, na fase de contratação (<span class="anchor">item 9.5</span>) — não fazem parte da submissão. O checklist antigo desta página os listava incorretamente na Fase 1; foram movidos para cá.</p>
+    <ul id="pos-aprovacao-list"></ul>
+  </section>
+
+  <footer>
+    <p>Fonte: <code>docs/finep-ref/06_02_2026_Saude_Regulamento-1.pdf</code> e <code>Anexo1.pdf</code> (FINEP, Mais Inovação Saúde — Rodada 2). Gerado como checklist operacional interno; validado com o agente <code>fundraiser</code> antes de publicação. Prazo de submissão sujeito a prorrogação e o Regulamento pode mudar durante o fluxo contínuo (<span class="anchor">itens 6.4, 11.5</span>) — revise o documento-fonte perto do envio.</p>
+  </footer>
+
+</div>
+
+<script src="jspdf.umd.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var DEADLINE_ISO = "2026-08-31T17:00:00-03:00";
+
+  var riscos = [
+    { text: 'Reenviar uma proposta nova enquanto a anterior ainda está em análise <strong>inabilita automaticamente a nova</strong> submissão — só reenviar se a anterior já foi indeferida/inabilitada.', anchor: 'item 6.2.1' },
+    { text: 'Limite de <strong>2 propostas por empresa</strong>, sendo no máximo <strong>1 proposta por grupo de concorrência</strong>.', anchor: 'item 6.2' },
+    { text: 'O prazo pode ser prorrogado pela Finep — não use essa possibilidade para relaxar a meta interna do time (meta: enviar até 29/08, com folga antes do prazo oficial).', anchor: 'item 6.4' },
+    { text: 'O Regulamento pode ser alterado a qualquer momento durante o fluxo contínuo, com efeito imediato para quem ainda não foi avaliado — revise o Regulamento vigente perto do envio, não confie só nesta leitura de 02/08/2026.', anchor: 'item 11.5, 11.5.1' },
+    { text: 'Os recursos podem se esgotar antes do prazo final, mas <strong>por grupo de concorrência específico</strong> (linha temática), não pelo montante total — confira o consumo já realizado na linha temática escolhida na página oficial de operações aprovadas antes de fixar a meta de envio.', anchor: 'item 6.5, 8.2' },
+    { text: 'Se a Fase 1 (Habilitação) for indeferida após o envio, há direito a recurso administrativo em até <strong>10 dias corridos</strong> da comunicação — mas o recurso não pode trazer informação nova que modifique a proposta original.', anchor: 'item 7.3.3, 7.3.6' }
+  ];
+
+  var posAprovacao = [
+    { label: 'Certidão de Débitos relativos aos Tributos Federais e à Dívida Ativa da União', anchor: 'item 9.5.ii.a' },
+    { label: 'Certificado de Regularidade do FGTS', anchor: 'item 9.5.ii.b' },
+    { label: 'Adimplência com a União via consulta ao CADIN', anchor: 'item 9.5.ii.c' },
+    { label: 'Cadastro Nacional de Condenações Cíveis por Improbidade e Inelegibilidade (CNCIAI), inclusive sócio majoritário', anchor: 'item 9.5.ii.d' },
+    { label: 'Cadastro Nacional de Empresas Inidôneas e Suspensas (CEIS), inclusive sócio majoritário', anchor: 'item 9.5.ii.e' },
+    { label: 'Cadastro Nacional de Empresas Punidas (CNEP)', anchor: 'item 9.5.ii.f' },
+    { label: 'Cadastro de empregadores que tenham submetido trabalhadores a condições análogas à de escravo', anchor: 'item 9.5.ii.g' },
+    { label: 'Print da tela "Consulta Obrigatoriedade do e-Social"', anchor: 'item 9.5.ii.h' },
+    { label: 'Certidão falimentar negativa (ou de insolvência civil negativa)', anchor: 'item 9.5.ii.i' },
+    { label: 'Declaração de ações coletivas (Anexo 3), assinada pelos representantes legais', anchor: 'item 9.5.ii.j' },
+    { label: 'Declaração ambiental e outros aspectos regulatórios (Anexo 4), com licenças pertinentes', anchor: 'item 9.5.ii.k' },
+    { label: 'Autorização societária para contratar financiamento / assumir obrigações, se for o caso', anchor: 'item 9.5.ii.l' },
+    { label: 'Ato de eleição/nomeação dos administradores atuais, quando cabível', anchor: 'item 9.5.ii.m' },
+    { label: 'Instrumento de procuração, caso a representação legal se dê dessa forma', anchor: 'item 9.5.ii.n' },
+    { label: 'Se Linha Temática III: parecer de aprovação no Comitê de Ética em Pesquisa (CEP) e autorização da ANVISA', anchor: 'item 9.5.iii' }
+  ];
+
+  var fases = [
+    {
+      n: 1, id: 'fase-1', titulo: 'Elegibilidade da Empresa Proponente e Habilitação', cor: 'var(--red)',
+      sub: 'GATE — bloqueia o botão de envio da Fase 4 até 100% resolvida',
+      janela: 'Semana 1 (02–08/08) — mas continue em paralelo às Fases 2 e 3: itens que dependem de terceiros (anuência da ICT, balanço assinado por contador) devem ser disparados hoje, não esperar esta fase "fechar".',
+      desc: 'Critérios eliminatórios do Regulamento (seção 2 e item 7.1 — Etapa 1: Habilitação). Se qualquer um destes falhar, a proposta é desclassificada nesta etapa, independentemente da qualidade técnica — não vale a pena investir nas fases seguintes sem isso resolvido.',
+      criterios: [
+        { id: 'f1-1', label: 'Empresa é pessoa jurídica com fins lucrativos (não associação, fundação, cooperativa, MEI ou empresário individual)', anchor: 'item 2.1, 2.2', elim: true,
+          leigo: 'A Finep só aceita empresas no sentido de negócio com fins lucrativos. ONGs, associações, fundações, cooperativas e MEI ficam de fora, mesmo fazendo pesquisa e inovação de verdade.',
+          comoPreencher: 'Confira o tipo societário no Contrato Social ou Estatuto (LTDA, S.A. etc.). Se for MEI, associação, fundação ou cooperativa, este edital não é para vocês como proponente.' },
+        { id: 'f1-2', label: 'Atividade do projeto não consta na', anchor: 'item 2.3', elim: true, link: { text: 'lista de exclusão da Finep ↗', href: 'http://www.finep.gov.br/apoio-e-financiamento-externa/programas-e-linhas/setores-e-atividades-excluidos-e-de-apoio-condicionado' },
+          leigo: 'Existem atividades e setores que a Finep nunca financia, listados numa página própria do site. Se o projeto cair nessa lista, não adianta insistir.',
+          comoPreencher: 'Abra o link da lista de exclusão, use Ctrl+F para buscar palavras-chave do seu setor/produto, e confirme que nada bate.' },
+        { id: 'f1-3', label: 'Registro na Junta Comercial ou RCPJ realizado até 31/12 do ano anterior ao da submissão (hoje: 31/12/2025 — revisar se o prazo for prorrogado para 2027)', anchor: 'item 2.4.a', elim: true, extra: { id: 'f1-3-data', label: 'Data do registro', type: 'date' },
+          leigo: 'A empresa precisa já existir oficialmente desde o ano passado — empresa aberta este ano não pode participar.',
+          comoPreencher: 'Veja a data de abertura no Cartão CNPJ ou no Contrato Social registrado. Se abriu depois de 31/12 do ano anterior, aguarde a próxima rodada.' },
+        { id: 'f1-4', label: 'Atividade operacional comprovada nos últimos 12 meses (despesas ou receitas, via Demonstrações Financeiras)', anchor: 'item 2.4.b, 6.10.b', elim: true,
+          leigo: 'Não basta a empresa existir no papel — ela precisa comprovar que já estava de fato operando (vendendo, gastando, faturando) nos últimos 12 meses.',
+          comoPreencher: 'Peça ao contador as Demonstrações Financeiras dos últimos 12 meses mostrando movimentação real — não pode ser uma empresa "de gaveta".' },
+        { id: 'f1-5', label: 'Objeto social, na data de envio, compatível com as atividades do grupo de concorrência escolhido', anchor: 'item 2.4.c; item 2, Anexo 1', elim: true,
+          leigo: 'O que está escrito no Contrato Social como "atividade da empresa" precisa combinar com a linha temática escolhida — uma empresa registrada só para "comércio varejista" dificilmente convence numa linha de biotecnologia.',
+          comoPreencher: 'Releia o objeto social no Contrato Social e compare com a descrição oficial da linha escolhida abaixo. Se não bater, pode ser preciso alterar o Contrato Social com antecedência — fale com o contador/advogado societário, isso não se resolve da noite pro dia.',
+          extra: { id: 'f1-5-linha', label: 'Linha temática / grupo de concorrência', type: 'select', options: [
+            { value: 'I', label: 'I — Desenvolvimento de Insumos Farmacêuticos Ativos (IFAs) Estratégicos e Inovadores para o SUS' },
+            { value: 'II', label: 'II — Desenvolvimento de Produtos Biológicos Novos e Biossimilares Estratégicos para o SUS' },
+            { value: 'III', label: 'III — Fomento à Pesquisa Clínica para Desenvolvimento de Produtos Inovadores ou Aprimorados' },
+            { value: 'IV', label: 'IV — Desenvolvimento de Terapias Avançadas' },
+            { value: 'V', label: 'V — Desenvolvimento de Dispositivos Médicos' },
+            { value: 'VI', label: 'VI — Desenvolvimento de Vacinas' }
+          ] } },
+        { id: 'f1-6', label: 'Sede da empresa no território nacional', anchor: 'item 2.1', elim: true,
+          leigo: 'O endereço oficial (sede) da empresa precisa ser no Brasil — não vale ser filial brasileira de matriz que decide tudo lá fora, só formalmente registrada aqui.',
+          comoPreencher: 'Confirme o endereço da sede no Cartão CNPJ.' },
+        { id: 'f1-7', label: 'Principal atividade de P&D do grupo econômico, na área do projeto, está localizada no Brasil (não é mera tropicalização de solução da matriz estrangeira)', anchor: 'item 2.4.d; reforçado por 4.1.3', elim: true,
+          leigo: 'Não basta o endereço da empresa ser no Brasil — o trabalho de pesquisa e desenvolvimento em si (cientistas, laboratório, time técnico) também precisa estar aqui. Só "importar" uma solução pronta da matriz estrangeira e adaptar não conta como inovação para este edital.',
+          comoPreencher: 'Descreva honestamente onde o P&D do produto realmente acontece — se for majoritariamente fora do Brasil, esse critério provavelmente falha, mesmo com a sede formal aqui.' },
+        {
+          id: 'f1-8', type: 'conditional', label: 'Arranjo escolhido atende aos requisitos aplicáveis', anchor: 'item 3, Anexo 1; 7.1.6', elim: true,
+          leigo: 'Vocês não podem submeter sozinhos — o edital exige uma instituição de pesquisa parceira (ICT, como uma universidade ou instituto). Existem dois formatos: "Simples" (só sua empresa + a ICT) ou "em Rede" (sua empresa + outras empresas parceiras + a ICT), cada um com regras próprias.',
+          comoPreencher: 'Decida com a diretoria qual arranjo faz sentido pro projeto, confirme com a ICT que ela topa participar formalmente, e marque os itens da coluna certa abaixo.',
+          radioName: 'f1-8-tipo',
+          radioOptions: [ { value: 'simples', label: 'Arranjo Simples' }, { value: 'rede', label: 'Arranjo em Rede' } ],
+          branches: {
+            simples: [
+              { id: 'f1-8-s1', label: 'Ao menos 1 ICT parceira no arranjo, sendo pelo menos uma não instituída/mantida pela proponente ou coexecutoras', anchor: 'item 3, Anexo 1',
+                leigo: 'A ICT parceira precisa ser realmente independente da sua empresa — não pode ser um instituto criado ou controlado por vocês mesmos.',
+                comoPreencher: 'Confirme com a ICT que ela não foi fundada nem é mantida financeiramente pela sua empresa ou por nenhuma coexecutora.' }
+            ],
+            rede: [
+              { id: 'f1-8-r1', label: 'Ao menos 2 empresas coexecutoras + ao menos 1 ICT parceira', anchor: 'item 3, Anexo 1',
+                leigo: 'No arranjo em Rede é preciso ter pelo menos duas outras empresas parceiras além da sua, mais a ICT.',
+                comoPreencher: 'Confirme por escrito (e-mail ou carta de intenção) que pelo menos 2 outras empresas topam entrar como coexecutoras antes de escolher este arranjo.' },
+              { id: 'f1-8-r2', label: 'Ao menos 5% do orçamento total destinado à(s) ICT(s)', anchor: 'item 3.ii, Anexo 1',
+                leigo: 'Pelo menos 5% de todo o dinheiro do projeto precisa ir para a instituição de pesquisa parceira, não só para as empresas.',
+                comoPreencher: 'Ao montar o orçamento (Fase 3), calcule 5% do valor total da proposta e reserve isso para a ICT.' },
+              { id: 'f1-8-r3', label: 'Ao menos uma empresa do arranjo com receita ≥ R$16.000.000', anchor: 'item 3, Anexo 1',
+                leigo: 'Pelo menos uma empresa do grupo precisa ter faturamento de R$16 milhões ou mais no ano anterior — trava para o arranjo em Rede não ser usado só por microempresas.',
+                comoPreencher: 'Some o faturamento bruto do ano anterior de cada empresa do arranjo (ver DRE) e confirme se alguma bate esse valor.' },
+              { id: 'f1-8-r4', label: 'Proponente e coexecutoras sem sobreposição de grupo econômico entre si', anchor: 'item 3, Anexo 1', openQuestion: true,
+                leigo: 'As empresas do arranjo precisam ser realmente independentes entre si — não pode ser a mesma empresa "disfarçada" em várias CNPJs.',
+                comoPreencher: 'Confirme que nenhuma empresa participante é controlada pelo mesmo grupo que controla outra do arranjo — em caso de dúvida, um advogado societário confirma rápido.' },
+              { id: 'f1-8-r5', label: 'A ICT não é instituída/mantida por nenhum integrante do arranjo', anchor: 'item 3, Anexo 1',
+                leigo: 'Mesma lógica do arranjo Simples — a ICT que recebe os 5% do orçamento precisa ser de fato independente das empresas do projeto.',
+                comoPreencher: 'Confirme com a ICT que ela não foi fundada nem é mantida por nenhuma das empresas do arranjo.' }
+            ]
+          }
+        },
+        { id: 'f1-9', label: 'Anuência formal da ICT parceira obtida', anchor: 'item 2.6', elim: true, extra: { id: 'f1-9-ict', label: 'Nome da ICT parceira', type: 'text' },
+          leigo: 'Não basta "ter conversado" com a universidade/instituto — precisa de um documento formal assinado confirmando que ela topa participar do projeto.',
+          comoPreencher: 'Peça à ICT uma carta de anuência assinada pelo representante legal — comece esse pedido o quanto antes, universidades costumam ter processo interno lento para assinar.' },
+        { id: 'f1-10', label: 'Patrimônio líquido positivo', anchor: 'item 7.1.7.a', elim: true, extra: { id: 'f1-10-valor', label: 'Patrimônio líquido (R$)', type: 'text' },
+          leigo: 'As contas da empresa (o que ela tem menos o que ela deve) precisam estar no azul — patrimônio líquido negativo já reprova de cara.',
+          comoPreencher: 'Peça ao contador o valor do Patrimônio Líquido no último Balanço Patrimonial fechado.' },
+        {
+          id: 'f1-11', type: 'radio', label: 'Teste de resultado operacional (cumulativo ao item anterior — ao menos 1 dos 3 abaixo)', anchor: 'item 7.1.7.b, 7.1.7.1', elim: true,
+          leigo: 'Além do patrimônio líquido positivo, a Finep também confere se o resultado operacional é saudável o bastante para bancar a contrapartida exigida — existem três formas alternativas de passar, dependendo se o resultado é positivo ou negativo.',
+          comoPreencher: 'Peça ao contador o Resultado Operacional, o Endividamento Oneroso e o Ativo Total do último balanço, e veja com ele qual dos três cenários (b.1/b.2/b.3) se aplica antes de fechar o arranjo/contrapartida.',
+          radioName: 'f1-11-subtest',
+          radioOptions: [
+            { value: 'b1', label: '(b.1) Resultado operacional negativo, com endividamento oneroso ≤30% do ativo total e contrapartida ≤50% do ativo total' },
+            { value: 'b2', label: '(b.2) Resultado operacional positivo, com contrapartida ≤20% do resultado operacional' },
+            { value: 'b3', label: '(b.3) Resultado operacional positivo, contrapartida >20% do resultado operacional mas endividamento oneroso ≤30% do ativo total e contrapartida ≤50% do ativo total' }
+          ],
+          extras: [
+            { id: 'f1-11-ro', label: 'Resultado operacional (R$)', type: 'text' },
+            { id: 'f1-11-eo', label: 'Endividamento oneroso (R$)', type: 'text' },
+            { id: 'f1-11-at', label: 'Ativo total (R$)', type: 'text' },
+            { id: 'f1-11-cp', label: 'Contrapartida (R$)', type: 'text' }
+          ]
+        },
+        { id: 'f1-12', label: 'Valor solicitado dentro do teto/piso da linha temática escolhida — mínimo R$5.000.000 para todas; máximo: R$15M (linhas I/II), R$10M (linha III), R$30M (linha IV), R$15M (linhas V/VI)', anchor: 'item 5, Anexo 1; 7.1.3; 4.2.2', elim: true, extra: { id: 'f1-12-valor', label: 'Valor solicitado à Finep (R$)', type: 'text' },
+          leigo: 'Existe um valor mínimo e máximo que dá para pedir à Finep, e o teto muda conforme a linha temática — pedir fora dessa faixa reprova a proposta automaticamente, nem entra na fila de avaliação.',
+          comoPreencher: 'Defina primeiro a linha temática (item acima), depois confira o teto correspondente, e ajuste o orçamento do projeto para caber dentro da faixa antes de submeter.' },
+        { id: 'f1-13', label: 'Percentual de contrapartida financeira atende ao mínimo exigido por porte × arranjo (5%–50%, conforme tabela do item 6, Anexo 1)', anchor: 'item 7.1.4; item 6, Anexo 1', elim: true, extra: { id: 'f1-13-pct', label: 'Percentual de contrapartida (%)', type: 'text' },
+          leigo: 'A Finep não banca 100% do projeto — a empresa precisa colocar uma parte própria (contrapartida), e o percentual mínimo depende do porte da empresa e do arranjo escolhido.',
+          comoPreencher: 'Descubra o porte da empresa pelo faturamento (tabela do Anexo 1) e calcule o percentual mínimo sobre o valor total da proposta — reserve esse dinheiro com antecedência, ele precisa estar numa conta específica antes de cada parcela.' },
+        { id: 'f1-14', label: 'Prazo de execução do projeto ≤ 36 meses', anchor: 'item 7, Anexo 1; 7.1.5', elim: true, extra: { id: 'f1-14-meses', label: 'Prazo de execução (meses)', type: 'text' },
+          leigo: 'O projeto inteiro, do início até a entrega final, não pode durar mais que 3 anos, mesmo que na prática vocês precisem de mais tempo.',
+          comoPreencher: 'Monte o cronograma físico do projeto e confirme que cabe em até 36 meses — se não couber, reduza o escopo ou divida em fases.' }
+      ]
+    },
+    {
+      n: 2, id: 'fase-2', titulo: 'Modelagem Técnica', cor: 'var(--blue)',
+      sub: 'Não bloqueada — trabalhe em paralelo à Fase 1',
+      janela: 'Semana 2 (09–15/08)',
+      desc: 'Núcleo técnico da proposta: FAP, TRL, equipe, vídeo institucional.',
+      nota: 'Se Linha Temática III (Fomento à Pesquisa Clínica): aprovação do Comitê de Ética em Pesquisa (CEP) e autorização da ANVISA NÃO são exigidas na submissão — só na contratação (item 9.5.iii).',
+      criterios: [
+        { id: 'f2-1', label: 'TRL de entrada e de saída do projeto dentro da faixa 3–7', anchor: 'item 1, Anexo 1; item 9, Anexo 1', extra: { id: 'f2-1-trl', label: 'TRL entrada → saída', type: 'text' },
+          leigo: 'TRL é uma escala de 1 a 9 que mede o quão "pronta" é a tecnologia — 1 é só uma ideia teórica, 9 é produto vendido no mercado. Este edital só financia projetos que já passaram da fase de ideia pura (TRL 3) mas ainda não estão prontos para venda (até TRL 7).',
+          comoPreencher: 'Se você não sabe estimar o TRL do seu projeto, o Anexo 5 do Regulamento tem a definição de cada nível — compare a maturidade real do seu produto com essas descrições.' },
+        { id: 'f2-2', label: 'FAP preenchido com equipe, metodologia, TRL, metas físicas, atividades, indicadores e orçamento coerentes entre si', anchor: 'indicador "Consistência", eliminatório na Etapa 2 — item 7.2.1.1', elim: true,
+          leigo: 'O FAP é o formulário técnico principal da proposta — a Finep confere se equipe, metodologia, metas, indicadores e orçamento contam a mesma história, sem contradição entre as partes. Se for inconsistente, reprova mesmo com uma boa ideia.',
+          comoPreencher: 'Depois de preencher o FAP, releia do início ao fim como se fosse um avaliador de fora: as metas batem com o cronograma? A equipe descrita tem a formação necessária? O orçamento reflete o que está escrito na metodologia?' },
+        { id: 'f2-3', label: 'Vídeo de até 10 min enviado como link (não upload), cobrindo (i) inovação/relevância do projeto e (ii) capacidade técnica, infraestrutura e parceiros', anchor: 'item 6.9', extra: { id: 'f2-3-link', label: 'Link do vídeo', type: 'text' },
+          leigo: 'Além do texto, é obrigatório mandar um vídeo curto mostrando a inovação e a capacidade da empresa de executar o projeto — como um pitch, mas por link.',
+          comoPreencher: 'Grave em até 10 minutos, suba num serviço de vídeo (YouTube não-listado, Google Drive com link público, etc.) e confirme que qualquer pessoa com o link consegue assistir sem pedir senha ou login.' },
+        { id: 'f2-4', label: 'Currículos Lattes de toda a equipe executora anexados', anchor: 'FAP, item 6.10',
+          leigo: 'A Finep quer ver o currículo acadêmico/profissional (Currículo Lattes, plataforma oficial de currículos científicos no Brasil) de quem vai efetivamente trabalhar no projeto.',
+          comoPreencher: 'Peça a cada integrante da equipe técnica para atualizar o Lattes na plataforma CNPq antes de submeter — um Lattes desatualizado pode prejudicar a nota de qualificação da equipe.' },
+        { id: 'f2-5', label: 'Se Linha Temática V (Dispositivos Médicos): Certificado de Autorização de Funcionamento (AFE) junto à ANVISA de ao menos uma beneficiária, anexado como "Outros"', anchor: 'item 6.10.c, c.1, c.2, c.3',
+          leigo: 'Só se aplica a quem escolheu a linha de Dispositivos Médicos: pelo menos uma empresa do projeto precisa ter uma autorização da ANVISA para funcionar (não é o registro do produto, é a autorização da empresa em si).',
+          comoPreencher: 'Confirme se a empresa (proponente ou alguma coexecutora) já tem o AFE ativo junto à ANVISA — se não tiver, esse trâmite pode ser demorado, comece a verificar cedo.' }
+      ]
+    },
+    {
+      n: 3, id: 'fase-3', titulo: 'Orçamento', cor: 'var(--green)',
+      sub: 'Não bloqueada — trabalhe em paralelo à Fase 1',
+      janela: 'Semana 3 (16–22/08)',
+      desc: 'Tradução do plano de trabalho em custos, dentro das rubricas e vedações do Regulamento. Valor e contrapartida já são registrados na Fase 1 — aqui é o detalhamento.',
+      criterios: [
+        { id: 'f3-1', label: 'Balanço Patrimonial e Demonstrativo de Resultado do último ano, assinados por contador com nº de registro no CRC (digital ou físico digitalizado)', anchor: 'item 6.10.b, b.1',
+          leigo: 'Não basta ter os números — o Balanço Patrimonial e a Demonstração de Resultado do último ano precisam vir assinados formalmente por um contador registrado.',
+          comoPreencher: 'Peça ao seu contador o Balanço e a DRE do último ano fechado, com a assinatura dele e o número de registro no CRC visível no documento.' },
+        { id: 'f3-2', label: 'Mesmo sendo optante pelo SIMPLES, a documentação contábil acima foi enviada (não há isenção)', anchor: 'item 6.10.b.3',
+          leigo: 'Se a empresa é optante pelo Simples Nacional, muita gente acha que fica dispensada de mandar contabilidade formal — não é o caso neste edital.',
+          comoPreencher: 'Mesmo sendo do SIMPLES, peça ao contador o mesmo Balanço/DRE assinado do item anterior.' },
+        { id: 'f3-3', label: 'Nenhuma despesa vedada incluída no orçamento (pró-labore, PLR, pagamento a agente público da ativa fora das exceções legais, diárias/passagens a agente público fora de pesquisa científica)', anchor: 'item 4.4',
+          leigo: 'Existem gastos que a Finep nunca paga com esse dinheiro — bolsas, participação nos lucros (PLR), pró-labore, e pagamento a funcionário público fora de regras bem específicas. Colocar isso no orçamento reprova o item.',
+          comoPreencher: 'Revise linha por linha o orçamento do projeto e confirme que nenhuma rubrica é, disfarçadamente, um desses gastos vedados.' },
+        { id: 'f3-4', label: 'Se Arranjo em Rede: ao menos 5% do orçamento destinado à(s) ICT(s), registrado exclusivamente na rubrica Serviços de Consultoria', anchor: 'item 3.ii, Anexo 1; 4.3.3',
+          leigo: 'Repetindo o critério da Fase 1, mas agora na prática do orçamento: se o arranjo for em Rede, o orçamento detalhado precisa mostrar de fato 5% do valor indo para a ICT, numa rubrica específica.',
+          comoPreencher: 'No detalhamento orçamentário, separe claramente a rubrica "Serviços de Consultoria" com o valor da ICT, e confira que soma pelo menos 5% do total.' },
+        { id: 'f3-5', label: '3 cotações válidas obtidas para itens de equipamento/serviços de terceiros', anchor: 'não confirmado no Regulamento/Anexo 1 lidos — verificar no Manual da Plataforma da Finep antes de confiar nesta exigência', openQuestion: true,
+          leigo: 'Editais de fomento costumam pedir 3 orçamentos/cotações diferentes para justificar o preço de equipamentos e serviços comprados de terceiros — mas isso não apareceu explicitamente no Regulamento/Anexo 1 que lemos, pode estar só no Manual da Plataforma.',
+          comoPreencher: 'Enquanto não confirma essa exigência no Manual da Plataforma da Finep, é mais seguro já ir juntando 3 cotações por item relevante do orçamento — não custa ter a mais.' }
+      ]
+    },
+    {
+      n: 4, id: 'fase-4', titulo: 'Revisão Final e Submissão', cor: 'var(--indigo)',
+      sub: '2º GATE — botão de envio só libera com a Fase 1 completa E todos os itens desta fase marcados',
+      janela: 'Semana 4 (23–29/08) — meta interna de envio: 29/08 (folga antes do prazo oficial)',
+      desc: 'Upload, preenchimento da plataforma e conferência final antes do envio definitivo.',
+      criterios: [
+        { id: 'f4-1', label: 'Cadastro prévio em cadastro.finep.gov.br — segmentos "Básico de Pessoa Jurídica" e "Características Tecnológicas" (proponente); só "Básico de PJ" (coexecutoras)', anchor: 'item 6.6',
+          leigo: 'Antes de conseguir enviar qualquer coisa, todo mundo envolvido (empresa proponente e cada coexecutora) precisa ter um cadastro básico feito no site da Finep — sem isso, nem dá para começar a preencher a proposta.',
+          comoPreencher: 'Acesse cadastro.finep.gov.br e crie o cadastro da empresa com antecedência (não deixe para a última semana) — proponente preenche um segmento a mais que coexecutoras.' },
+        { id: 'f4-2', label: 'Proposta preenchida em financiamento.finep.gov.br conforme o Manual da Plataforma', anchor: 'item 6.7, 6.8',
+          leigo: 'O texto/dados da proposta em si só valem se estiverem dentro do sistema oficial da Finep — mandar por e-mail ou papel não é aceito.',
+          comoPreencher: 'Preencha tudo dentro de financiamento.finep.gov.br, seguindo o Manual da Plataforma disponibilizado lá — reserve tempo, sistemas de submissão costumam ser burocráticos.' },
+        { id: 'f4-3', label: 'Consentimento dos titulares de dados pessoais obtido, conforme LGPD (Lei 13.709/2018), e Aviso de Privacidade da Finep comunicado', anchor: 'item 11.4',
+          leigo: 'Como a proposta tem dados pessoais de gente da equipe (nome, CPF, currículo), a lei de proteção de dados exige que cada pessoa tenha consentido com isso antes de enviar.',
+          comoPreencher: 'Antes de enviar os dados da equipe, avise cada integrante de que os dados dele vão para a Finep e obtenha uma confirmação simples (pode ser por e-mail) de que ele está ciente.' },
+        { id: 'f4-4', label: 'Confirmado que a empresa não excede 2 propostas totais / 1 proposta por grupo de concorrência', anchor: 'item 6.2', textarea: { id: 'f4-4-obs', label: 'Outras propostas em andamento (se houver)' },
+          leigo: 'É fácil perder a conta de quantas propostas a empresa já tem em andamento — o edital só permite 2 no total e só 1 por linha temática, então vale conferir antes de mandar mais uma.',
+          comoPreencher: 'Liste rapidamente qualquer outra proposta que a empresa (ou uma coexecutora) já tenha em análise neste edital, e confirme que esta nova não estoura o limite.' },
+        { id: 'f4-5', label: 'Data/hora planejada de envio definida com folga antes do prazo (meta: até 29/08)', anchor: 'meta interna', extra: { id: 'f4-5-data', label: 'Data/hora planejada de envio', type: 'datetime-local' },
+          leigo: 'Definir uma data-alvo interna, alguns dias antes do prazo oficial, evita o clássico problema de tentar enviar em cima da hora e travar por causa de instabilidade no sistema.',
+          comoPreencher: 'Marque no calendário do time uma data pelo menos 2 dias antes do prazo oficial como "deadline interno" de envio.' }
+      ],
+      gate: true
+    }
+  ];
+
+  // ---------- render ----------
+  function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;"); }
+
+  function fieldHTML(f) {
+    if (f.type === "select") {
+      var opts = '<option value=""></option>' + f.options.map(function (o) {
+        return '<option value="' + esc(o.value) + '">' + esc(o.label) + '</option>';
+      }).join('');
+      return '<label class="mini"><span>' + esc(f.label) + '</span><select id="' + f.id + '" data-persist>' + opts + '</select></label>';
+    }
+    var type = f.type || "text";
+    return '<label class="mini"><span>' + esc(f.label) + '</span><input type="' + type + '" id="' + f.id + '" data-persist></label>';
+  }
+
+  function didaticoHTML(c) {
+    if (!c.leigo && !c.comoPreencher) return '';
+    var out = '<div class="didatico">';
+    if (c.leigo) out += '<p class="leigo">💬 <strong>Em outras palavras:</strong> ' + esc(c.leigo) + '</p>';
+    if (c.comoPreencher) out += '<p class="comofazer">🧭 <strong>Como preencher:</strong> ' + esc(c.comoPreencher) + '</p>';
+    out += '</div>';
+    return out;
+  }
+
+  function respRow(critId) {
+    return '<div class="resp-row">' +
+      '<label class="mini"><span>Responsável</span><input type="text" id="' + critId + '-resp" data-persist></label>' +
+      '<label class="mini"><span>Concluído em</span><input type="date" id="' + critId + '-data-conclusao" data-persist></label>' +
+      '</div>';
+  }
+
+  function badges(c) {
+    var out = c.elim ? '<span class="badge badge-e" title="Eliminatório">[E]</span>' : '<span class="badge badge-c" title="Classificatório / informativo">[C]</span>';
+    if (c.openQuestion) out += '<span class="badge badge-q" data-open-question title="Não confirmado no edital lido">[?]</span>';
+    return out;
+  }
+
+  function criterioHTML(c) {
+    if (c.type === "conditional") return conditionalHTML(c);
+    if (c.type === "radio") return radioHTML(c);
+    var linkHTML = c.link ? ' <a href="' + c.link.href + '" target="_blank" rel="noopener">' + esc(c.link.text) + '</a>' : '';
+    return '<div class="criterio" data-crit="' + c.id + '">' +
+      '<label class="crit-main">' +
+        '<input type="checkbox" id="' + c.id + '" data-persist' + (c.elim ? ' data-elim' : '') + '>' +
+        '<span>' + esc(c.label) + linkHTML + ' <span class="anchor">(' + esc(c.anchor) + ')</span> ' + badges(c) + '</span>' +
+      '</label>' +
+      didaticoHTML(c) +
+      (c.extra ? '<div class="extra-row">' + fieldHTML(c.extra) + '</div>' : '') +
+      (c.textarea ? '<div class="extra-row"><label class="mini full"><span>' + esc(c.textarea.label) + '</span><textarea id="' + c.textarea.id + '" data-persist rows="2"></textarea></label></div>' : '') +
+      respRow(c.id) +
+      '</div>';
+  }
+
+  function conditionalHTML(c) {
+    var radios = c.radioOptions.map(function (o) {
+      return '<label class="radio-opt"><input type="radio" name="' + c.radioName + '" id="' + c.radioName + '-' + o.value + '" value="' + o.value + '" data-persist data-conditional-toggle="' + c.id + '"><span>' + esc(o.label) + '</span></label>';
+    }).join('');
+    var branches = Object.keys(c.branches).map(function (key) {
+      var items = c.branches[key];
+      var itemsHTML = items.map(function (it) {
+        var qBadge = it.openQuestion ? '<span class="badge badge-q" data-open-question title="Regra simplificada de um trecho ambíguo do Anexo 1 — confirmar redação exata">[?]</span>' : '';
+        return '<label class="crit-sub"><input type="checkbox" id="' + it.id + '" data-persist data-branch-elim><span>' + esc(it.label) + ' <span class="anchor">(' + esc(it.anchor) + ')</span> ' + qBadge + '</span></label>' + didaticoHTML(it);
+      }).join('');
+      return '<div class="branch" id="' + c.id + '-branch-' + key + '" hidden>' + itemsHTML + '</div>';
+    }).join('');
+    return '<div class="criterio" data-crit="' + c.id + '">' +
+      '<p class="crit-label"><strong>' + esc(c.label) + '</strong> <span class="anchor">(' + esc(c.anchor) + ')</span> ' + badges(c) + '</p>' +
+      didaticoHTML(c) +
+      '<div class="radio-row">' + radios + '</div>' +
+      branches +
+      '</div>';
+  }
+
+  function radioHTML(c) {
+    var radios = c.radioOptions.map(function (o) {
+      return '<label class="radio-opt"><input type="radio" name="' + c.radioName + '" id="' + c.radioName + '-' + o.value + '" value="' + o.value + '" data-persist><span>' + esc(o.label) + '</span></label>';
+    }).join('');
+    var extras = (c.extras || []).map(fieldHTML).join('');
+    return '<div class="criterio" data-crit="' + c.id + '">' +
+      '<p class="crit-label"><strong>' + esc(c.label) + '</strong> <span class="anchor">(' + esc(c.anchor) + ')</span> ' + badges(c) + '</p>' +
+      didaticoHTML(c) +
+      '<div class="radio-row">' + radios + '</div>' +
+      '<div class="extra-row">' + extras + '</div>' +
+      respRow(c.id) +
+      '</div>';
+  }
+
+  function faseHTML(f) {
+    var criteriosHTML = f.criterios.map(criterioHTML).join('');
+    var notaHTML = f.nota ? '<p class="section-note">ℹ ' + esc(f.nota) + '</p>' : '';
+    var gateHTML = f.gate ? (
+      '<div class="gate-box">' +
+        '<label><input type="checkbox" id="pronto-para-envio" data-persist disabled><span>Proposta pronta para envio</span></label>' +
+        '<p id="gate-note"></p>' +
+      '</div>'
+    ) : '';
+    return '<div class="fase-card" id="' + f.id + '" style="--fase-color:' + f.cor + '">' +
+      '<div class="fase-head" data-toggle="' + f.id + '-body">' +
+        '<div>' +
+          '<p class="fase-title"><span class="fase-num">' + f.n + '</span>' + esc(f.titulo) + '</p>' +
+          '<p class="fase-sub">' + esc(f.sub) + '</p>' +
+          '<p class="fase-window">🗓 ' + esc(f.janela) + '</p>' +
+          '<p class="fase-desc">' + esc(f.desc) + '</p>' +
+        '</div>' +
+        '<span class="fase-toggle no-print">▾</span>' +
+      '</div>' +
+      '<div class="fase-body" id="' + f.id + '-body">' + notaHTML + criteriosHTML + gateHTML + '</div>' +
+      '</div>';
+  }
+
+  document.getElementById('fases-container').innerHTML = fases.map(faseHTML).join('');
+
+  document.getElementById('riscos-list').innerHTML = riscos.map(function (r) {
+    return '<li>' + r.text + ' <span class="anchor">(' + esc(r.anchor) + ')</span></li>';
+  }).join('');
+
+  document.getElementById('pos-aprovacao-list').innerHTML = posAprovacao.map(function (p) {
+    return '<li>' + esc(p.label) + ' <span class="anchor">(' + esc(p.anchor) + ')</span></li>';
+  }).join('');
+
+  // ---------- interaction: expand/collapse ----------
+  document.querySelectorAll('.fase-head').forEach(function (head) {
+    head.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return;
+      var bodyId = head.getAttribute('data-toggle');
+      var body = document.getElementById(bodyId);
+      var toggle = head.querySelector('.fase-toggle');
+      body.hidden = !body.hidden;
+      toggle.textContent = body.hidden ? '▸' : '▾';
+    });
+  });
+  var allExpanded = true;
+  document.getElementById('btn-toggle-all').addEventListener('click', function () {
+    allExpanded = !allExpanded;
+    document.querySelectorAll('.fase-body').forEach(function (b) { b.hidden = !allExpanded; });
+    document.querySelectorAll('.fase-toggle').forEach(function (t) { t.textContent = allExpanded ? '▾' : '▸'; });
+  });
+  document.getElementById('btn-print').addEventListener('click', function () { window.print(); });
+
+  // conditional branch toggling (arranjo Simples/Rede)
+  document.querySelectorAll('[data-conditional-toggle]').forEach(function (r) {
+    r.addEventListener('change', function () {
+      var parent = r.getAttribute('data-conditional-toggle');
+      document.querySelectorAll('[id^="' + parent + '-branch-"]').forEach(function (b) { b.hidden = true; });
+      document.getElementById(parent + '-branch-' + r.value).hidden = false;
+      updateGateUI();
+      saveState();
+    });
+  });
+
+  // ---------- Fase 1 completeness ----------
+  function fase1Status() {
+    var fase1 = fases[0];
+    var total = 0, done = 0;
+    fase1.criterios.forEach(function (c) {
+      if (c.type === 'conditional') {
+        total++;
+        var sel = document.querySelector('input[name="' + c.radioName + '"]:checked');
+        if (sel) {
+          var items = c.branches[sel.value];
+          var all = items.every(function (it) { return document.getElementById(it.id).checked; });
+          if (all) done++;
+        }
+      } else if (c.type === 'radio') {
+        total++;
+        if (document.querySelector('input[name="' + c.radioName + '"]:checked')) done++;
+      } else {
+        total++;
+        if (document.getElementById(c.id).checked) done++;
+      }
+    });
+    return { total: total, done: done };
+  }
+
+  function fase4OwnStatus() {
+    var fase4 = fases[3];
+    var total = 0, done = 0;
+    fase4.criterios.forEach(function (c) {
+      total++;
+      if (document.getElementById(c.id).checked) done++;
+    });
+    return { total: total, done: done };
+  }
+
+  function updateGateUI() {
+    var status = fase1Status();
+    var complete1 = status.total > 0 && status.done === status.total;
+    var badge = document.getElementById('verdict-badge');
+    badge.textContent = complete1 ? '🟢 GO' : ('🔴 Pendente (' + status.done + '/' + status.total + ')');
+    badge.className = 'value verdict ' + (complete1 ? 'verdict-go' : 'verdict-pending');
+
+    var submitCb = document.getElementById('pronto-para-envio');
+    if (submitCb) {
+      var s4 = fase4OwnStatus();
+      var complete4 = s4.total > 0 && s4.done === s4.total;
+      var complete = complete1 && complete4;
+      submitCb.disabled = !complete;
+      if (!complete) submitCb.checked = false;
+      var note = document.getElementById('gate-note');
+      if (complete) {
+        note.textContent = 'Todos os critérios eliminatórios da Fase 1 e os itens da própria Fase 4 foram confirmados.';
+      } else {
+        var pendencias = [];
+        if (!complete1) pendencias.push((status.total - status.done) + ' da Fase 1');
+        if (!complete4) pendencias.push((s4.total - s4.done) + ' da própria Fase 4');
+        note.textContent = 'Bloqueado: faltam ' + pendencias.join(' e ') + '.';
+      }
+    }
+  }
+
+  function updateOpenQuestionsCount() {
+    var n = document.querySelectorAll('[data-open-question]').length;
+    document.getElementById('open-questions-count').textContent = n;
+  }
+
+  function updateCountdown() {
+    var deadline = new Date(DEADLINE_ISO);
+    var now = new Date();
+    var diff = deadline.getTime() - now.getTime();
+    var el = document.getElementById('countdown');
+    if (diff <= 0) { el.textContent = 'Prazo encerrado'; return; }
+    var days = Math.floor(diff / 86400000);
+    var hours = Math.floor((diff % 86400000) / 3600000);
+    el.textContent = days + 'd ' + hours + 'h restantes';
+  }
+
+  // ---------- persistence ----------
+  var STORAGE_KEY = 'ff-timeline-finep-v1';
+  function saveState() {
+    var state = {};
+    document.querySelectorAll('[data-persist]').forEach(function (el) {
+      if (el.type === 'checkbox') state[el.id] = el.checked;
+      else if (el.type === 'radio') { if (el.checked) state[el.name] = el.value; }
+      else state[el.id] = el.value;
+    });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* ignore quota errors */ }
+  }
+  function restoreState() {
+    var state = {};
+    try { state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (e) { state = {}; }
+    document.querySelectorAll('[data-persist]').forEach(function (el) {
+      if (el.type === 'checkbox') { if (el.id in state) el.checked = state[el.id]; }
+      else if (el.type === 'radio') { if (state[el.name] === el.value) { el.checked = true; el.dispatchEvent(new Event('change')); } }
+      else if (el.id in state) el.value = state[el.id];
+    });
+  }
+
+  document.addEventListener('change', function (e) {
+    if (!e.target.matches('input,textarea,select')) return;
+    saveState();
+    updateGateUI();
+  });
+  document.addEventListener('input', function (e) {
+    if (!e.target.matches('textarea, input[type=text], input[type=datetime-local]')) return;
+    saveState();
+  });
+
+  restoreState();
+  updateGateUI();
+  updateOpenQuestionsCount();
+  updateCountdown();
+  setInterval(updateCountdown, 60000);
+
+  // ---------- PDF export (AcroForm — real fillable fields) ----------
+  function exportPdf() {
+    var jspdf = window.jspdf;
+    var doc = new jspdf.jsPDF({ unit: 'mm', format: 'a4' });
+    var marginX = 16, pageWidth = 210, contentWidth = pageWidth - marginX * 2;
+    var y = 18;
+    var fieldSeq = 0;
+
+    function ensureSpace(needed) {
+      if (y + needed > 280) { doc.addPage(); y = 18; }
+    }
+
+    function addCheckbox(id, checked) {
+      var cb = new jspdf.AcroFormCheckBox();
+      cb.fieldName = 'pdf-' + id + '-' + (fieldSeq++);
+      cb.x = marginX; cb.y = y - 3.2; cb.width = 4; cb.height = 4;
+      if (checked) cb.appearanceState = 'On';
+      doc.addField(cb);
+    }
+
+    function addTextLine(label, value, indent) {
+      var tf = new jspdf.AcroFormTextField();
+      tf.fieldName = 'pdf-txt-' + (fieldSeq++);
+      tf.x = marginX + indent; tf.y = y; tf.width = contentWidth - indent - 4; tf.height = 5;
+      tf.fontSize = 8;
+      tf.value = value || '';
+      doc.addField(tf);
+      doc.setFont(undefined, 'normal'); doc.setFontSize(7.5); doc.setTextColor(90, 96, 112);
+      doc.text(label + ':', marginX + indent, y - 1);
+      y += 7;
+    }
+
+    function heading(text, size, color) {
+      ensureSpace(10);
+      doc.setFont(undefined, 'bold'); doc.setFontSize(size || 12); doc.setTextColor.apply(doc, color || [26, 29, 36]);
+      var lines = doc.splitTextToSize(text, contentWidth);
+      doc.text(lines, marginX, y);
+      y += lines.length * (size ? size * 0.45 : 5.5) + 2;
+    }
+
+    function bodyText(text, size) {
+      doc.setFont(undefined, 'normal'); doc.setFontSize(size || 8.5); doc.setTextColor(58, 64, 78);
+      var lines = doc.splitTextToSize(text, contentWidth - 6);
+      ensureSpace(lines.length * 4 + 2);
+      doc.text(lines, marginX, y);
+      y += lines.length * 4 + 1;
+      return lines.length * 4;
+    }
+
+    function didaticoPdf(c) {
+      if (c.leigo) bodyText('💬 ' + c.leigo, 7.2);
+      if (c.comoPreencher) bodyText('🧭 ' + c.comoPreencher, 7.2);
+    }
+
+    function criterioPdf(c) {
+      if (c.type === 'conditional' || c.type === 'radio') {
+        ensureSpace(8);
+        bodyText(c.label + ' (' + c.anchor + ')' + (c.elim ? ' [E]' : ''), 8.5);
+        didaticoPdf(c);
+        var selName = c.radioName;
+        var sel = document.querySelector('input[name="' + selName + '"]:checked');
+        var opts = c.radioOptions;
+        opts.forEach(function (o) {
+          ensureSpace(6);
+          addCheckbox('radio-' + selName + '-' + o.value, sel && sel.value === o.value);
+          bodyText(o.label, 7.5);
+        });
+        if (c.type === 'conditional' && sel) {
+          c.branches[sel.value].forEach(function (it) {
+            ensureSpace(6);
+            addCheckbox(it.id, document.getElementById(it.id).checked);
+            bodyText(it.label + ' (' + it.anchor + ')', 7.5);
+          });
+        }
+        if (c.type === 'radio' && c.extras) {
+          c.extras.forEach(function (f) {
+            ensureSpace(9);
+            addTextLine(f.label, document.getElementById(f.id).value, 6);
+          });
+        }
+        return;
+      }
+      ensureSpace(8);
+      addCheckbox(c.id, document.getElementById(c.id).checked);
+      bodyText(c.label + ' (' + c.anchor + ')' + (c.elim ? ' [E]' : (c.openQuestion ? ' [?]' : ' [C]')), 8.5);
+      didaticoPdf(c);
+      if (c.extra) {
+        ensureSpace(9);
+        var extraEl = document.getElementById(c.extra.id);
+        var extraVal = extraEl.tagName === 'SELECT' ? extraEl.options[extraEl.selectedIndex].text : extraEl.value;
+        addTextLine(c.extra.label, extraVal, 6);
+      }
+      if (c.textarea) { ensureSpace(9); addTextLine(c.textarea.label, document.getElementById(c.textarea.id).value, 6); }
+      ensureSpace(9);
+      addTextLine('Responsável', document.getElementById(c.id + '-resp').value, 6);
+    }
+
+    doc.setFont(undefined, 'bold'); doc.setFontSize(8); doc.setTextColor(58, 95, 217);
+    doc.text('FRAMEWORKFOMENTO · FINEP MAIS INOVAÇÃO SAÚDE — RODADA 2', marginX, y); y += 7;
+    heading('Timeline de Submissão — Checklist Preenchível', 15);
+    bodyText('Prazo: 31/08/2026, 17h Brasília [?] (Regulamento item 6.3 diz 18h00 — confirmar com a Finep). Gerado em ' + new Date().toLocaleString('pt-BR') + '.');
+    y += 2;
+
+    heading('Identificação do proponente', 10, [58, 95, 217]);
+    ['id-empresa', 'id-cnpj', 'id-ict', 'id-responsavel'].forEach(function (id) {
+      ensureSpace(9);
+      var labelEl = document.querySelector('#' + id);
+      var label = labelEl.closest('label').querySelector('span').textContent;
+      addTextLine(label, labelEl.value, 0);
+    });
+    y += 2;
+
+    heading('Riscos e considerações', 10, [180, 83, 9]);
+    riscos.forEach(function (r) {
+      bodyText('• ' + r.text.replace(/<[^>]+>/g, '') + ' (' + r.anchor + ')', 8);
+    });
+    y += 2;
+
+    fases.forEach(function (f) {
+      ensureSpace(14);
+      heading('Fase ' + f.n + ' — ' + f.titulo, 11, [26, 29, 36]);
+      bodyText(f.sub, 7.5);
+      if (f.nota) bodyText('ℹ ' + f.nota, 7.5);
+      f.criterios.forEach(criterioPdf);
+      y += 3;
+    });
+
+    heading('Pós-aprovação / Contratação (não bloqueia o envio)', 10, [58, 95, 217]);
+    posAprovacao.forEach(function (p) {
+      ensureSpace(6);
+      addCheckbox('pos-' + fieldSeq, false);
+      bodyText(p.label + ' (' + p.anchor + ')', 8);
+    });
+
+    doc.save('timeline-submissao-finep.pdf');
+  }
+
+  document.getElementById('btn-export-pdf').addEventListener('click', exportPdf);
+})();
+</script>
+</body>
+</html>

@@ -22,8 +22,9 @@ Kanban e atalhos:
   /docs-sync      atualiza docs/ a partir do estado real do projeto
 
 Fundraiser (persona de captador de recursos):
-  /fundraiser-test             testa o prototipo estatico, devolve parecer em docs/persona/
-  /fundraiser-production-test  testa a aplicacao real ja implementada, devolve parecer em docs/persona/
+  /fundraiser-test                  testa o prototipo estatico, devolve parecer em docs/persona/
+  /fundraiser-production-test       testa a aplicacao real ja implementada, devolve parecer em docs/persona/
+  /fundraiser-submission-timeline   cria checklist HTML gated de submissao a partir dos PDFs de um edital, em docs/submissions/
 
 QA (guardiao de criterios de aceite):
   /qa-test             testa o prototipo estatico, devolve relatorio em docs/qa-report/

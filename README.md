@@ -26,7 +26,8 @@ Este projeto é desenvolvido com o [GitHub Spec Kit](https://github.com/github/s
 
 Documentação viva do projeto:
 - `docs/` — requisitos funcionais/não funcionais, regras de negócio, escopo, arquitetura, diagrama de classes, critérios de aceite. Site HTML autocontido, sem markdown — abra `docs/index.html` no navegador.
-- `docs/persona/` — documentos de Persona (canvas + parecer/dores) gerados por `/fundraiser-test` e `/fundraiser-production-test`, um captador de recursos real testando o protótipo ou a aplicação em produção.
+- `docs/persona/` — documentos de Persona (canvas + parecer/dores) gerados por `/fundraiser-test`, `/fundraiser-production-test` e `/fundraiser-submission-timeline`, um captador de recursos real testando o protótipo, a aplicação em produção, ou um checklist de submissão recém-criado.
+- `docs/submissions/` — checklists HTML de submissão gerados por `/fundraiser-submission-timeline` a partir dos PDFs reais de um edital, com portão de elegibilidade e roteiro de Google Forms companheiro.
 - `docs/qa-report/` — relatórios de conformidade a critérios de aceite gerados por `/qa-test` e `/qa-production-test`.
 - `docs/cybersec-report/` — relatórios de segurança (SAST/SCA/config/OWASP ZAP) gerados por `/cybersecurity-check`.
 - `docs/deploy-report/` — relatórios de prontidão operacional de deploy (CI/CD, build de imagem, servidor de produção vs. dev, Doze Fatores) gerados por `/check-deployment`.
@@ -52,6 +53,7 @@ Documentação viva do projeto:
 | `/quick-task` | Atalho: cria uma tarefa avulsa e já a implementa (kanban-sync + kanban-start em um comando), para ajustes pequenos |
 | `/fundraiser-test` | O `fundraiser` vira um captador de recursos real e testa um protótipo estático, devolvendo um documento de Persona com parecer/dores em `docs/persona/` |
 | `/fundraiser-production-test` | Igual ao anterior, mas testa a aplicação real já implementada (rodando de verdade), não o protótipo |
+| `/fundraiser-submission-timeline` | Cria, a partir dos PDFs (Regulamento/Anexos) de um edital real, um checklist HTML de submissão com portão de elegibilidade funcional em `docs/submissions/`, mais um roteiro de Google Forms equivalente |
 | `/qa-test` | O `qa` verifica se um protótipo estático sustenta os critérios de aceite, devolvendo um relatório em `docs/qa-report/` |
 | `/qa-production-test` | Igual ao anterior, mas testa a aplicação real já implementada, com testes automatizados + walkthrough ao vivo |
 | `/cybersecurity-check` | O `cybersecurity-blue` audita a aplicação real (SAST/SCA/config/OWASP ZAP), devolvendo um relatório de segurança em `docs/cybersec-report/` |
@@ -67,6 +69,7 @@ Documentação viva do projeto:
 - **"Quero atualizar a documentação do projeto"** → `/docs-sync`.
 - **"Quero saber que dores um captador de recursos real sentiria usando o protótipo atual"** → `/fundraiser-test` (não corrige nada, só devolve o parecer honesto em `docs/persona/`).
 - **"Quero saber que dores um captador de recursos real sentiria usando a aplicação já implementada"** → `/fundraiser-production-test` (mesma ideia, mas na aplicação rodando de verdade, não no protótipo).
+- **"Preciso de um checklist de submissão real e confiável para este edital"** → `/fundraiser-submission-timeline <pasta-de-referência-do-edital>` (extrai os critérios eliminatórios dos PDFs do edital com âncora de item, valida com o `fundraiser` antes e depois de construir, e devolve um checklist HTML gated em `docs/submissions/` mais um roteiro de Google Forms — nunca inventa dado que não esteja no documento-fonte).
 - **"Quero transformar dores achadas num teste de persona em tarefas"** → `/kanban-sync` → "Criar nova tarefa" → "A partir de um relatório existente" → "Teste de persona (docs/persona/)" (escolhe o arquivo, escolhe quais dores viram task — pode criar mais de uma de uma vez). A mesma lógica vale para achados de `/qa-test`/`/qa-production-test` (`docs/qa-report/`), `/cybersecurity-check` (`docs/cybersec-report/`) e `/check-deployment` (`docs/deploy-report/`).
 - **"Quero saber se há vulnerabilidades de segurança conhecidas na aplicação"** → `/cybersecurity-check` (o `cybersecurity-blue` roda SAST/SCA/checagem de configuração/scan OWASP ZAP contra a aplicação real e devolve um parecer honesto em `docs/cybersec-report/`, sem corrigir nada).
 - **"Quero saber se a aplicação está pronta para ser implantada em produção"** → `/check-deployment` (o `devops` audita CI/CD, build da imagem Docker, servidor de produção vs. dev e os Doze Fatores, devolvendo um parecer honesto em `docs/deploy-report/`, sem corrigir nada).

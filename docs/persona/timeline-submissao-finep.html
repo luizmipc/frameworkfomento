@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persona — Camila Yassuda (docs/submissions/timeline FINEP) — frameworkfomento</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <p class="kicker group-label">docs/persona</p>
+    <a href="#top">Camila Yassuda</a>
+    <a href="#canvas">Quem é essa persona</a>
+    <a href="#tarefas">Tarefas testadas</a>
+    <a href="#dores">Dores identificadas</a>
+    <a href="#bem">O que funcionou bem</a>
+    <a href="#resolver">Para quem resolver</a>
+
+    <p class="kicker group-label">frameworkfomento</p>
+    <a href="../index.html">Documentação</a>
+  </nav>
+
+  <main>
+    <p class="kicker">docs/persona · teste de <code>docs/submissions/timeline_de_submiss_o_estrat_gica.html</code>, por leitura de código (extensão do Chrome não conectada a este contexto) — checklist operacional real, não protótipo, para a submissão ao edital FINEP "Mais Inovação Saúde — Rodada 2"</p>
+    <h1 id="top">Camila Yassuda</h1>
+    <p class="quote">"Eu não tenho medo de marcar a caixinha errada — tenho medo de marcar a caixinha certa achando que já terminei, e só descobrir na plataforma da Finep, faltando dois dias, que ainda falta o cadastro prévio."</p>
+    <p class="lede">Teste do arquivo real (não protótipo) <code>docs/submissions/timeline_de_submiss_o_estrat_gica.html</code>, em 2026-08-02. Sem acesso às ferramentas de browser neste contexto (a extensão não conectou), a avaliação foi feita por <strong>leitura de código linha a linha</strong> — HTML/CSS/JS do arquivo — simulando mentalmente cada interação (marcar critérios, tentar liberar o gate antes da hora, recarregar e restaurar via <code>localStorage</code>, exportar PDF), e <strong>cruzando cada critério e cada âncora de item contra o Regulamento e o Anexo 1 reais</strong> em <code>docs/finep-ref/</code> (mais o PDF de Perguntas Frequentes, que o arquivo não referencia mas existe na mesma pasta). A mecânica em si (gate de 14/14, persistência, exportação AcroForm) já foi validada por teste automatizado antes deste teste — aqui o foco foi exclusivamente: isso é de fato útil e correto para quem vai submeter esta proposta específica?</p>
+
+    <h2 id="canvas">Quem é essa persona</h2>
+    <table>
+      <tbody>
+        <tr><th>Papel</th><td>CFO e cofundadora de uma health-startup de dispositivos médicos para diagnóstico point-of-care (Linha Temática V do edital) — acumula a função de captação de recursos porque a empresa ainda não tem alguém dedicado a isso</td></tr>
+        <tr><th>Organização</th><td>Startup de 14 pessoas, ~3 anos de operação, primeira vez submetendo a um edital Finep de Subvenção Econômica (já pegou um Finep Startup menor antes, mas em modalidade e porte bem diferentes)</td></tr>
+        <tr><th>Editais/programas acompanhados hoje</th><td>4 simultaneamente — este edital FINEP, um edital estadual de inovação em saúde, um programa de aceleração com aporte não-diluível, e um Chamada CNPq recorrente que a empresa monitora mas ainda não decidiu se vai submeter</td></tr>
+        <tr><th>Ferramentas atuais</th><td>Uma pasta compartilhada no Google Drive com os documentos societários/financeiros, uma planilha de controle de compliance (CNDs, certidões) que o contador terceirizado atualiza por conta própria, e um grupo de WhatsApp "Finep 2026" com os dois sócios e o contador para decisões rápidas</td></tr>
+        <tr><th>Familiaridade técnica</th><td>Alta com o produto (é engenheira), média-baixa com o vocabulário regulatório de fomento — sabe ler um edital, mas precisa reler trechos de capacidade financeira (endividamento oneroso, resultado operacional) mais de uma vez para ter certeza do que estão pedindo</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Objetivos</h3>
+    <ul>
+      <li>Saber, o quanto antes, se a empresa é <em>elegível de fato</em> antes de investir semanas no FAP e no orçamento — não quer descobrir um critério eliminatório na última semana.</li>
+      <li>Ter uma lista única e confiável de documentos/critérios, ancorada no Regulamento, para não depender de reler o PDF de 14 páginas inteiro toda vez que surge uma dúvida.</li>
+      <li>Conseguir delegar pedaços do checklist (valores financeiros para o contador, anuência da ICT para o sócio que cuida da parceria acadêmica) sem perder o controle de quem já fez o quê.</li>
+      <li>Bater o prazo de 31/08 com folga, porque sabe que "prazo pode ser prorrogado" (item 6.4 do Regulamento) não é uma desculpa para atrasar a meta interna do time.</li>
+    </ul>
+    <h3>Frustrações atuais (antes de usar este checklist)</h3>
+    <ul>
+      <li>Já perdeu tempo real tentando entender se "Arranjo Simples" ou "Arranjo em Rede" se aplica à empresa dela, porque o Regulamento define isso em dois lugares diferentes (Regulamento item 3 + Anexo 1 item 3) com redação levemente diferente.</li>
+      <li>Não confia 100% na própria leitura dos testes de capacidade financeira (item 7.1.7) — resultado operacional, endividamento oneroso, ativo total — porque é jargão contábil que ela recebe pronto do contador, mas nunca teve certeza de qual dos três sub-testes (b.1/b.2/b.3) se aplica ao caso da empresa.</li>
+      <li>Numa submissão anterior a outro edital, perdeu dois dias porque um documento de "só depois da aprovação" tinha sido misturado, por engano, com a lista de documentos exigidos na hora da submissão — e ela só descobriu isso ao ligar para o órgão financiador.</li>
+    </ul>
+
+    <h2 id="tarefas">Tarefas testadas</h2>
+    <ol>
+      <li>Percorrer os 14 critérios da Fase 1 (Elegibilidade/Habilitação) como se fosse marcá-los de fato para a empresa dela — incluindo escolher "Arranjo Simples" (que é o caso real dela, com uma ICT parceira) e o sub-teste financeiro certo (item 7.1.7) — e conferir se cada critério é compreensível sem reabrir o Regulamento.</li>
+      <li>Verificar o que acontece se ela tentar marcar "Proposta pronta para envio" com a Fase 1 incompleta, e o que muda quando a Fase 1 fecha 14/14 — e se esse "pronto para envio" reflete de fato tudo que falta fazer na Fase 4 (cadastro na plataforma, LGPD etc.), não só a elegibilidade.</li>
+      <li>Ler o bloco de Riscos e a seção Pós-aprovação/Contratação para saber, sem ambiguidade, o que é "para agora" (bloqueia o envio) e o que é "para depois" (só na contratação) — e cruzar a lista de documentos de Pós-aprovação contra o item 9.5 real do Regulamento, documento por documento.</li>
+      <li>Simular preencher os campos de Identificação e os valores financeiros (patrimônio líquido, resultado operacional etc.), fechar a aba e reabrir, confirmando pela leitura do código (<code>saveState</code>/<code>restoreState</code>) que nada se perde.</li>
+      <li>Simular clicar em "Baixar PDF preenchível" para mandar pro contador preencher os números que só ele tem, e pensar no fluxo de ida-e-volta: o contador devolve o PDF preenchido — como isso volta para a página?</li>
+    </ol>
+
+    <h2 id="dores">Parecer — dores identificadas</h2>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-1">Dor 1 — a lista de "Pós-aprovação/Contratação" omite um documento real do item 9.5 do Regulamento</h3>
+        <span class="badge badge-medium">🟡 média</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> conferindo a lista de 14 documentos em <code>posAprovacao</code> (<code>docs/submissions/timeline_de_submiss_o_estrat_gica.html</code>, array <code>posAprovacao</code>) item a item contra o item 9.5.ii do Regulamento (<code>docs/finep-ref/06_02_2026_Saude_Regulamento-1.pdf</code>, página 11), a lista vai de <code>a</code> a <code>f</code>, pula direto para <code>h</code>, e segue até <code>n</code> — o item <code>g</code> não está lá. No Regulamento, o item <code>9.5.ii.g</code> existe e é: "Cadastro de empregadores que tenham submetido trabalhadores a condições análogas à de escravo". Não é um documento genérico e sim uma certidão específica (a chamada "lista suja" do trabalho escravo) que a Finep exige junto com as outras 13 antes de assinar o Termo de Outorga.</p>
+      <p><strong>Por que é um problema:</strong> Camila tem uma frustração de verdade com exatamente esse tipo de furo (ver "Frustrações atuais") — ela quer um checklist único em que confiar, porque a alternativa é reler o PDF inteiro de novo. Se a empresa for aprovada no mérito e a Finep pedir a documentação de contratação (item 9.5.1: prazo de 10 dias corridos, sob pena de "eliminação da proposta"), e ela seguir só esta lista de 14 itens achando que está completa, vai descobrir o item faltante tarde — no pior momento possível para correr atrás de mais uma certidão. Não ameaça o prazo de 31/08 (é pós-aprovação, um evento futuro incerto), mas é um gap concreto e verificável, não uma opinião de UX.</p>
+      <p><strong>Recomendação:</strong> adicionar o item 9.5.ii.g ("Cadastro de empregadores... condições análogas à de escravo") na lista de Pós-aprovação, na posição correta entre f) e h), mantendo o padrão de âncora já usado nos outros 13 itens.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-2">Dor 2 — a data "31/12/2025" do critério f1-3 está fixa no código, mas a regra do Regulamento é móvel</h3>
+        <span class="badge badge-medium">🟡 média</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> o critério <code>f1-3</code> diz "Registro na Junta Comercial ou RCPJ realizado até <strong>31/12/2025</strong>" (âncora: item 2.4.a). O texto real do Regulamento não fixa uma data — diz "até 31/12 do ano anterior <strong>ao de submissão da proposta</strong>". Para uma submissão em 2026, 31/12/2025 está correto hoje. Mas o próprio checklist, na caixa de Riscos, alerta explicitamente que "o prazo pode ser prorrogado pela Finep" (item 6.4) e que "o Regulamento pode ser alterado a qualquer momento durante o fluxo contínuo" (item 11.5) — ou seja, o arquivo já reconhece que este é um edital de fluxo contínuo que pode seguir vivo além de 2026.</p>
+      <p><strong>Por que é um problema:</strong> se o prazo for prorrogado para 2027 (cenário que o próprio checklist já contempla como risco real), o rótulo deste item continua dizendo "31/12/2025" — uma data que deixaria de ser a regra correta (passaria a ser 31/12/2026) sem qualquer aviso visual. Alguém preenchendo este checklist numa reedição futura marcaria o critério achando que está certo, quando na verdade a regra por trás mudou. Para Camila, que está submetendo agora em 2026, isso não afeta nada hoje — mas é o tipo de dívida silenciosa que um checklist reaproveitável não deveria carregar.</p>
+      <p><strong>Recomendação:</strong> trocar o rótulo fixo por algo como "Registro na Junta Comercial ou RCPJ realizado até 31/12 do ano anterior à submissão (hoje: 31/12/2025)", deixando explícito que a data é derivada da regra, não um valor fixo.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-3">Dor 3 — a regra de "sem sobreposição de grupo econômico" no Arranjo em Rede simplifica um trecho do Anexo 1 que é genuinamente confuso, sem o badge [?] que o próprio checklist usa para esses casos</h3>
+        <span class="badge badge-low">🟢 baixa</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> o sub-item <code>f1-8-r4</code> (branch "rede") diz "Proponente e coexecutoras sem sobreposição de grupo econômico entre si". O Anexo 1 (item 3.ii) na verdade diz duas coisas separadas, com dupla negação: "A empresa proponente não poderá pertencer ao mesmo grupo econômico de, no mínimo, duas empresas coexecutoras" e "Nenhuma coexecutora poderá pertencer ao mesmo grupo econômico de, pelo menos, uma outra coexecutora" — uma redação que, mesmo lida com calma, admite mais de uma interpretação de quantas sobreposições pontuais seriam toleradas.</p>
+      <p><strong>Por que é um problema:</strong> este não é um caso do checklist "errar" por preguiça — é que a fonte primária é confusa, e a paráfrase do checklist escolhe a leitura mais segura (zero sobreposição), o que é defensável, mas não é sinalizado como uma simplificação. O checklist já tem um mecanismo pronto para isso — o badge <code>[?]</code>, usado em outros dois pontos do arquivo (horário do prazo e o item de "3 cotações") exatamente para dizer "isto não está 100% claro no texto-fonte, confirme antes de confiar". Este item passa pelo mesmo teste e não recebeu o mesmo tratamento, então, para quem lê rápido, ele parece tão firme quanto os outros 13 critérios que de fato são inequívocos no Regulamento — quando não é o caso.</p>
+      <p><strong>Recomendação:</strong> ou aplicar o badge <code>[?]</code> a este sub-item (com a nota "leitura mais restritiva escolhida; texto do Anexo 1 admite mais de uma interpretação"), ou, se o arranjo real da empresa for Simples (como no caso da Camila), a dor nem chega a se manifestar — só importa para quem for de fato de Arranjo em Rede.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-4">Dor 4 — o gate de "Proposta pronta para envio" só verifica a Fase 1; os 5 itens da própria Fase 4 (cadastro, plataforma, LGPD) podem ficar todos desmarcados e o botão libera do mesmo jeito</h3>
+        <span class="badge badge-medium">🟡 média</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> lendo <code>updateGateUI()</code>, o botão "Proposta pronta para envio" só depende de <code>fase1Status()</code> — os 14 critérios de elegibilidade. Os 5 critérios da própria Fase 4 (<code>f4-1</code> a <code>f4-5</code>: cadastro prévio em cadastro.finep.gov.br, preenchimento em financiamento.finep.gov.br, consentimento LGPD, confirmação do limite de 2 propostas, data de envio planejada) não entram em nenhum cálculo — eles existem na tela, mas não bloqueiam nada, mesmo estando na fase que se chama literalmente "2º GATE".</p>
+      <p><strong>Por que é um problema:</strong> Camila está sob pressão de prazo e vai confiar no rótulo da caixa: "Proposta pronta para envio" soa como "está tudo pronto", não como "só a elegibilidade está confirmada". O maior risco realista aqui é justamente o tipo de coisa que ela mais teme (ver a citação no topo): marcar essa caixa, sentir-se segura, e só perceber na hora H que nunca confirmou o cadastro prévio na plataforma (item 6.6, que tem seu próprio prazo de aprovação — cadastro não é instantâneo) porque nada no checklist a obrigou a olhar para aquele item.</p>
+      <p><strong>Recomendação:</strong> ou o rótulo do gate muda para deixar claro seu escopo real ("Elegibilidade confirmada — falta ainda revisar a Fase 4"), ou o gate passa a exigir também os 5 itens da Fase 4 (mais coerente com "2º GATE" no rótulo da própria fase). Decisão de quem mantém este arquivo, não uma correção óbvia de um lado só.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-5">Dor 5 — o PDF exportado é uma via de mão única: o contador preenche lá, mas isso não volta para a página</h3>
+        <span class="badge badge-low">🟢 baixa</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> <code>exportPdf()</code> gera um snapshot do estado atual da página num PDF com AcroForm de verdade (já confirmado tecnicamente por <code>pdfinfo</code>). Mas não existe caminho de volta: se Camila mandar esse PDF para o contador preencher "Patrimônio líquido" e "Endividamento oneroso" (que só ele tem em mãos), o preenchimento dele fica só no PDF — para o badge de veredito e o gate da página refletirem isso, alguém precisa reabrir o navegador e retranscrever os números manualmente.</p>
+      <p><strong>Por que é um problema:</strong> não é grave — ainda é mais rápido que montar isso do zero num Word ou planilha, e para os campos de "apenas registro" (ex.: Responsável, Concluído em) a diferença nem importa muito. Mas para os campos financeiros centrais do gate (que só o contador confirma), o fluxo real de "várias pessoas contribuindo em paralelo" (que a estrutura do checklist claramente antecipa, com campo "Responsável" em cada critério) esbarra nesse ponto: uma vez que o dado sai da página, ele não volta sozinho.</p>
+      <p><strong>Recomendação:</strong> baixa prioridade — documentar essa limitação explicitamente (ex.: "o PDF é só para leitura/assinatura/arquivo, preencha os valores finais na página") evitaria que alguém presuma sincronismo que não existe.</p>
+    </section>
+
+    <h2 id="bem">O que funcionou bem</h2>
+    <ul>
+      <li><strong>Os valores numéricos batem, byte a byte, com o Anexo 1:</strong> conferido item a item — R$5M (piso), R$15M/R$15M/R$10M/R$30M/R$15M/R$15M (teto por linha I–VI, item 5 do Anexo 1), contrapartida 5%–50% conforme porte × arranjo (item 6 do Anexo 1), receita ≥R$16.000.000 para o Arranjo em Rede (item 3.ii) — todos exatos. Para Camila, que já perdeu tempo duvidando da própria leitura desses números, ter um checklist que bate 100% com a fonte primária é o tipo de confiança que ela precisa para não reabrir o PDF toda hora.</li>
+      <li><strong>O badge <code>[?]</code> no horário do prazo é um achado real, não um exagero de cautela:</strong> o Regulamento (item 6.3) diz "31/08/2026, 18h00 (horário de Brasília)" — o checklist mostra "17h" na barra de resumo mas sinaliza isso com <code>[?]</code> e a nota exata da divergência. É exatamente o tipo de detalhe que, sem essa sinalização, poderia custar a submissão de alguém que confiasse cegamente na hora errada.</li>
+      <li><strong>A nota da Fase 2 sobre CEP/ANVISA (Linha III) está certa e evita um erro caro:</strong> "não são exigidas na submissão — só na contratação (item 9.5.iii)" bate exatamente com o Anexo 1 ("Para a submissão da proposta, não é exigida a aprovação do estudo clínico pela ANVISA ou pelo CEP..."). Não é o caso da Camila (Linha V), mas é o tipo de nuance que salvaria alguém de linha III de atrasar a submissão perseguindo um documento que ainda não é necessário.</li>
+      <li><strong>Separação clara entre "para agora" e "para depois":</strong> o bloco de Riscos (fora do fluxo de fases, cor âmbar, ícone de alerta) e a seção Pós-aprovação (badge azul "não bloqueia o envio" + nota explícita dizendo que o checklist antigo listava isso errado na Fase 1 e foi corrigido) deixam claro, sem ambiguidade de leitura, o que é urgente agora e o que é para depois da aprovação — modulo a Dor 1 (item faltante na lista).</li>
+      <li><strong>Persistência via <code>localStorage</code> é exatamente o suficiente para o caso de uso:</strong> não perder o preenchimento ao fechar a aba é o requisito mínimo real de alguém preenchendo isso ao longo de dias, entre reuniões — e a leitura do código (<code>saveState</code>/<code>restoreState</code>, incluindo o cuidado de disparar <code>change</code> no radio restaurado para reabrir a branch condicional certa) confirma que isso funciona sem armadilha.</li>
+      <li><strong>Nenhuma dependência de CDN para o PDF (<code>jspdf.umd.min.js</code> local, na mesma pasta):</strong> para um checklist que pode ser aberto sem internet estável ou atrás de firewall corporativo, isso é uma escolha de infraestrutura correta e discreta.</li>
+    </ul>
+
+    <h2 id="resolver">Para quem resolver</h2>
+    <p><a href="#dor-1">Dor 1</a> (item 9.5.ii.g ausente da lista de Pós-aprovação) e <a href="#dor-2">Dor 2</a> (data fixa "31/12/2025" em vez de regra móvel) são correções pontuais de conteúdo, ancoradas no Regulamento — ajuste direto em <code>docs/submissions/timeline_de_submiss_o_estrat_gica.html</code> (arrays <code>posAprovacao</code> e <code>fases[0].criterios</code>), sem depender de nenhum outro artefato.</p>
+    <p><a href="#dor-3">Dor 3</a> (badge <code>[?]</code> faltando na regra de sobreposição de grupo econômico do Arranjo em Rede) é uma decisão de quanto rigor sinalizar — baixa prioridade dado que não afeta o caso Arranjo Simples da Camila, mas relevante para quem for de fato Arranjo em Rede.</p>
+    <p><a href="#dor-4">Dor 4</a> (gate de envio não cobre os itens da própria Fase 4) é uma decisão sobre o escopo do gate ou do rótulo do botão — não corrigível "só de um lado" sem decidir qual dos dois comportamentos é o pretendido.</p>
+    <p><a href="#dor-5">Dor 5</a> (exportação de PDF é mão única) é uma limitação a documentar explicitamente no próprio arquivo, não necessariamente a resolver agora.</p>
+
+    <p class="page-footer">Este documento não corrige nada — é insumo para quem mantém <code>docs/submissions/timeline_de_submiss_o_estrat_gica.html</code> agir sobre o parecer, a critério de quem revisa. Testado por leitura de código, não ao vivo em browser (ver nota no topo).</p>
+  </main>
+
+</div>
+<script src="../assets/script.js" defer></script>
+</body>
+</html>
