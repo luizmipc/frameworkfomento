@@ -32,9 +32,11 @@ acompanhando (nome da chamada, descrição, instituição responsável, link par
 a chamada e datas importantes) e quer saber, a qualquer momento, em que
 estágio do seu processo de captação cada edital se encontra — ainda não
 começou a trabalhar nele (Backlog), já está preparando a proposta (Em
-andamento), está revisando antes de enviar (Validação) ou já foi submetido/
-finalizado (Concluído). Ele organiza esse acompanhamento movendo cada edital
-entre essas quatro colunas conforme avança.
+andamento), está revisando antes de enviar (Validação), já enviou a proposta
+ao financiador e aguarda o resultado (Submetido), ou já recebeu o resultado
+— teve a proposta aceita (Aprovado) ou recusada (Não aprovado). Ele organiza
+esse acompanhamento movendo cada edital entre essas seis colunas conforme
+avança.
 
 **Why this priority**: É o cenário de uso mais básico e imediatamente valioso
 do gerenciamento de editais — sem ele, o captador não tem visão consolidada
@@ -43,7 +45,7 @@ tarefa avulsa A001 já registrada no quadro do projeto.
 
 **Independent Test**: Pode ser testado cadastrando dois ou três editais com
 seus dados básicos, verificando que aparecem corretamente na listagem, e
-movendo cada um entre as quatro colunas do quadro de progresso — entrega
+movendo cada um entre as seis colunas do quadro de progresso — entrega
 valor sozinho, mesmo sem as demais user stories implementadas.
 
 **Acceptance Scenarios**:
@@ -54,8 +56,9 @@ valor sozinho, mesmo sem as demais user stories implementadas.
    importantes (abertura e fechamento) de cada edital.
 2. **Given** existem editais cadastrados, **When** o captador acessa a visão
    de quadro de progresso, **Then** ele vê cada edital representado como um
-   cartão posicionado em uma das quatro colunas (Backlog, Em andamento,
-   Validação, Concluído), de acordo com o estágio atual daquele edital.
+   cartão posicionado em uma das seis colunas (Backlog, Em andamento,
+   Validação, Submetido, Aprovado, Não aprovado), de acordo com o estágio
+   atual daquele edital.
 3. **Given** um edital está na coluna "Em andamento", **When** o captador
    move esse edital para a coluna "Validação", **Then** o sistema registra o
    novo estágio e reflete essa mudança tanto na visão de quadro quanto na
@@ -81,9 +84,16 @@ valor sozinho, mesmo sem as demais user stories implementadas.
    ocultar nenhuma coluna) para manter nome da chamada, descrição,
    instituição responsável, link e datas legíveis e acessíveis; **and**,
    separadamente, na visão de quadro de progresso em uma resolução de
-   desktop padrão, as quatro colunas (Acceptance Scenario 2) permanecem
+   desktop padrão, as seis colunas (Acceptance Scenario 2) permanecem
    visíveis lado a lado, sem exigir rolagem horizontal para comparar
    colunas.
+8. **Given** um edital está na coluna "Submetido", **When** o captador
+   registra o resultado movendo esse edital para "Aprovado" ou para "Não
+   aprovado", **Then** o sistema o exibe em exatamente uma dessas duas
+   colunas por vez (nunca as duas simultaneamente), e o captador continua
+   podendo movê-lo de volta a qualquer coluna anterior caso precise corrigir
+   um erro de marcação — a movimentação entre colunas permanece livre e sem
+   guarda de ordem (FR-002, FR-009).
 
 ---
 
@@ -281,11 +291,18 @@ ordenados pela proximidade da data de fechamento.
   depois via edição (FR-013), sem ficar bloqueado enquanto o link oficial não
   é publicado. Ver Clarifications (sessão 2026-07-31).
 - Como o sistema trata um edital cuja data de fechamento já passou, mas que o
-  captador ainda não moveu para "Concluído" no quadro de progresso?
+  captador ainda não moveu para nenhum dos estágios terminais (Submetido,
+  Aprovado ou Não aprovado) no quadro de progresso?
 - O que acontece se dois editais diferentes tiverem o mesmo nome de chamada
   (ex.: edições anuais de um mesmo programa, "Edital 2025" e "Edital 2026")?
 - Como o sistema se comporta quando o captador tenta mover um edital
-  diretamente do Backlog para Concluído, pulando as colunas intermediárias?
+  diretamente do Backlog para Aprovado ou Não aprovado, pulando colunas
+  intermediárias como Em andamento, Validação ou Submetido? Resolução: é
+  permitido — a movimentação entre colunas do quadro de progresso continua
+  livre e sem guarda de ordem (FR-002, FR-009), incluindo alcançar
+  diretamente qualquer um dos três novos estágios (Submetido, Aprovado, Não
+  aprovado) a partir de qualquer coluna anterior, sem exigir passagem prévia
+  por Submetido.
 - O que acontece quando um edital não possui data de abertura definida (só a
   data de fechamento é conhecida no momento do cadastro)?
 - Como a listagem trata um número grande de editais cadastrados (ex.: mais de
@@ -324,8 +341,25 @@ ordenados pela proximidade da data de fechamento.
   mostrando ao menos: nome da chamada, descrição, instituição responsável,
   link para a chamada e datas importantes (abertura e fechamento).
 - **FR-002**: O sistema DEVE oferecer, além da tabela, uma visão de quadro de
-  progresso (kanban) com exatamente quatro colunas nesta ordem: Backlog, Em
-  andamento, Validação e Concluído.
+  progresso (kanban) com exatamente seis colunas, nesta ordem: Backlog, Em
+  andamento, Validação, Submetido, Aprovado e Não aprovado. As duas últimas
+  são estágios terminais que registram o resultado do edital junto ao
+  financiador — mutuamente exclusivos entre si (um edital tem exatamente um
+  estágio ativo por vez, nunca os dois ao mesmo tempo) e não sequenciais um
+  em relação ao outro (não existe uma ordem entre Aprovado e Não aprovado;
+  ambos representam o mesmo momento do processo — o desfecho da submissão —
+  sob dois resultados possíveis). Decisão de produto sobre a movimentação
+  entre colunas: este requisito não introduz nenhuma guarda de ordem nova —
+  a transição entre as seis colunas permanece totalmente livre em qualquer
+  direção, incluindo alcançar Aprovado/Não aprovado a partir de qualquer
+  coluna, não só de Submetido (ver FR-009, que já cobria esse princípio para
+  o modelo de quatro colunas e passa a cobrir as seis). Justificativa: o
+  protótipo de referência (`prototype/avulsa-A001/`) já implementa
+  transição livre sem nenhuma trava entre colunas, e passar a exigir Submetido
+  como pré-requisito de Aprovado/Não aprovado seria uma restrição nova, não
+  pedida pelo usuário, que bloquearia correções manuais legítimas (ex.: o
+  captador marca Aprovado/Não aprovado por engano, ou o edital é reaberto
+  para nova rodada de avaliação e precisa voltar para Validação).
 - **FR-003**: O sistema DEVE permitir que o captador cadastre um novo edital
   informando, no mínimo: nome da chamada, instituição responsável, descrição
   e data de fechamento (prazo de submissão). O link para a chamada é
@@ -347,8 +381,11 @@ ordenados pela proximidade da data de fechamento.
 - **FR-008**: O sistema DEVE atribuir a todo edital recém-cadastrado o
   estágio inicial "Backlog" no quadro de progresso.
 - **FR-009**: O sistema DEVE permitir que o captador mova um edital entre
-  quaisquer das quatro colunas do quadro de progresso, em qualquer direção
-  (tanto avançando quanto retornando a uma coluna anterior).
+  quaisquer das seis colunas do quadro de progresso (FR-002), em qualquer
+  direção (tanto avançando quanto retornando a uma coluna anterior) —
+  incluindo mover diretamente para ou a partir de Aprovado/Não aprovado sem
+  exigir passagem prévia por Submetido (ver justificativa de produto em
+  FR-002).
 - **FR-010**: O sistema DEVE manter o estágio de um edital sincronizado entre
   a visão de tabela e a visão de quadro de progresso — mudar o estágio em uma
   visão DEVE refletir imediatamente na outra.
@@ -473,15 +510,15 @@ ordenados pela proximidade da data de fechamento.
 - **FR-027**: O sistema DEVE permitir que o captador marque um edital já
   cadastrado como "Ignorado", sem excluí-lo (distinto da remoção definitiva,
   FR-014). Esta marcação é um atributo de visibilidade ortogonal ao Estágio
-  de Acompanhamento — não é um quinto estágio do quadro de progresso, que
-  continua com exatamente quatro colunas (FR-002 permanece inalterado).
-  Justificativa de produto: cobre o caso de um edital que o captador
+  de Acompanhamento — não é um sétimo estágio do quadro de progresso, que
+  continua com exatamente seis colunas (FR-002). Justificativa de produto:
+  cobre o caso de um edital que o captador
   cadastrou como candidato antes de avaliá-lo a fundo e, após avaliar,
   concluiu que não tem a ver com a área de atuação da sua organização — ele
   quer registrar que já avaliou e descartou aquele edital especificamente,
   para não precisar reavaliá-lo do zero caso ele ressurja (ex.: divulgado de
   novo por outro canal), o que a exclusão definitiva (FR-014) não permite
-  preservar. Uma quinta coluna foi considerada e descartada porque
+  preservar. Uma sétima coluna foi considerada e descartada porque
   "ignorado" não é um estágio do processo de captação (o edital não avança
   nem retrocede por ser ignorado) — é sobre o captador não querer ver aquele
   item agora, o que é melhor modelado como um estado de visibilidade
@@ -498,8 +535,8 @@ ordenados pela proximidade da data de fechamento.
   Essa alternância DEVE ser apresentada como um controle de duas posições
   nomeadas (ex.: "‹ Ativos" / "Ignorados ›", com indicação da quantidade de
   editais ignorados) — não como uma caixa de marcação (checkbox/toggle)
-  liga-desliga, não como uma quinta coluna do quadro de progresso (FR-002
-  permanece com exatamente quatro colunas) e não como uma rota/tela
+  liga-desliga, não como uma sétima coluna do quadro de progresso (FR-002
+  permanece com exatamente seis colunas) e não como uma rota/tela
   totalmente separada. Os dois conjuntos (ativos e ignorados) são tratados
   como posições opostas de uma mesma alternância, reaproveitando os mesmos
   controles de busca/filtro/ordenação e a mesma lógica de contagem total
@@ -523,7 +560,7 @@ ordenados pela proximidade da data de fechamento.
   essenciais (nome da chamada, descrição, instituição responsável, link e
   datas) DEVEM permanecer legíveis e acessíveis em telas estreitas (ex.:
   celular), reorganizando a apresentação quando necessário em vez de ocultar
-  qualquer coluna. No quadro de progresso, as quatro colunas (FR-002) DEVEM
+  qualquer coluna. No quadro de progresso, as seis colunas (FR-002) DEVEM
   permanecer visíveis lado a lado em resoluções de desktop padrão, sem exigir
   rolagem horizontal. Este requisito é tratado como FR separado de FR-001/
   FR-002 (e não uma extensão deles) porque cobre um sinal distinto —
@@ -549,9 +586,12 @@ ordenados pela proximidade da data de fechamento.
   submeter propostas a editais de fomento em nome de uma organização
   proponente. É quem cadastra, acompanha e move os editais entre estágios.
 - **Estágio de Acompanhamento**: representa em que ponto do processo de
-  captação um edital se encontra, com quatro valores possíveis: Backlog, Em
-  andamento, Validação, Concluído. Cada edital tem exatamente um estágio
-  ativo por vez.
+  captação um edital se encontra, com seis valores possíveis, nesta ordem:
+  Backlog, Em andamento, Validação, Submetido, Aprovado, Não aprovado. Os
+  dois últimos são estágios terminais e mutuamente exclusivos entre si
+  (nunca ambos ao mesmo tempo), registrando o resultado do edital junto ao
+  financiador, mas não sequenciais um em relação ao outro (ver FR-002).
+  Cada edital tem exatamente um estágio ativo por vez.
 
 ## Success Criteria *(mandatory)*
 
