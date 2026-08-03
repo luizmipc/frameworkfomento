@@ -4,11 +4,46 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project status
 
-This repository is a fresh scaffold — it currently contains only a README and no source code, build tooling, or dependencies. There is no established architecture, commands, or conventions to follow yet.
+Django project scaffold + deploy/security infra are in place; the actual
+feature (`editais` app — listagem e kanban de editais de fomento) is
+mid-build, tracked in `specs/001-manage-call-for-proposals/` (Spec Kit:
+spec/plan/tasks) and `KANBAN.md`. A static, non-functional prototype of
+the target UI lives in `prototype/avulsa-A001/`.
 
-When code is added to this repo, update this file with:
-- Build/lint/test commands (and how to run a single test)
-- The high-level architecture once it exists
+### Build/lint/test
+
+- `./run_tests.sh` (raiz do repo) — gate obrigatório antes de todo commit:
+  `shortcuts/lint.sh` (`ruff check --fix` + `ruff check` em `app/`) →
+  `cd app && uv run manage.py test` → `uv run python config/tests.py`
+  (self-check de segurança). Carrega `.env` primeiro, se existir.
+- Rodar um teste único: `cd app && uv run manage.py test
+  config.tests.<TestCase>.<method>` (hoje só `config/tests.py` existe;
+  quando o app `editais` nascer, mesma forma:
+  `editais.tests.<TestCase>.<method>`).
+- `./shortcuts/security-test.sh` — suíte de segurança separada (gitleaks,
+  bandit, semgrep, deps, trivy, django-check, zap); `--list` lista os
+  nomes, argumentos posicionais rodam um subconjunto.
+- Dev local: `cd app && uv run manage.py runserver`. Via Docker:
+  `docker compose up` (builda do `Dockerfile`, `entrypoint.sh` roda
+  `migrate` e sobe `gunicorn` como PID 1).
+
+### Arquitetura
+
+- Projeto Django único em `app/`: `config/` (settings, urls, wsgi/asgi,
+  `middleware.py` com cabeçalhos de segurança HTTP) + SQLite em dev
+  (`app/db.sqlite3`). Nenhum app de feature ainda — `editais` nasce nas
+  Phases 1-2 de `specs/001-manage-call-for-proposals/tasks.md`.
+- Deploy: `Dockerfile` (usuário não-root `appuser`, `HEALTHCHECK`,
+  `--no-dev` para excluir ferramental de lint/segurança da imagem),
+  `docker-compose.yml` (variáveis via `.env`, ver `.env.example`),
+  `entrypoint.sh` (raiz do repo — `migrate` + `exec gunicorn`), CI em
+  `.github/workflows/ci.yml` (roda `./run_tests.sh` em push/PR para
+  `main`).
+- Docs vivas em `docs/` (`index.html` como hub, mais `docs/persona/`,
+  `docs/qa-report/`, `docs/cybersec-report/`, `docs/deploy-report/`);
+  specs via Spec Kit em `specs/<slug>/`; PDFs de referência de editais em
+  `ref/`. Fluxo de trabalho (`/kanban-sync`, `/kanban-start`, agentes) em
+  `.claude/skills/` e `.claude/agents/`.
 
 ## Git workflow
 
