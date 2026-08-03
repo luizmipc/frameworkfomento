@@ -7,6 +7,19 @@
 // quaisquer colunas (sem guarda), mesmo comportamento de antes.
 const STATUSES = ["backlog", "andamento", "validacao", "submetido", "aprovado", "nao_aprovado"];
 
+// A039 (docs/persona/avulsa-A001.html#dor-4): Aprovado e Não aprovado são dois
+// desfechos terminais mutuamente exclusivos, sem ordem entre si — a seta "→"
+// (que sugere avanço sequencial do funil) não deve ficar habilitada em
+// nenhum dos dois. A correção manual entre eles continua livre via
+// drag-and-drop, que já permite soltar em qualquer coluna.
+const ESTAGIOS_TERMINAIS_FUNIL = ["aprovado", "nao_aprovado"];
+
+// A040 (docs/persona/avulsa-A001.html#dor-5): nos três estágios terminais o
+// processo com o financiador já se encerrou — data_fechamento vencida vira
+// dado histórico, não risco. Usado para não exibir o selo "Vencido" nesses
+// casos (ver isVencido abaixo).
+const ESTAGIOS_CONCLUIDOS = ["submetido", "aprovado", "nao_aprovado"];
+
 const editais = [
   {
     id: "e1",
@@ -308,7 +321,10 @@ function renderTabela() {
   }
   lista.forEach((edital) => {
     const tr = document.createElement("tr");
-    const vencido = isVencido(edital.fechamento);
+    // A040: em estágio terminal, o fechamento vencido já não é mais um risco
+    // — é dado histórico do processo encerrado — então não conta como vencido
+    // para fins de badge/borda vermelha.
+    const vencido = isVencido(edital.fechamento) && !ESTAGIOS_CONCLUIDOS.includes(edital.status);
     // FR-022: badge de prazo próximo só se aplica a editais ainda não vencidos
     // — vencido (FR-011) tem precedência e exclui o cálculo de nível.
     const nivel = vencido ? null : nivelProximidade(edital.fechamento);
@@ -401,7 +417,8 @@ function renderKanban() {
       card.querySelector(".card-dates").innerHTML = edital.abertura
         ? `${formatDate(edital.abertura)} — ${formatDate(edital.fechamento)}`
         : `<span class="field-missing">Abertura não informada</span> — ${formatDate(edital.fechamento)}`;
-      const vencido = isVencido(edital.fechamento);
+      // A040: mesma regra da tabela — vencido não conta em estágio terminal.
+      const vencido = isVencido(edital.fechamento) && !ESTAGIOS_CONCLUIDOS.includes(edital.status);
       // FR-022: mesma precedência da tabela — só calcula nível se não vencido.
       const nivel = vencido ? null : nivelProximidade(edital.fechamento);
       card.classList.toggle("vencido", vencido);
@@ -432,7 +449,11 @@ function updateMoveButtons() {
     const edital = editais.find((e) => e.id === card.dataset.id);
     const idx = STATUSES.indexOf(edital.status);
     card.querySelector('[data-dir="-1"]').disabled = idx === 0;
-    card.querySelector('[data-dir="1"]').disabled = idx === STATUSES.length - 1;
+    // A039: além do último índice de STATUSES, qualquer estágio terminal do
+    // funil (Aprovado/Não aprovado) desabilita "→" — não há um "próximo"
+    // entre os dois.
+    card.querySelector('[data-dir="1"]').disabled =
+      idx === STATUSES.length - 1 || ESTAGIOS_TERMINAIS_FUNIL.includes(edital.status);
   });
 }
 

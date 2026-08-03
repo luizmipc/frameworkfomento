@@ -141,15 +141,6 @@ todas as colunas.
 - [ ] A020 FR-010 — Estágio sincronizado entre tabela e quadro (via
   relatório QA docs/qa-report/avulsa-A001.html#fr-010). Protótipo:
   `prototype/avulsa-A001/`.
-- [ ] A035 Dar feedback textual imediato e visível (ex.: toast "Edital
-  movido para Ignorados") no momento de clicar "Ignorar"/"Reverter" — hoje
-  o item some/reaparece instantaneamente da visão atual sem nenhuma
-  confirmação, só um contador pequeno no canto muda (FR-027/FR-030).
-  Protótipo: `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-1` (reafirmada da 8ª rodada, agora
-  confirmada ao vivo na 9ª). Ver também lição aprendida em
-  `.claude/agents/designer.md` (2026-08-02) sobre feedback de ações que
-  removem um item da visão atual.
 - [ ] A036 Avaliar se o estágio "Concluído" do quadro de progresso precisa
   distinguir dois momentos reais diferentes do processo de captação —
   "submetido, aguardando parecer" vs. "resultado já saiu/processo
@@ -184,7 +175,6 @@ todas as colunas.
   claude-in-chrome nesta sessão) — confirmado por leitura de código: mover/
   drag-and-drop, contadores de coluna e botões de mover já iteravam sobre
   `STATUSES` genericamente, sem lógica hardcoded a 4 colunas.
-
 ### (avulsas)
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento
@@ -254,6 +244,37 @@ _Nenhuma tarefa em progresso._
   ao vivo via browser em 2026-07-31 (filtrando por uma instituição com 1
   único edital, as 3 colunas restantes mostraram "Nenhum edital
   encontrado com esses critérios." com contador "(0)").
+- [x] A035 Dar feedback textual imediato e visível (ex.: toast "Edital
+  movido para Ignorados") no momento de clicar "Ignorar"/"Reverter".
+  Protótipo: `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-1` (reafirmada da 8ª rodada,
+  confirmada ao vivo na 9ª). O código já implementava `showToast()` desde
+  antes desta rodada (o quadro só não tinha sido sincronizado);
+  confirmado ao vivo de novo em 2026-08-03 (toast "Edital movido para
+  Ignorados" aparece ao clicar "Ignorar" na Tabela).
+- [x] A039 A seta "→" desabilitava só no último item de `STATUSES`, não em
+  qualquer estágio terminal — um card em "Aprovado" ainda podia ser movido
+  para "Não aprovado" com um clique, sem aviso. Protótipo:
+  `prototype/avulsa-A001/`. Via teste de persona
+  `docs/persona/avulsa-A001.html#dor-4` (10ª rodada). Corrigida: novo array
+  `ESTAGIOS_TERMINAIS_FUNIL = ["aprovado", "nao_aprovado"]` em `script.js`,
+  `updateMoveButtons()` desabilita "→" nos dois estágios terminais (não só
+  no último índice do array); drag-and-drop continua permitindo a correção
+  manual entre os dois. Confirmado ao vivo via browser em 2026-08-03:
+  Submetido → Aprovado via "→" funciona normalmente, "→" fica desabilitado
+  assim que o card chega em Aprovado/Não aprovado, "←" continua habilitado.
+- [x] A040 O selo vermelho "Vencido" aparecia igual em editais já
+  Submetidos/Aprovados/Não aprovados e em editais ativos com prazo
+  realmente perdido. Protótipo: `prototype/avulsa-A001/`. Via teste de
+  persona `docs/persona/avulsa-A001.html#dor-5` (10ª rodada). Corrigida:
+  novo array `ESTAGIOS_CONCLUIDOS = ["submetido", "aprovado",
+  "nao_aprovado"]` em `script.js`; o cálculo de `vencido` em
+  `renderTabela()`/`renderKanban()` passa a excluir esses três estágios
+  (o selo simplesmente não aparece ali; efeito colateral esperado e correto:
+  o badge amarelo "vence em até N dias" também para de aparecer nesses
+  casos, pela mesma lógica). Confirmado ao vivo via browser em 2026-08-03:
+  Tabela e Kanban não exibem mais "Vencido" nos três estágios terminais,
+  mesmo com `fechamento` no passado.
 
 ### (avulsas)
 
