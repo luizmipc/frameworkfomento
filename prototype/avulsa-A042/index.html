@@ -5,20 +5,61 @@
      HTML/CSS/JS puro, dados mockados em script.js, sem persistência real e
      sem geração de PDF real (exportações são simuladas via toast). Página de
      detalhe de UM edital específico — chegada simulada a partir do ícone de
-     lupa que existiria na tabela/kanban de prototype/avulsa-A001/. -->
+     lupa que existiria na tabela/kanban de prototype/avulsa-A001/.
+
+     Revisão de sofisticação visual/interativa (2026-08-04), pedida após
+     comparação com docs/submissions/timeline-submission-finep-digital.html
+     (gerado por .claude/skills/fundraiser-submission-timeline/SKILL.md a
+     partir de um Regulamento real — específico daquele edital). Este
+     protótipo continua GENÉRICO (qualquer edital, dados mockados) e mantém
+     a decisão de FR-033 de modelar o plano de submissão como LISTA PLANA de
+     itens — nunca reintroduza fases com gate próprio por fase. Ver o final
+     deste comentário e a mensagem de retorno do agente de design para a
+     lista completa do que foi acrescentado além do texto literal de
+     FR-032–FR-040 (seções Riscos/Pós-aprovação, blocos didáticos 💬/🧭,
+     campos responsável/concluído-em, categoria visual, barra de resumo no
+     topo) — precisa ser formalizado com o product-owner antes do dev
+     implementar de verdade. -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detalhe do edital — Protótipo A042</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
+
+<div class="topbar no-print">
+  <button type="button" class="btn-topbar secondary" id="btn-toggle-all">Expandir/recolher tudo</button>
+  <button type="button" class="btn-topbar secondary" id="btn-print">Imprimir</button>
+  <button type="button" class="btn-topbar" id="export-tudo">Exportar tudo (PDF)</button>
+</div>
+
+<header class="topo">
   <!-- Link simbólico: em prototype/avulsa-A001/ o acesso a esta tela viria
        de um ícone de lupa na tabela/kanban (fora do escopo desta task). -->
-  <a class="back-link" href="../avulsa-A001/index.html">&larr; Voltar aos editais</a>
+  <a class="back-link no-print" href="../avulsa-A001/index.html">&larr; Voltar aos editais</a>
   <h1 id="edital-nome"></h1>
   <p class="subtitle" id="edital-instituicao"></p>
   <p class="edital-status-line">Estágio atual: <span class="badge-estagio" id="edital-estagio-badge"></span></p>
+
+  <!-- Barra de resumo/veredito: visão de poucos segundos sem rolar a
+       página — elegibilidade (itens essenciais do plano), proximidade do
+       prazo de fechamento e contagem de pendências. Reflete o mesmo estado
+       usado pela sugestão de avanço de estágio, só que sempre visível
+       (a sugestão abaixo só aparece quando há uma transição possível). -->
+  <div class="summary-bar">
+    <div class="summary-item">
+      <span class="label">Elegibilidade (itens essenciais)</span>
+      <span class="value verdict" id="verdict-badge">carregando…</span>
+    </div>
+    <div class="summary-item">
+      <span class="label">Prazo de fechamento</span>
+      <span class="value" id="countdown">calculando…</span>
+    </div>
+    <div class="summary-item">
+      <span class="label">Pendências essenciais</span>
+      <span class="value" id="pendencias-count">–</span>
+    </div>
+  </div>
 </header>
 
 <!-- Mesmo padrão de toast de prototype/avulsa-A001/ (feedback não-bloqueante,
@@ -38,6 +79,14 @@
         <div><dt>Documentação exigida</dt><dd id="edital-documentacao"></dd></div>
         <div><dt>Critérios de avaliação</dt><dd id="edital-criterios"></dd></div>
       </dl>
+    </section>
+
+    <!-- Sempre visível, fora do plano de submissão — nunca gated por nenhum
+         item concluído. Riscos genéricos de captação (não específicos de
+         um edital real), mockados em script.js. -->
+    <section class="riscos-box" id="riscos">
+      <h2>⚠ Riscos e considerações</h2>
+      <ul id="riscos-list"></ul>
     </section>
 
     <section class="panel" id="plano-submissao">
@@ -64,12 +113,25 @@
           <label for="new-item-desc">Descrição do item</label>
           <input type="text" id="new-item-desc" placeholder="Ex.: Comprovante de regularidade fiscal" required>
         </div>
+        <div class="control-field control-field-narrow">
+          <label for="new-item-categoria">Categoria (opcional)</label>
+          <input type="text" id="new-item-categoria" placeholder="Ex.: Financeiro">
+        </div>
         <label class="checkbox-field">
           <input type="checkbox" id="new-item-essencial">
           Essencial para elegibilidade
         </label>
         <button type="submit">Adicionar item</button>
       </form>
+    </section>
+
+    <!-- Explicitamente NÃO-gated — documentos que só entram depois da
+         aprovação, separados do plano de submissão para não confundir com
+         o que é exigido para submeter agora. -->
+    <section class="pos-aprovacao" id="pos-aprovacao">
+      <h2>Pós-aprovação / Contratação <span class="badge badge-c">não bloqueia o envio</span></h2>
+      <p class="section-note">Estes itens só entram em jogo depois que o edital aprovar a proposta — não fazem parte do que falta para submeter.</p>
+      <ul id="pos-aprovacao-list"></ul>
     </section>
   </div>
 
@@ -95,19 +157,43 @@
   </aside>
 </main>
 
+<footer class="rodape">
+  <p>Protótipo não-funcional — task A042. Conteúdo mockado, genérico, sem vínculo com nenhum edital real. Não substitui a leitura do edital-fonte nem o formulário oficial do financiador.</p>
+</footer>
+
 <template id="plano-item-template">
   <li class="plano-item">
-    <label class="plano-item-check">
-      <input type="checkbox" class="item-concluido">
-      <span class="item-desc"></span>
-    </label>
-    <span class="badge-essencial hidden">Essencial para elegibilidade</span>
-    <!-- Só aparece quando o item está concluído — texto livre (nome/anotação),
-         não upload de arquivo real (protótipo não-funcional). -->
-    <div class="item-docref hidden">
-      <label>Referência do documento
-        <input type="text" class="item-docref-input" placeholder="Nome do arquivo ou anotação (ex.: cnd-2026-07.pdf)">
+    <div class="item-header">
+      <label class="plano-item-check">
+        <input type="checkbox" class="item-concluido">
+        <span class="item-desc"></span>
       </label>
+      <div class="item-badges">
+        <span class="badge badge-e badge-essencial hidden" title="Essencial para elegibilidade">Essencial</span>
+        <span class="badge badge-c item-categoria hidden"></span>
+      </div>
+      <button type="button" class="item-toggle no-print" aria-label="Expandir/recolher detalhes do item">▾</button>
+    </div>
+    <div class="item-body">
+      <!-- Bloco didático (💬/🧭): só existe em itens onde o próprio captador
+           já preencheu esse conteúdo ao criar o item — não é extraído
+           automaticamente de PDF nenhum (protótipo genérico, sem edital
+           real de origem). Fica oculto quando o item não tem esse texto. -->
+      <div class="didatico hidden">
+        <p class="leigo hidden">💬 <strong>Em outras palavras:</strong> <span class="leigo-text"></span></p>
+        <p class="comofazer hidden">🧭 <strong>Como preencher:</strong> <span class="comofazer-text"></span></p>
+      </div>
+      <div class="resp-row">
+        <label class="mini"><span>Responsável</span><input type="text" class="item-resp" placeholder="Nome"></label>
+        <label class="mini"><span>Concluído em</span><input type="date" class="item-concluido-em"></label>
+      </div>
+      <!-- Só aparece quando o item está concluído — texto livre (nome/anotação),
+           não upload de arquivo real (protótipo não-funcional). -->
+      <div class="item-docref hidden">
+        <label>Referência do documento
+          <input type="text" class="item-docref-input" placeholder="Nome do arquivo ou anotação (ex.: cnd-2026-07.pdf)">
+        </label>
+      </div>
     </div>
   </li>
 </template>
