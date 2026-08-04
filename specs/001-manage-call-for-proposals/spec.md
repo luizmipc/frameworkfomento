@@ -307,7 +307,16 @@ pesquisa — ver Assumptions). Tanto o resumo executivo quanto o plano de
 submissão devem poder ser exportados em PDF para impressão e
 compartilhamento. À medida que o plano de submissão avança, o captador
 espera uma sugestão — nunca uma trava — indicando que já é possível avançar
-o edital para o próximo estágio do quadro de progresso.
+o edital para o próximo estágio do quadro de progresso. Ele também quer,
+sem precisar rolar a página, enxergar de imediato o estado geral daquele
+edital — se já está habilitado para avançar, quanto falta para o prazo de
+fechamento e quantas pendências essenciais restam — e precisa de dois
+espaços adicionais, sempre visíveis mas nunca bloqueantes: um para
+registrar riscos e avisos daquele edital (ex.: prazos que só valem depois
+da aprovação, possibilidade de o edital ser alterado durante a submissão) e
+outro, claramente separado do plano de submissão, para itens que só entram
+em jogo depois da aprovação (ex.: documentos de contratação) — sem
+confundir o que é exigido agora com o que só será exigido depois.
 
 **Why this priority**: Depende logicamente de existir um edital cadastrado
 com estágio de acompanhamento (User Story 1) e dados básicos (User Story 2)
@@ -327,7 +336,11 @@ essencial para elegibilidade e concluindo-o, e confirmando que: a sugestão
 de avanço aparece quando as condições são atendidas (e some quando deixam
 de ser); o resumo executivo reflete as pendências de elegibilidade ainda
 abertas; e tanto o resumo executivo quanto o plano de submissão podem ser
-exportados em PDF.
+exportados em PDF. Também pode ser testado separadamente: a barra de
+resumo/veredito refletindo o gate de elegibilidade, a proximidade do prazo
+e as pendências essenciais sem precisar rolar a página; e o registro de
+riscos e de itens de pós-aprovação, confirmando que nenhum dos dois
+interfere na elegibilidade nem na sugestão de avanço.
 
 **Acceptance Scenarios**:
 
@@ -382,6 +395,41 @@ exportados em PDF.
     sistema gera um arquivo PDF com a lista de itens, seus status
     (Pendente/Concluído) e quais são essenciais para elegibilidade, apto
     para impressão e compartilhamento fora do sistema.
+11. **Given** a página de detalhe de um edital, **When** o captador a acessa,
+    **Then** ele vê, no topo, sem precisar rolar a página, uma barra de
+    resumo/veredito indicando o estado do gate de elegibilidade
+    ("Habilitado"/"Pendente"), a proximidade ou o vencimento do prazo de
+    fechamento e a quantidade de pendências essenciais ainda em aberto —
+    distinta do banner de sugestão de avanço (Acceptance Scenarios 5 e 6),
+    que só aparece quando as condições de FR-038 são atendidas.
+12. **Given** um item do plano de submissão sendo criado ou editado, **When**
+    o captador preenche, opcionalmente, "Em outras palavras", "Como
+    preencher", responsável, data de conclusão e/ou categoria, **Then** o
+    sistema salva e exibe esses valores junto ao item; **When** ele deixa
+    qualquer um desses campos em branco, **Then** o item continua podendo
+    ser criado, editado e concluído normalmente, sem nenhum bloqueio.
+13. **Given** a página de detalhe de um edital, **When** o captador acessa a
+    seção "Riscos", **Then** ele a vê sempre visível — inclusive quando o
+    plano de submissão está vazio —, consegue registrar avisos em texto
+    livre, e confirma que nenhum risco registrado altera o gate de
+    elegibilidade, a sugestão de avanço (Acceptance Scenarios 5 e 6) ou o
+    resumo executivo (Acceptance Scenario 8).
+14. **Given** a página de detalhe de um edital, **When** o captador acessa a
+    seção "Pós-aprovação / Contratação", **Then** ele a vê visualmente
+    separada do plano de submissão, consegue registrar itens em texto
+    livre, e confirma que nenhum item dela conta como pendência de
+    elegibilidade (Acceptance Scenario 8) nem afeta a sugestão de avanço de
+    estágio (Acceptance Scenarios 5 e 6).
+15. **Given** o captador está na página de detalhe com múltiplos itens no
+    plano de submissão, **When** ele aciona o controle "Expandir/recolher
+    tudo" da barra de ações fixa, **Then** todos os itens expandem ou
+    recolhem juntos; **When** ele expande ou recolhe um item
+    individualmente, **Then** apenas aquele item muda, sem afetar os
+    demais; **and**, **When** ele imprime a página (ação "Imprimir" ou
+    impressão nativa do navegador), **Then** o layout impresso permanece
+    legível e completo — sem cortar plano de submissão, resumo executivo,
+    Riscos ou Pós-aprovação — ocultando os controles de ação que não fazem
+    sentido no papel.
 
 ---
 
@@ -703,7 +751,9 @@ exportados em PDF.
   leva o captador a uma página de detalhe exclusiva daquele edital, reunindo
   os dados já cadastrados (FR-001, FR-006, FR-007), o plano de submissão
   (FR-033 a FR-036), a sugestão de avanço no quadro de progresso quando
-  aplicável (FR-038) e o resumo executivo (FR-037).
+  aplicável (FR-038), o resumo executivo (FR-037), a barra de
+  resumo/veredito (FR-041), a barra de ações fixa (FR-042, FR-043), a
+  seção Riscos (FR-047) e a seção Pós-aprovação / Contratação (FR-048).
 - **FR-033**: O sistema DEVE permitir que o captador adicione, na página de
   detalhe de um edital, itens ao plano de submissão daquele edital, cada um
   com uma descrição em texto informada pelo captador (ex.: "Balanço
@@ -718,7 +768,13 @@ exportados em PDF.
   reabre FR-017: documentação exigida e critérios de avaliação continuam
   sendo texto livre, sem controle individual de status — o plano de
   submissão é uma lista separada e adicional, específica desta página de
-  detalhe, não uma reinterpretação desses dois campos.
+  detalhe, não uma reinterpretação desses dois campos. O captador pode
+  ainda atribuir a cada item uma categoria opcional (texto livre curto,
+  ex.: "Financeiro", "Documentação"), usada apenas como agrupamento/etiqueta
+  visual da lista — reafirmando a decisão de escopo já registrada acima: a
+  categoria não introduz fases nem um modelo de gate por fase; o plano de
+  submissão continua sendo uma lista plana de itens, todos no mesmo nível,
+  apenas com uma tag opcional de exibição.
 - **FR-034**: O sistema DEVE permitir que o captador altere o status de
   qualquer item do plano de submissão entre "Pendente" e "Concluído", e DEVE
   exibir, na página de detalhe, quantos itens do plano de submissão já estão
@@ -793,18 +849,114 @@ exportados em PDF.
   são essenciais para elegibilidade, apto para impressão e compartilhamento
   fora do sistema. O mecanismo técnico de geração do PDF fica em aberto para
   a fase de planejamento técnico.
+- **FR-041**: O sistema DEVE exibir, no topo da página de detalhe (FR-032),
+  sempre visível sem exigir rolagem, uma barra de resumo/veredito com: (a)
+  o estado do gate de elegibilidade do edital ("Habilitado" ou "Pendente"),
+  calculado pela regra de FR-038 aplicável ao estágio atual do edital
+  (regra (a) — itens essenciais concluídos — quando o edital está "Em
+  andamento"; regra (b) — 100% dos itens concluídos — quando está em
+  "Validação"); para um edital em qualquer outro estágio (Backlog,
+  Submetido, Aprovado, Não aprovado), onde FR-038 não define nenhuma
+  sugestão de avanço, a barra exibe o gate como não aplicável a esse
+  estágio, mostrando apenas os itens (b) e (c) a seguir; (b) a proximidade
+  ou o vencimento do prazo de fechamento do próprio edital, reaproveitando
+  os limiares e a codificação visual já definidos em FR-011 (prazo vencido)
+  e FR-022 (proximidade em quatro níveis); e (c) a quantidade de pendências
+  essenciais ainda em aberto no plano de submissão (itens marcados como
+  "essencial para elegibilidade" — FR-035 — com status "Pendente" —
+  FR-034). Este requisito é tratado como FR separado de FR-038 (e não uma
+  reescrita dele) porque cobre um sinal distinto: FR-038 é uma sugestão
+  condicional que aparece e desaparece conforme um limiar específico é
+  cruzado (o momento de avançar de estágio); a barra de resumo/veredito é
+  um painel de status permanente, sempre presente na página de detalhe,
+  independentemente de haver ou não uma sugestão de avanço no momento.
+- **FR-042**: O sistema DEVE exibir, fixa (sticky) no topo da página de
+  detalhe (FR-032) enquanto o captador rola a página, uma barra de ações
+  reunindo: um controle para expandir ou recolher, de uma vez, todos os
+  itens do plano de submissão (ver FR-043 para o controle equivalente por
+  item individual); uma ação "Imprimir" que aciona a impressão da página
+  corrente pelo navegador (ver FR-044 para os requisitos de layout de
+  impressão); e os botões de exportação em PDF do resumo executivo
+  (FR-039) e do plano de submissão (FR-040), que passam a ficar
+  posicionados nessa mesma barra fixa, sem alterar o comportamento de
+  exportação já especificado por esses dois requisitos — "Imprimir" a
+  página inteira e "Exportar PDF" um conteúdo específico (resumo ou plano)
+  continuam sendo ações distintas, apenas compartilhando o mesmo local de
+  acesso na tela.
+- **FR-043**: O sistema DEVE permitir que o captador expanda ou recolha,
+  individualmente, a exibição detalhada de cada item do plano de submissão
+  (ex.: ocultando temporariamente os campos didáticos de FR-045 e os demais
+  metadados do item, mantendo sempre visíveis ao menos sua descrição e seu
+  status), independentemente do controle global de expandir/recolher todos
+  os itens de uma vez (FR-042).
+- **FR-044**: O sistema DEVE apresentar a página de detalhe de um edital
+  (FR-032), quando impressa diretamente pelo navegador (ex.: via atalho de
+  impressão do sistema operacional ou a ação "Imprimir" de FR-042), em um
+  layout legível e completo — sem cortar conteúdo do plano de submissão, do
+  resumo executivo, da seção Riscos (FR-047) ou da seção Pós-aprovação /
+  Contratação (FR-048) — e ocultando os controles de ação que não fazem
+  sentido no papel (ex.: botões de expandir/recolher, de exportação em PDF
+  e de mudança de estágio). Este requisito é tratado como FR separado de
+  FR-039/FR-040 (e não uma extensão deles) porque cobre a fidelidade de
+  impressão da página inteira do navegador, não a geração de um arquivo PDF
+  dedicado ao resumo executivo ou ao plano de submissão isoladamente.
+- **FR-045**: O sistema DEVE permitir que o captador registre,
+  opcionalmente, para cada item do plano de submissão, ao criar ou editar
+  esse item, dois textos livres adicionais: uma paráfrase em linguagem
+  simples do que o item significa ("Em outras palavras") e uma orientação
+  prática de onde obter o dado ou documento correspondente ("Como
+  preencher"). Ambos os campos são opcionais e, quando não preenchidos, não
+  impedem a criação, a edição ou a conclusão do item. Decisão de escopo:
+  diferente do artefato de referência (skill `fundraiser-submission-
+  timeline`, que extrai esse conteúdo automaticamente do Regulamento de um
+  edital em PDF), aqui esses textos são digitados manualmente pelo próprio
+  captador — esta feature não inclui extração automática de conteúdo a
+  partir de PDF.
+- **FR-046**: O sistema DEVE permitir que o captador registre,
+  opcionalmente, para cada item do plano de submissão, um responsável
+  (texto livre, ex.: nome de quem vai providenciar aquele item) e uma data
+  de conclusão. Ambos os campos são opcionais, puramente informativos, e
+  não têm efeito sobre o status Pendente/Concluído do item (FR-034, que
+  continua sendo alternado manualmente ou pelo registro de referência de
+  documento — FR-036) nem sobre o cálculo de elegibilidade (FR-035,
+  FR-038) — servem apenas de acompanhamento adicional para o captador e
+  para quem lê o resumo executivo ou as exportações em PDF.
+- **FR-047**: O sistema DEVE oferecer, na página de detalhe de um edital
+  (FR-032), uma seção "Riscos" sempre visível, independente da existência
+  ou do progresso do plano de submissão, na qual o captador registra
+  livremente, em texto, avisos ou riscos daquele edital (ex.: prazos que só
+  se aplicam depois da aprovação, possibilidade de o edital ser alterado
+  durante a submissão). Esta seção segue o mesmo modelo de FR-006/FR-007/
+  FR-017 — texto livre descritivo, sem controle individual de status
+  "atendido/pendente" por item — e nunca é considerada no cálculo de
+  elegibilidade (FR-035, FR-038) nem na barra de resumo/veredito (FR-041):
+  é informativa, nunca bloqueante.
+- **FR-048**: O sistema DEVE oferecer, na página de detalhe de um edital
+  (FR-032), uma seção "Pós-aprovação / Contratação" separada e visualmente
+  distinta do plano de submissão (FR-033), na qual o captador registra
+  livremente, em texto, itens que só se tornam relevantes depois da
+  aprovação do edital (ex.: documentos exigidos para a contratação). Assim
+  como a seção Riscos (FR-047), esta seção segue o modelo de texto livre
+  descritivo de FR-017 e é explicitamente não-gated: nenhum item dela é
+  considerado nas pendências de elegibilidade do resumo executivo (FR-037),
+  no gate exibido na barra de resumo/veredito (FR-041) ou na sugestão de
+  avanço de estágio (FR-038) — a separação visual existe justamente para
+  que o captador nunca confunda um item de pós-aprovação com um requisito
+  da submissão em si.
 
 ### Key Entities
 
 - **Edital (Chamada de Fomento)**: representa uma oportunidade de captação de
   recursos. Atributos obrigatórios: nome da chamada, descrição, instituição
   responsável, data de fechamento (prazo de submissão). Atributos opcionais:
-  link para a chamada, data de abertura, documentação exigida e critérios de
-  avaliação. Relaciona-se com um estágio de acompanhamento (ver Estágio de
-  Acompanhamento). Tem ainda um atributo de visibilidade independente do
-  estágio — ignorado (sim/não, padrão não) — que, quando ativo, oculta o
-  edital das visões padrão (tabela e quadro de progresso) sem alterar seu
-  estágio de acompanhamento nem excluir seus dados (ver FR-027 a FR-030).
+  link para a chamada, data de abertura, documentação exigida, critérios de
+  avaliação, riscos registrados (texto livre — FR-047) e itens de
+  pós-aprovação/contratação (texto livre — FR-048). Relaciona-se com um
+  estágio de acompanhamento (ver Estágio de Acompanhamento). Tem ainda um
+  atributo de visibilidade independente do estágio — ignorado (sim/não,
+  padrão não) — que, quando ativo, oculta o edital das visões padrão
+  (tabela e quadro de progresso) sem alterar seu estágio de acompanhamento
+  nem excluir seus dados (ver FR-027 a FR-030).
 - **Captador de Recursos**: pessoa responsável por identificar, avaliar e
   submeter propostas a editais de fomento em nome de uma organização
   proponente. É quem cadastra, acompanha e move os editais entre estágios.
@@ -817,12 +969,16 @@ exportados em PDF.
   Cada edital tem exatamente um estágio ativo por vez.
 - **Item do Plano de Submissão**: representa uma etapa ou documento
   necessário para viabilizar o envio da proposta de um edital específico,
-  dentro da página de detalhe desse edital (FR-032). Atributos: descrição
-  (texto livre, definida pelo captador), status (Pendente ou Concluído,
-  padrão Pendente — FR-034), indicador de "essencial para elegibilidade"
-  (sim/não, padrão não — FR-035), e referência ao documento correspondente
-  quando registrada (metadado em texto — nome do arquivo ou anotação de
-  localização; não armazena o arquivo em si nesta feature, ver FR-036).
+  dentro da página de detalhe desse edital (FR-032). Atributos
+  obrigatórios: descrição (texto livre, definida pelo captador), status
+  (Pendente ou Concluído, padrão Pendente — FR-034), indicador de
+  "essencial para elegibilidade" (sim/não, padrão não — FR-035). Atributos
+  opcionais: referência ao documento correspondente quando registrada
+  (metadado em texto — nome do arquivo ou anotação de localização; não
+  armazena o arquivo em si nesta feature, ver FR-036), paráfrase "Em outras
+  palavras" e orientação "Como preencher" (texto livre, cada um — FR-045),
+  responsável e data de conclusão (FR-046), e categoria (texto livre curto,
+  usada apenas como tag de agrupamento visual, sem gate próprio — FR-033).
   Pertence a exatamente um edital; não existe independentemente dele.
 
 ## Success Criteria *(mandatory)*

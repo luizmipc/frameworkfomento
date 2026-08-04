@@ -101,8 +101,8 @@
 
     <h4 id="fr-detalhe">Detalhe do edital e plano de submissão (User Story 5 — P5)</h4>
     <ul>
-      <li><code>FR-032</code> Ícone de lupa, na tabela e no quadro de progresso, que leva a uma página de detalhe exclusiva do edital — reúne os dados já cadastrados, o plano de submissão, a sugestão de avanço de estágio e o resumo executivo.</li>
-      <li><code>FR-033</code> Plano de submissão: lista plana de itens (etapas/documentos) adicionados manualmente pelo captador, cada um com descrição em texto livre; sem fases pré-estruturadas por edital. Não reabre <code>FR-017</code> — documentação exigida e critérios de avaliação continuam texto livre sem controle de status.</li>
+      <li><code>FR-032</code> Ícone de lupa, na tabela e no quadro de progresso, que leva a uma página de detalhe exclusiva do edital — reúne os dados já cadastrados, o plano de submissão, a sugestão de avanço de estágio, o resumo executivo, a barra de resumo/veredito, a barra de ações fixa, a seção Riscos e a seção Pós-aprovação/Contratação.</li>
+      <li><code>FR-033</code> Plano de submissão: lista plana de itens (etapas/documentos) adicionados manualmente pelo captador, cada um com descrição em texto livre e uma categoria opcional (texto livre curto, ex.: "Financeiro"), usada só como tag de agrupamento visual — nunca um modelo de fases com gate próprio. Não reabre <code>FR-017</code> — documentação exigida e critérios de avaliação continuam texto livre sem controle de status.</li>
       <li><code>FR-034</code> Cada item do plano de submissão tem status "Pendente" ou "Concluído", alternável pelo captador; a página exibe o progresso (concluídos/total).</li>
       <li><code>FR-035</code> Um item pode ser marcado como "essencial para elegibilidade" — sinaliza que sua ausência bloqueia a elegibilidade da proposta, independente do status Pendente/Concluído.</li>
       <li><code>FR-036</code> Registro de documento anexado a um item como metadado (nome/referência), sem envio/armazenamento do arquivo em si nesta rodada — registrar a referência marca o item como "Concluído".</li>
@@ -110,6 +110,14 @@
       <li><code>FR-038</code> Sugestão de avanço de estágio na página de detalhe: Em andamento→Validação quando todos os itens essenciais estão concluídos (havendo ao menos um); Validação→Submetido quando 100% dos itens estão concluídos (havendo ao menos um cadastrado). Ação de um clique move o edital (<code>FR-009</code>/<code>FR-010</code>); nenhuma sugestão equivalente para retroceder, já livre via <code>FR-009</code>.</li>
       <li><code>FR-039</code> Exportação do resumo executivo como PDF, apto para impressão/compartilhamento fora do sistema.</li>
       <li><code>FR-040</code> Exportação do plano de submissão (itens, status, indicação de essencial) como PDF.</li>
+      <li><code>FR-041</code> Barra de resumo/veredito, fixa no topo da página de detalhe sem exigir rolagem: estado do gate de elegibilidade (mesma regra de <code>FR-038</code>, quando aplicável ao estágio atual), proximidade/vencimento do prazo de fechamento (reaproveita <code>FR-011</code>/<code>FR-022</code>) e contagem de pendências essenciais em aberto. Distinta do banner de sugestão de avanço (<code>FR-038</code>), que só aparece condicionalmente.</li>
+      <li><code>FR-042</code> Barra de ações fixa (sticky): reúne o controle global "Expandir/recolher tudo" (itens do plano de submissão), a ação "Imprimir" a página e os botões de exportação em PDF (<code>FR-039</code>/<code>FR-040</code>), que passam a ficar posicionados nesse mesmo local, sem mudar o que cada exportação já faz.</li>
+      <li><code>FR-043</code> Affordance de expandir/recolher cada item do plano de submissão individualmente, independente do controle global (<code>FR-042</code>).</li>
+      <li><code>FR-044</code> CSS de impressão da página de detalhe: layout legível e completo ao imprimir (sem cortar plano de submissão, resumo executivo, Riscos ou Pós-aprovação), ocultando controles de ação que não fazem sentido no papel.</li>
+      <li><code>FR-045</code> Campos didáticos opcionais por item do plano de submissão, digitados pelo captador: "Em outras palavras" (paráfrase simples) e "Como preencher" (orientação prática). Diferente do artefato de referência (skill <code>fundraiser-submission-timeline</code>), aqui não há extração automática de PDF.</li>
+      <li><code>FR-046</code> Campos opcionais "Responsável" e "Concluído em" por item do plano de submissão — puramente informativos, sem efeito sobre o status Pendente/Concluído (<code>FR-034</code>) nem sobre elegibilidade (<code>FR-035</code>/<code>FR-038</code>).</li>
+      <li><code>FR-047</code> Seção "Riscos" sempre visível na página de detalhe, independente do plano de submissão: avisos/riscos em texto livre (mesmo modelo de <code>FR-006</code>/<code>FR-007</code>/<code>FR-017</code>), nunca considerados na elegibilidade nem na sugestão de avanço — informativa, não bloqueante.</li>
+      <li><code>FR-048</code> Seção "Pós-aprovação / Contratação", separada e visualmente distinta do plano de submissão: itens em texto livre relevantes só depois da aprovação, explicitamente não-gated (não contam para elegibilidade, veredito ou sugestão de avanço).</li>
     </ul>
 
     <div class="callout">
@@ -183,10 +191,12 @@
       <li>Busca por nome da chamada e filtro por instituição responsável, na tabela e no quadro de progresso; ordenação por data de fechamento na tabela e, dentro de cada coluna, no quadro de progresso.</li>
       <li>Apresentação responsiva da tabela e do quadro de progresso — dados essenciais legíveis em telas estreitas, seis colunas do quadro visíveis sem rolagem horizontal em desktop padrão.</li>
       <li>Página de detalhe de um edital específico, acessível por um ícone de lupa a partir da tabela e do quadro de progresso.</li>
-      <li>Plano de submissão por edital: lista plana de itens (etapas/documentos) definida manualmente pelo captador, cada um com status Pendente/Concluído e um indicador opcional de "essencial para elegibilidade"; registro de documento anexado a um item como metadado (nome/referência), sem envio/armazenamento do arquivo em si.</li>
+      <li>Plano de submissão por edital: lista plana de itens (etapas/documentos) definida manualmente pelo captador, cada um com status Pendente/Concluído, um indicador opcional de "essencial para elegibilidade", categoria opcional (tag de agrupamento visual, sem gate próprio), campos didáticos opcionais ("Em outras palavras"/"Como preencher") e campos opcionais "Responsável"/"Concluído em"; registro de documento anexado a um item como metadado (nome/referência), sem envio/armazenamento do arquivo em si.</li>
       <li>Resumo executivo por edital: pendências de elegibilidade principais (itens essenciais ainda pendentes) mais os dados do edital relevantes para quem decide/acompanha a submissão sem operar o sistema.</li>
+      <li>Barra de resumo/veredito fixa no topo da página de detalhe (gate de elegibilidade, proximidade do prazo, contagem de pendências essenciais) e barra de ações fixa (expandir/recolher tudo, imprimir), além de expandir/recolher por item individual.</li>
+      <li>Seção "Riscos" (avisos/riscos em texto livre, sempre visível, não bloqueante) e seção "Pós-aprovação / Contratação" (itens em texto livre relevantes só após a aprovação, separada e explicitamente não-gated).</li>
       <li>Sugestão (não obrigatória) de avanço de estágio no quadro de progresso, condicionada ao progresso do plano de submissão, com ação de um clique para mover o edital.</li>
-      <li>Exportação em PDF do resumo executivo e do plano de submissão de um edital.</li>
+      <li>Exportação em PDF do resumo executivo e do plano de submissão de um edital; CSS de impressão da página de detalhe como um todo (layout legível ao imprimir, sem cortar conteúdo, ocultando controles de ação).</li>
     </ul>
 
     <h4 id="sl-fora">Fora do escopo (nesta feature)</h4>
