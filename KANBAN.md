@@ -149,12 +149,6 @@ todas as colunas.
   limitação conhecida fora de escopo), não de UX. Protótipo:
   `prototype/avulsa-A001/`. Via teste de persona
   `docs/persona/avulsa-A001.html#dor-2`.
-- [ ] A037 Confirmar/declarar em FR-025 ou FR-029 se "Limpar filtros" deve
-  mesmo resetar o toggle Ativos/Ignorados de volta para "Ativos" (comportamento
-  atual do protótipo, decisão implícita não coberta por nenhum FR) ou se
-  deveria preservar a visão atual e só limpar busca/instituição. Protótipo:
-  `prototype/avulsa-A001/`. Via teste de persona
-  `docs/persona/avulsa-A001.html#dor-3`.
 - [ ] A038 Atualizar o protótipo do quadro Kanban de editais para refletir o
   novo fluxo de submissão: colunas Backlog, Em andamento, Validação,
   Submetido, Aprovado, Não aprovado (substitui "Concluído" por três colunas
@@ -275,6 +269,18 @@ _Nenhuma tarefa em progresso._
   casos, pela mesma lógica). Confirmado ao vivo via browser em 2026-08-03:
   Tabela e Kanban não exibem mais "Vencido" nos três estágios terminais,
   mesmo com `fechamento` no passado.
+- [x] A037 "Limpar filtros" resetava também o toggle Ativos/Ignorados de
+  volta para "Ativos", perdendo o lugar de onde o captador estava — decisão
+  implícita não coberta por nenhum FR. Protótipo: `prototype/avulsa-A001/`.
+  Via teste de persona `docs/persona/avulsa-A001.html#dor-3`. Resolvida:
+  decisão formalizada em `spec.md` (branch `001-manage-call-for-proposals`)
+  — FR-025 passa a cobrir só busca/instituição, FR-029 ganha a contrapartida
+  de que o toggle nunca é resetado por "Limpar filtros" (novo Acceptance
+  Scenario 9 de User Story 4). Protótipo corrigido:
+  `prototype/avulsa-A001/script.js`, listener de `clearFiltersBtn` não
+  chama mais `setMostrarIgnorados(false)`. Confirmado ao vivo via browser
+  em 2026-08-03: na visão "Ignorados" com filtro de instituição ativo,
+  "Limpar filtros" limpa só a instituição e permanece em "Ignorados".
 
 ### (avulsas)
 

@@ -273,14 +273,12 @@ sortFechamento.addEventListener("change", renderTabela);
 clearFiltersBtn.addEventListener("click", () => {
   searchInput.value = "";
   instFilter.value = "";
-  // "Limpar filtros" volta para a visão padrão "Ativos" (FR-028) — chama
-  // setMostrarIgnorados em vez de applyFilters direto, senão os botões do
-  // segmented control ficam com o estado visual desatualizado.
-  // A037 (docs/persona/avulsa-A001.html#dor-3): resetar o toggle Ativos/
-  // Ignorados junto com "Limpar filtros" é uma decisão implícita deste
-  // protótipo, não uma regra confirmada em spec.md — product-owner ainda vai
-  // declarar em FR-025/FR-029 se esse é o comportamento pretendido.
-  setMostrarIgnorados(false);
+  // FR-025/FR-029: "Limpar filtros" reseta busca e filtro de instituição
+  // apenas — o toggle Ativos/Ignorados é uma dimensão de visão separada e
+  // nunca é resetado por este botão (spec.md, Acceptance Scenario 9 de
+  // User Story 4). Chama applyFilters diretamente, sem tocar em
+  // mostrarIgnorados/no segmented control.
+  applyFilters();
 });
 
 // A035 (docs/persona/avulsa-A001.html#dor-1): feedback textual imediato ao
