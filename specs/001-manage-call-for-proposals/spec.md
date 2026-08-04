@@ -290,6 +290,101 @@ ordenados pela proximidade da data de fechamento.
 
 ---
 
+### User Story 5 - Consultar o detalhe de um edital e montar um plano de submissão com resumo executivo (Priority: P5)
+
+Um captador de recursos que já está preparando a proposta de um edital
+específico (estágio "Em andamento" ou além, no quadro de progresso da User
+Story 1) precisa de um lugar único, dedicado àquele edital, para: revisar
+todos os dados já cadastrados dele (User Stories 1 e 2), montar e acompanhar
+um plano de submissão — uma lista de etapas/documentos necessários para
+viabilizar o envio da proposta, cada um marcável como pendente ou concluído
+— e saber, a qualquer momento, quais pendências de elegibilidade ainda
+travam a submissão. Ele também precisa de um resumo executivo dessas
+pendências e dos dados relevantes do edital, pronto para compartilhar fora
+do sistema com quem, na organização proponente, precisa decidir ou
+acompanhar aquela submissão sem operar o sistema (ex.: um coordenador de
+pesquisa — ver Assumptions). Tanto o resumo executivo quanto o plano de
+submissão devem poder ser exportados em PDF para impressão e
+compartilhamento. À medida que o plano de submissão avança, o captador
+espera uma sugestão — nunca uma trava — indicando que já é possível avançar
+o edital para o próximo estágio do quadro de progresso.
+
+**Why this priority**: Depende logicamente de existir um edital cadastrado
+com estágio de acompanhamento (User Story 1) e dados básicos (User Story 2)
+— sem eles não haveria o que detalhar nem em que estágio sugerir avanço.
+Diferente das User Stories 1 a 4, que cobrem a gestão do conjunto de
+editais, esta User Story aprofunda o trabalho dentro de um único edital já
+em preparação ativa — por isso é a de menor prioridade: o gerenciamento
+básico (cadastrar, acompanhar, editar, localizar) já entrega valor completo
+sem ela, e ela ganha valor à medida que a preparação de uma proposta
+específica se torna mais complexa (mais documentos, mais critérios de
+elegibilidade a controlar).
+
+**Independent Test**: Pode ser testado cadastrando um edital, abrindo sua
+página de detalhe pelo ícone de lupa a partir da tabela ou do quadro de
+progresso, adicionando itens ao plano de submissão, marcando um deles como
+essencial para elegibilidade e concluindo-o, e confirmando que: a sugestão
+de avanço aparece quando as condições são atendidas (e some quando deixam
+de ser); o resumo executivo reflete as pendências de elegibilidade ainda
+abertas; e tanto o resumo executivo quanto o plano de submissão podem ser
+exportados em PDF.
+
+**Acceptance Scenarios**:
+
+1. **Given** um edital cadastrado aparece na tabela ou no quadro de
+   progresso, **When** o captador aciona o ícone de lupa associado a esse
+   edital, **Then** o sistema abre uma página de detalhe exclusiva daquele
+   edital, exibindo seus dados já cadastrados (FR-001, FR-006, FR-007), o
+   plano de submissão e o resumo executivo.
+2. **Given** o captador está na página de detalhe de um edital, **When** ele
+   adiciona um novo item ao plano de submissão informando uma descrição,
+   **Then** o sistema salva o item com status "Pendente" e o exibe na lista
+   do plano de submissão daquele edital.
+3. **Given** um item do plano de submissão, **When** o captador marca esse
+   item como "essencial para elegibilidade", **Then** o sistema passa a
+   considerá-lo nas pendências de elegibilidade do resumo executivo enquanto
+   ele permanecer "Pendente".
+4. **Given** um item do plano de submissão em status "Pendente", **When** o
+   captador registra a referência do documento correspondente (nome do
+   arquivo ou anotação de onde ele está guardado, sem enviar o arquivo em
+   si — FR-036), **Then** o sistema marca o item como "Concluído" e atualiza
+   o progresso do plano de submissão exibido na página.
+5. **Given** todos os itens marcados como "essenciais para elegibilidade" no
+   plano de submissão de um edital estão "Concluído" (havendo ao menos um
+   item essencial cadastrado) e o edital está no estágio "Em andamento",
+   **When** o captador visualiza a página de detalhe, **Then** o sistema
+   exibe uma sugestão visível para avançar o edital para "Validação" (ex.:
+   "Habilitado para ir a Validação"), com uma ação que, ao ser acionada,
+   move o edital para esse estágio (FR-009, FR-010).
+6. **Given** 100% dos itens do plano de submissão de um edital (essenciais e
+   não essenciais) estão "Concluído" (havendo ao menos um item cadastrado) e
+   o edital está no estágio "Validação", **When** o captador visualiza a
+   página de detalhe, **Then** o sistema exibe uma sugestão para avançar o
+   edital para "Submetido", com a mesma ação de um clique.
+7. **Given** uma sugestão de avanço está sendo exibida, **When** o captador
+   desmarca um item já "Concluído" (reduzindo o progresso do plano de
+   submissão abaixo do limiar aplicável), **Then** a sugestão deixa de ser
+   exibida, sem que o sistema altere automaticamente o estágio atual do
+   edital — mover continua sendo sempre uma decisão explícita do captador
+   (FR-009).
+8. **Given** a página de detalhe de um edital, **When** o captador aciona o
+   resumo executivo, **Then** o sistema exibe as pendências de elegibilidade
+   principais (itens essenciais ainda "Pendente") junto aos dados do edital
+   relevantes para decisão (nome da chamada, instituição responsável, prazo
+   de fechamento, estágio de acompanhamento atual, documentação exigida e
+   critérios de avaliação já cadastrados).
+9. **Given** o resumo executivo de um edital está sendo exibido, **When** o
+   captador aciona a exportação em PDF do resumo executivo, **Then** o
+   sistema gera um arquivo PDF com esse conteúdo, apto para impressão e
+   compartilhamento fora do sistema.
+10. **Given** o plano de submissão de um edital está sendo exibido, **When**
+    o captador aciona a exportação em PDF do plano de submissão, **Then** o
+    sistema gera um arquivo PDF com a lista de itens, seus status
+    (Pendente/Concluído) e quais são essenciais para elegibilidade, apto
+    para impressão e compartilhamento fora do sistema.
+
+---
+
 ### Edge Cases
 
 - O que acontece quando um edital cadastrado não tem link oficial disponível
@@ -339,6 +434,15 @@ ordenados pela proximidade da data de fechamento.
   uma coluna que teria conteúdo sem o filtro; uma coluna vazia sem filtro
   ativo já comunica sem ambiguidade "nenhum edital neste estágio ainda" e não
   precisa de texto extra. Ver Clarifications (sessão 2026-07-31).
+- Como o sistema trata um plano de submissão (User Story 5) sem nenhum item
+  cadastrado, ou sem nenhum item marcado como "essencial para
+  elegibilidade"? Resolução: a sugestão de avanço de estágio (FR-038) exige
+  ao menos um item essencial concluído (para sugerir a transição Em
+  andamento → Validação) ou ao menos um item cadastrado com 100% concluído
+  (para sugerir a transição Validação → Submetido) — em nenhum dos dois
+  casos a ausência de itens satisfaz a condição por vacuidade, então a
+  sugestão simplesmente não aparece até existir conteúdo real no plano de
+  submissão.
 
 ## Requirements *(mandatory)*
 
@@ -594,6 +698,101 @@ ordenados pela proximidade da data de fechamento.
   implementado e confirmado ao vivo no protótipo `prototype/avulsa-A001/`
   (tasks A002 e A003 do quadro do projeto), que nunca havia sido registrado
   como requisito.
+- **FR-032**: O sistema DEVE oferecer, a partir de cada edital exibido na
+  tabela (FR-001) e no quadro de progresso (FR-002), um ícone de lupa que
+  leva o captador a uma página de detalhe exclusiva daquele edital, reunindo
+  os dados já cadastrados (FR-001, FR-006, FR-007), o plano de submissão
+  (FR-033 a FR-036), a sugestão de avanço no quadro de progresso quando
+  aplicável (FR-038) e o resumo executivo (FR-037).
+- **FR-033**: O sistema DEVE permitir que o captador adicione, na página de
+  detalhe de um edital, itens ao plano de submissão daquele edital, cada um
+  com uma descrição em texto informada pelo captador (ex.: "Balanço
+  assinado pelo contador", "Anuência da ICT parceira"). Cada item recém-
+  adicionado começa com status "Pendente" (FR-034). Decisão de escopo: o
+  plano de submissão desta feature é uma lista plana de itens definida
+  manualmente pelo captador, sem fases/etapas pré-estruturadas específicas
+  de cada edital — formalizar fases exigiria um modelo configurável por
+  edital que não foi pedido nesta rodada; documentação exigida (FR-006) e
+  critérios de avaliação (FR-007) continuam sendo a referência de conteúdo
+  que o captador consulta para decidir quais itens criar. Este FR não
+  reabre FR-017: documentação exigida e critérios de avaliação continuam
+  sendo texto livre, sem controle individual de status — o plano de
+  submissão é uma lista separada e adicional, específica desta página de
+  detalhe, não uma reinterpretação desses dois campos.
+- **FR-034**: O sistema DEVE permitir que o captador altere o status de
+  qualquer item do plano de submissão entre "Pendente" e "Concluído", e DEVE
+  exibir, na página de detalhe, quantos itens do plano de submissão já estão
+  "Concluído" em relação ao total cadastrado.
+- **FR-035**: O sistema DEVE permitir que o captador marque qualquer item do
+  plano de submissão como "essencial para elegibilidade" (e desmarque essa
+  indicação a qualquer momento), sinalizando que a ausência desse item
+  bloqueia a elegibilidade da proposta perante o edital. Este atributo é
+  independente do status "Pendente"/"Concluído" (FR-034) — um item pode ser
+  essencial e pendente, essencial e concluído, ou não essencial em qualquer
+  status.
+- **FR-036**: O sistema DEVE permitir que o captador registre, para um item
+  do plano de submissão, uma referência ao documento correspondente (ex.:
+  nome do arquivo ou uma anotação livre de onde ele está guardado), sem
+  exigir o envio/armazenamento do arquivo em si nesta feature — o efeito de
+  registrar essa referência é marcar o item como "Concluído" (FR-034).
+  Decisão de escopo: o envio real de arquivo (upload com armazenamento no
+  sistema) fica fora desta rodada porque o projeto ainda não tem uma stack
+  de armazenamento de arquivo definida (dev usa SQLite, sem serviço de
+  storage configurado); tratar apenas o metadado agora entrega o valor
+  central pedido — saber o que já foi providenciado — sem introduzir uma
+  decisão de infraestrutura nova por baixo de uma spec de negócio. Ver
+  Assumptions para o registro deste corte como candidato a feature futura.
+- **FR-037**: O sistema DEVE oferecer, na página de detalhe de um edital
+  (FR-032), um resumo executivo que reúne: (a) as pendências de
+  elegibilidade principais — os itens do plano de submissão marcados como
+  "essenciais para elegibilidade" (FR-035) que ainda estão com status
+  "Pendente" (FR-034); e (b) os dados do próprio edital relevantes para
+  quem precisa decidir ou acompanhar a submissão sem operar o sistema (nome
+  da chamada, instituição responsável, data de fechamento, estágio de
+  acompanhamento atual, documentação exigida e critérios de avaliação já
+  cadastrados — FR-001, FR-006, FR-007). Quando não houver nenhuma
+  pendência de elegibilidade em aberto, o sistema DEVE indicar isso
+  explicitamente (ex.: "Nenhuma pendência de elegibilidade em aberto"), em
+  vez de exibir a seção vazia sem explicação.
+- **FR-038**: O sistema DEVE exibir, na página de detalhe (FR-032), uma
+  sugestão visível para avançar o edital ao próximo estágio do quadro de
+  progresso (FR-002) quando as seguintes condições, mensuráveis a partir do
+  plano de submissão, forem atendidas: (a) de "Em andamento" para
+  "Validação" — existe pelo menos um item marcado como "essencial para
+  elegibilidade" (FR-035) e todos os itens essenciais estão "Concluído"
+  (FR-034); (b) de "Validação" para "Submetido" — existe pelo menos um item
+  cadastrado no plano de submissão e 100% dos itens (essenciais e não
+  essenciais) estão "Concluído". Em nenhum dos dois casos a ausência de
+  itens satisfaz a condição por vacuidade (ver Edge Cases). A sugestão inclui
+  uma ação que, ao ser acionada, move o edital para o estágio sugerido,
+  usando o mesmo mecanismo de FR-009/FR-010, e desaparece imediatamente se o
+  progresso do plano de submissão cair abaixo do limiar aplicável (ex.: o
+  captador desmarca um item já concluído), sem mover automaticamente o
+  edital de volta a um estágio anterior. Decisão de escopo: esta sugestão
+  cobre apenas as transições Em andamento→Validação e Validação→Submetido,
+  as duas em que o progresso do plano de submissão tem relação direta e
+  mensurável com o momento de avançar; os demais estágios (Backlog,
+  Submetido→Aprovado/Não aprovado) dependem de decisões que o plano de
+  submissão não modela (início de trabalho, resultado do financiador) e
+  permanecem fora do mecanismo de sugestão. O pedido original também
+  mencionava uma sugestão para "retroceder" — decisão de produto: não é
+  formalizada como um mecanismo novo porque mover um edital para qualquer
+  coluna anterior já é livre e sem guarda de ordem hoje (FR-009); uma
+  sugestão condicional ao progresso do plano de submissão faria sentido
+  apenas para avançar, nunca para retroceder.
+- **FR-039**: O sistema DEVE permitir que o captador exporte o resumo
+  executivo (FR-037) de um edital como um arquivo PDF, contendo os mesmos
+  dados exibidos na tela, apto para impressão e compartilhamento fora do
+  sistema (ex.: com um coordenador de pesquisa da organização proponente,
+  que não precisa ter acesso ao sistema para consultar essas informações —
+  ver Assumptions). O mecanismo técnico de geração do PDF fica em aberto
+  para a fase de planejamento técnico.
+- **FR-040**: O sistema DEVE permitir que o captador exporte o plano de
+  submissão (FR-033 a FR-036) de um edital como um arquivo PDF, contendo a
+  lista de itens, seus status (Pendente/Concluído) e a indicação de quais
+  são essenciais para elegibilidade, apto para impressão e compartilhamento
+  fora do sistema. O mecanismo técnico de geração do PDF fica em aberto para
+  a fase de planejamento técnico.
 
 ### Key Entities
 
@@ -616,6 +815,15 @@ ordenados pela proximidade da data de fechamento.
   (nunca ambos ao mesmo tempo), registrando o resultado do edital junto ao
   financiador, mas não sequenciais um em relação ao outro (ver FR-002).
   Cada edital tem exatamente um estágio ativo por vez.
+- **Item do Plano de Submissão**: representa uma etapa ou documento
+  necessário para viabilizar o envio da proposta de um edital específico,
+  dentro da página de detalhe desse edital (FR-032). Atributos: descrição
+  (texto livre, definida pelo captador), status (Pendente ou Concluído,
+  padrão Pendente — FR-034), indicador de "essencial para elegibilidade"
+  (sim/não, padrão não — FR-035), e referência ao documento correspondente
+  quando registrada (metadado em texto — nome do arquivo ou anotação de
+  localização; não armazena o arquivo em si nesta feature, ver FR-036).
+  Pertence a exatamente um edital; não existe independentemente dele.
 
 ## Success Criteria *(mandatory)*
 
@@ -647,6 +855,15 @@ ordenados pela proximidade da data de fechamento.
   de progresso, e depois localizá-lo e desmarcá-lo, recuperando-o
   integralmente (dados e estágio) sem ter perdido nenhuma informação
   previamente registrada.
+- **SC-008**: Um captador consegue montar e acompanhar o plano de submissão
+  de um edital (adicionar itens, marcá-los como concluídos, marcar quais são
+  essenciais para elegibilidade) e recebe uma sugestão clara de avanço no
+  quadro de progresso assim que as condições são atendidas, sem precisar
+  calcular manualmente se o edital já pode avançar de estágio.
+- **SC-009**: Um captador consegue gerar, em poucos cliques, um PDF do
+  resumo executivo e um PDF do plano de submissão de um edital, prontos para
+  impressão e compartilhamento fora do sistema com quem precisa decidir ou
+  acompanhar aquela submissão.
 
 ## Assumptions
 
@@ -682,3 +899,23 @@ ordenados pela proximidade da data de fechamento.
   Story 2 for implementada (candidato natural: autocomplete a partir das
   instituições já cadastradas pelo mesmo captador), sem bloquear o
   fechamento desta spec nem virar FR condicional nesta rodada.
+- Assume-se que "coordenador de pesquisa" (User Story 5) não é um ator do
+  sistema nesta feature — ele não tem login nem acesso direto ao
+  gerenciamento de editais, que permanece estritamente restrito ao captador
+  que cadastrou cada edital (FR-015, FR-016). O resumo executivo é desenhado
+  para ser útil a esse leitor, mas chega até ele por fora do sistema (ex.:
+  PDF impresso ou enviado por e-mail pelo captador — FR-039), não por um
+  acesso concedido dentro da aplicação. Colaboração multiusuário real (um
+  coordenador de pesquisa logado, revisando editais dentro do sistema)
+  permanece fora de escopo, na mesma linha de FR-016.
+- Assume-se que o registro de documentos no plano de submissão (FR-036)
+  cobre apenas o metadado (referência/nome do documento), não o envio e
+  armazenamento do arquivo em si — o projeto ainda não tem uma stack de
+  armazenamento de arquivo definida nesta fase (`app/` é um scaffold Django
+  com SQLite em dev, sem serviço de storage configurado). Upload real de
+  arquivo fica registrado aqui como candidato a uma feature futura, sem
+  bloquear o fechamento desta rodada.
+- Assume-se que o mecanismo técnico de geração dos PDFs de resumo executivo
+  (FR-039) e de plano de submissão (FR-040) fica em aberto para a fase de
+  planejamento técnico — esta spec não prescreve biblioteca ou serviço de
+  geração.

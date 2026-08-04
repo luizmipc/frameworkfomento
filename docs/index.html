@@ -99,6 +99,19 @@
       <li><code>FR-026</code> Mensagem de estado vazio ("Nenhum edital encontrado com esses critérios.") em qualquer coluna do quadro de progresso que fique sem editais por causa de busca/filtro ativo.</li>
     </ul>
 
+    <h4 id="fr-detalhe">Detalhe do edital e plano de submissão (User Story 5 — P5)</h4>
+    <ul>
+      <li><code>FR-032</code> Ícone de lupa, na tabela e no quadro de progresso, que leva a uma página de detalhe exclusiva do edital — reúne os dados já cadastrados, o plano de submissão, a sugestão de avanço de estágio e o resumo executivo.</li>
+      <li><code>FR-033</code> Plano de submissão: lista plana de itens (etapas/documentos) adicionados manualmente pelo captador, cada um com descrição em texto livre; sem fases pré-estruturadas por edital. Não reabre <code>FR-017</code> — documentação exigida e critérios de avaliação continuam texto livre sem controle de status.</li>
+      <li><code>FR-034</code> Cada item do plano de submissão tem status "Pendente" ou "Concluído", alternável pelo captador; a página exibe o progresso (concluídos/total).</li>
+      <li><code>FR-035</code> Um item pode ser marcado como "essencial para elegibilidade" — sinaliza que sua ausência bloqueia a elegibilidade da proposta, independente do status Pendente/Concluído.</li>
+      <li><code>FR-036</code> Registro de documento anexado a um item como metadado (nome/referência), sem envio/armazenamento do arquivo em si nesta rodada — registrar a referência marca o item como "Concluído".</li>
+      <li><code>FR-037</code> Resumo executivo: reúne as pendências de elegibilidade principais (itens essenciais ainda "Pendente") e os dados do edital relevantes para quem decide/acompanha sem operar o sistema (nome, instituição, prazo, estágio, documentação exigida, critérios de avaliação).</li>
+      <li><code>FR-038</code> Sugestão de avanço de estágio na página de detalhe: Em andamento→Validação quando todos os itens essenciais estão concluídos (havendo ao menos um); Validação→Submetido quando 100% dos itens estão concluídos (havendo ao menos um cadastrado). Ação de um clique move o edital (<code>FR-009</code>/<code>FR-010</code>); nenhuma sugestão equivalente para retroceder, já livre via <code>FR-009</code>.</li>
+      <li><code>FR-039</code> Exportação do resumo executivo como PDF, apto para impressão/compartilhamento fora do sistema.</li>
+      <li><code>FR-040</code> Exportação do plano de submissão (itens, status, indicação de essencial) como PDF.</li>
+    </ul>
+
     <div class="callout">
       Nenhuma outra feature foi especificada até o momento além de "Gerenciamento de Editais de Fomento". Esta seção será expandida conforme novas specs forem criadas.
     </div>
@@ -169,6 +182,11 @@
       <li>Gerenciamento individual: cada captador só cadastra, acompanha e edita os próprios editais.</li>
       <li>Busca por nome da chamada e filtro por instituição responsável, na tabela e no quadro de progresso; ordenação por data de fechamento na tabela e, dentro de cada coluna, no quadro de progresso.</li>
       <li>Apresentação responsiva da tabela e do quadro de progresso — dados essenciais legíveis em telas estreitas, seis colunas do quadro visíveis sem rolagem horizontal em desktop padrão.</li>
+      <li>Página de detalhe de um edital específico, acessível por um ícone de lupa a partir da tabela e do quadro de progresso.</li>
+      <li>Plano de submissão por edital: lista plana de itens (etapas/documentos) definida manualmente pelo captador, cada um com status Pendente/Concluído e um indicador opcional de "essencial para elegibilidade"; registro de documento anexado a um item como metadado (nome/referência), sem envio/armazenamento do arquivo em si.</li>
+      <li>Resumo executivo por edital: pendências de elegibilidade principais (itens essenciais ainda pendentes) mais os dados do edital relevantes para quem decide/acompanha a submissão sem operar o sistema.</li>
+      <li>Sugestão (não obrigatória) de avanço de estágio no quadro de progresso, condicionada ao progresso do plano de submissão, com ação de um clique para mover o edital.</li>
+      <li>Exportação em PDF do resumo executivo e do plano de submissão de um edital.</li>
     </ul>
 
     <h4 id="sl-fora">Fora do escopo (nesta feature)</h4>
@@ -186,7 +204,15 @@
     </details>
     <details open>
       <summary>Checklist estruturado de documentação</summary>
-      <p>Documentação exigida e critérios de avaliação são texto livre descritivo, sem marcação individual "atendido/pendente" por item.</p>
+      <p>Documentação exigida e critérios de avaliação (dados de cadastro do edital, FR-006/FR-007) continuam sendo texto livre descritivo, sem marcação individual "atendido/pendente" por item. Isso não se aplica ao plano de submissão (User Story 5): ali, cada item tem status Pendente/Concluído e um indicador de essencial para elegibilidade — uma lista separada e adicional, específica da página de detalhe de um edital, que não retroage sobre a documentação exigida/critérios de avaliação do cadastro.</p>
+    </details>
+    <details open>
+      <summary>Upload real de arquivo</summary>
+      <p>Registrar um documento anexado a um item do plano de submissão (User Story 5) grava apenas um metadado (nome/referência do documento) — não há envio nem armazenamento do arquivo em si nesta feature, por falta de uma stack de armazenamento de arquivo definida no projeto. Candidato a feature futura.</p>
+    </details>
+    <details open>
+      <summary>Coordenador de pesquisa como ator do sistema</summary>
+      <p>O "coordenador de pesquisa" mencionado no resumo executivo (User Story 5) não é um usuário logado nem tem acesso direto ao sistema nesta feature — ele recebe o resumo executivo por fora do sistema (ex.: PDF impresso ou enviado pelo captador). Colaboração multiusuário real permanece fora de escopo (FR-016).</p>
     </details>
     <details open>
       <summary>Integração automática com fontes externas de editais</summary>
