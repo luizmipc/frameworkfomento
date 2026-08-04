@@ -446,12 +446,20 @@ function updateMoveButtons() {
   document.querySelectorAll(".card").forEach((card) => {
     const edital = editais.find((e) => e.id === card.dataset.id);
     const idx = STATUSES.indexOf(edital.status);
-    card.querySelector('[data-dir="-1"]').disabled = idx === 0;
-    // A039: além do último índice de STATUSES, qualquer estágio terminal do
-    // funil (Aprovado/Não aprovado) desabilita "→" — não há um "próximo"
-    // entre os dois.
+    // A039/A041: além das bordas do array, nenhuma seta pode mover o card
+    // entre dois estágios terminais do funil (Aprovado/Não aprovado) — eles
+    // são mutuamente exclusivos e sem ordem entre si, então tanto "←" quanto
+    // "→" desabilitam quando o estágio atual E o estágio de destino nessa
+    // direção estão ambos em ESTAGIOS_TERMINAIS_FUNIL. Drag-and-drop
+    // continua sendo o único caminho para essa correção manual específica.
+    const destinoAnterior = STATUSES[idx - 1];
+    const destinoSeguinte = STATUSES[idx + 1];
+    const terminalAtual = ESTAGIOS_TERMINAIS_FUNIL.includes(edital.status);
+    card.querySelector('[data-dir="-1"]').disabled =
+      idx === 0 || (terminalAtual && ESTAGIOS_TERMINAIS_FUNIL.includes(destinoAnterior));
     card.querySelector('[data-dir="1"]').disabled =
-      idx === STATUSES.length - 1 || ESTAGIOS_TERMINAIS_FUNIL.includes(edital.status);
+      idx === STATUSES.length - 1 ||
+      (terminalAtual && ESTAGIOS_TERMINAIS_FUNIL.includes(destinoSeguinte));
   });
 }
 

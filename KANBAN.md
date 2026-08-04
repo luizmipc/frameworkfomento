@@ -281,6 +281,24 @@ _Nenhuma tarefa em progresso._
   chama mais `setMostrarIgnorados(false)`. Confirmado ao vivo via browser
   em 2026-08-03: na visão "Ignorados" com filtro de instituição ativo,
   "Limpar filtros" limpa só a instituição e permanece em "Ignorados".
+- [x] A041 Correção da A039 (Done) ficou incompleta: a seta "→" foi
+  desabilitada em estágios terminais, mas a seta "←" a partir de "Não
+  aprovado" continuava habilitada e movia o card silenciosamente de volta
+  para "Aprovado" — o mesmo problema da Dor 4 original
+  (`docs/persona/avulsa-A001.html#dor-4`), só que na direção oposta.
+  Encontrado numa revisão de regressão ao vivo em 2026-08-03, depois da
+  A039 já estar em Done — não reabriu a A039, seguiu como task nova,
+  conforme convenção do projeto. Lição aprendida registrada em
+  `.claude/agents/designer.md` (2026-08-03). Protótipo:
+  `prototype/avulsa-A001/`. Corrigida: `updateMoveButtons()` generalizado
+  para as duas direções — cada seta desabilita quando o estágio atual E o
+  estágio de destino nessa direção (`STATUSES[idx - 1]` para "←",
+  `STATUSES[idx + 1]` para "→") estão ambos em `ESTAGIOS_TERMINAIS_FUNIL`,
+  sem depender da ordem do array. Confirmado ao vivo via browser em
+  2026-08-03: card em "Não aprovado" tem "←" e "→" desabilitados; card em
+  "Aprovado" mantém "←" habilitado (volta a "Submetido", correção
+  legítima) e "→" desabilitado; drag-and-drop continua livre para a
+  correção manual entre os dois terminais.
 
 ### (avulsas)
 

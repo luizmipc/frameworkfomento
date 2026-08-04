@@ -125,3 +125,25 @@ renderizam.
   em outro canto da tela — aplique isso por padrão ao desenhar qualquer
   toggle/ação equivalente daqui em diante, sem esperar um terceiro achado
   de persona apontar a mesma lacuna.
+
+- **2026-08-03**: a task A039 (`docs/persona/avulsa-A001.html#dor-4`)
+  pedia para a seta "→" parar de mover um card silenciosamente de
+  "Aprovado" para "Não aprovado" — dois estágios terminais mutuamente
+  exclusivos, sem ordem entre si, armazenados como os dois últimos itens
+  de um array linear (`STATUSES`) que também define a ordem de avanço do
+  funil. A correção aplicada desabilitou "→" (`dir=+1`) quando o estágio
+  atual é um dos dois terminais — resolveu exatamente o caso relatado, mas
+  deixou passar o caso simétrico: a seta "←" (`dir=-1`) a partir de "Não
+  aprovado" continuava habilitada e movia o card, com o mesmo silêncio, de
+  volta para "Aprovado" — o problema original inteiro, só que pela direção
+  oposta. Uma revisão de regressão ao vivo (não a rodada de persona que
+  fechou a A039) encontrou isso depois da task já estar em Done. Regra:
+  quando dois estágios terminais/mutuamente exclusivos são modelados como
+  posições adjacentes de um array ordenado que também serve para "avançar
+  o funil" (`STATUSES`+setas `←`/`→`), uma correção de affordance entre
+  eles precisa desabilitar a transição **nas duas direções** — verifique
+  explicitamente `STATUSES[idx-1]` e `STATUSES[idx+1]`, não só o sentido
+  que o relatório de persona descreveu. Testar ao vivo apenas o gesto
+  citado no achado original (aqui, só "→" repetido) não é suficiente
+  quando a mudança envolve um par de estados simétricos — teste o par
+  inteiro, nas duas direções, antes de marcar a task como concluída.
