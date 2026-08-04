@@ -556,7 +556,8 @@ body {
   gap: 0.15rem;
 }
 
-.mini input {
+.mini input,
+.mini select {
   font: inherit;
   font-size: 0.85rem;
   color: var(--text);
@@ -585,6 +586,139 @@ body {
   font-size: 0.85rem;
   color: var(--text);
   background: var(--surface);
+}
+
+/* Link externo opcional por item (ex.: lista de exclusão, formulário
+   oficial) — inline junto da descrição, mesmo padrão da referência. */
+.item-link {
+  margin-left: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+/* Badge "pergunta em aberto" — independente de essencial/informativo,
+   empilhável com qualquer um dos dois. */
+.badge-q {
+  background: var(--amber-bg);
+  color: var(--amber);
+  border: 1px solid var(--amber-border);
+}
+
+/* Campo estruturado opcional por item (extra) e observação livre
+   (textarea) — mesmo espaçamento/indentação do bloco didático e do
+   resp-row, para ficarem visualmente no mesmo "trilho" de detalhes do
+   item. Conteúdo (rótulo/tipo) é montado em JS por variar por item. */
+.item-extra-slot,
+.item-textarea-slot {
+  margin: 0 0 0.5rem 1.6rem;
+  max-width: 420px;
+}
+
+.item-extra-slot:empty,
+.item-textarea-slot:empty {
+  margin: 0;
+}
+
+.item-textarea-slot textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.3rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--surface);
+  resize: vertical;
+  min-height: 2.4rem;
+}
+
+/* Identificação do proponente — grade de campos editáveis, mesmo padrão
+   visual de .field-list mas com <input> em vez de <dd> estático. */
+.ident-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+}
+
+.ident-grid input {
+  font: inherit;
+  font-size: 0.88rem;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 0.3rem;
+  padding: 0.4rem 0.55rem;
+  background: var(--surface);
+  width: 100%;
+}
+
+/* Item do tipo "condicional" (radio + sub-checklist ramificado) e do tipo
+   "radio" (cenários mutuamente exclusivos + campos extras) — mesmo
+   mecanismo do Arranjo Simples/Rede e do teste financeiro da referência,
+   genericizado. Reaproveita .mini para os campos extras. */
+.crit-label {
+  margin: 0 0 0.3rem;
+  font-size: 0.9rem;
+}
+
+.crit-label strong {
+  font-weight: 600;
+}
+
+.radio-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin: 0.5rem 0 0.4rem 1.6rem;
+}
+
+.radio-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  max-width: 320px;
+  cursor: pointer;
+}
+
+.radio-opt input {
+  margin-top: 0.2rem;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.branch {
+  margin: 0.4rem 0 0.4rem 2.4rem;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.crit-sub {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.crit-sub input {
+  margin-top: 0.2rem;
+  flex: none;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.item-extras-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.5rem 1.6rem;
+}
+
+.item-extras-row .mini {
+  max-width: 200px;
 }
 
 /* Formulário de novo item */

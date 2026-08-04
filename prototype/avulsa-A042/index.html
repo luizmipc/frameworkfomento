@@ -29,7 +29,31 @@
      e barra de veredito reescritos para uma fórmula única aplicada ao grupo
      do estágio atual do edital (ver gateStatus()/computeSuggestion() em
      script.js), reutilizada nas 3 transições Elegibilidade→Em andamento→
-     Validação→Submetido. -->
+     Validação→Submetido.
+
+     2026-08-04 (2ª revisão): paridade de campos com
+     docs/submissions/timeline-submission-finep-digital.html — usuário
+     apontou que faltavam mecanismos inteiros do artefato de referência, não
+     só polimento visual. Adicionados: seção "Identificação do proponente"
+     (script.js `identificacao`, antes ausente); campo estruturado opcional
+     por item (`item.extra` — texto/data/select, ver renderExtra() em
+     script.js); link externo opcional por item (`item.link`); observação
+     livre opcional por item (`item.textarea`); badge "pergunta em aberto"
+     [?] (`item.openQuestion`, também usado em `riscos`); um item do tipo
+     "condicional" com radio + sub-checklist ramificado (ver `tipo:
+     'condicional'`/`branches` em script.js, mesmo mecanismo do
+     Arranjo Simples/Rede da referência); um item do tipo "radio" com
+     cenários mutuamente exclusivos + campos extras por cenário (`tipo:
+     'radio'`/`extras`); contador de "perguntas em aberto" na barra de
+     resumo; e persistência via `localStorage` (ausente até então — o
+     protótipo perdia todo o estado a cada recarregamento), serializando o
+     modelo de dados (`identificacao`/`edital`/`planoItems`) em vez de
+     percorrer o DOM cru como a referência faz, já que aqui a renderização
+     já é toda orientada a dados. PDF continua simulado via toast — gerar um
+     PDF AcroForm real (como a referência faz, via jsPDF vendorizado) é
+     decisão de mecanismo técnico, não um "campo" da UI, e FR-039/FR-040 já
+     deixam esse mecanismo deliberadamente em aberto para a fase de plano do
+     dev. -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detalhe do edital — Protótipo A042</title>
@@ -69,6 +93,10 @@
       <span class="label">Pendências essenciais</span>
       <span class="value" id="pendencias-count">–</span>
     </div>
+    <div class="summary-item">
+      <span class="label">Perguntas em aberto</span>
+      <span class="value" id="open-questions-count">–</span>
+    </div>
   </div>
 </header>
 
@@ -89,6 +117,21 @@
         <div><dt>Documentação exigida</dt><dd id="edital-documentacao"></dd></div>
         <div><dt>Critérios de avaliação</dt><dd id="edital-criterios"></dd></div>
       </dl>
+    </section>
+
+    <!-- Identificação do proponente: dados de quem está submetendo, não do
+         edital em si — preenchidos e persistidos aqui (equivalente ao bloco
+         "Identificação do proponente" da referência), reaproveitados no
+         resumo executivo e na exportação em PDF. -->
+    <section class="panel" id="identificacao">
+      <h2>Identificação do proponente</h2>
+      <p class="section-note">Preencha só o que já se sabe — nada aqui é inventado pela ferramenta.</p>
+      <div class="ident-grid">
+        <label class="mini"><span>Organização proponente (razão social)</span><input type="text" id="id-organizacao" placeholder="&lt;&lt;PREENCHER&gt;&gt;"></label>
+        <label class="mini"><span>CNPJ</span><input type="text" id="id-cnpj" placeholder="&lt;&lt;PREENCHER&gt;&gt;"></label>
+        <label class="mini"><span>Instituição parceira (se aplicável)</span><input type="text" id="id-parceira" placeholder="&lt;&lt;PREENCHER&gt;&gt;"></label>
+        <label class="mini"><span>Responsável pela captação</span><input type="text" id="id-responsavel" placeholder="&lt;&lt;PREENCHER&gt;&gt;"></label>
+      </div>
     </section>
 
     <!-- Sempre visível, fora do plano de submissão — nunca gated por nenhum
@@ -214,12 +257,18 @@
       <label class="plano-item-check">
         <input type="checkbox" class="item-concluido">
         <span class="item-desc"></span>
+        <a class="item-link hidden" target="_blank" rel="noopener"></a>
       </label>
       <div class="item-badges">
         <!-- FR-033 (2026-08-04): o estágio (antes "categoria" de texto livre)
              agora é comunicado pelo agrupamento visual da seção, não por um
-             badge por item — ver .plano-group em index.html/style.css. -->
+             badge por item — ver .plano-group em index.html/style.css.
+             Essencial/Informativo são mutuamente exclusivos (sempre um dos
+             dois, como [E]/[C] na referência); "pergunta em aberto" é um
+             terceiro badge independente, empilhável com qualquer um. -->
         <span class="badge badge-e badge-essencial hidden" title="Essencial para elegibilidade">Essencial</span>
+        <span class="badge badge-c badge-informativo hidden" title="Informativo — não bloqueia o avanço de estágio">Informativo</span>
+        <span class="badge badge-q badge-aberta hidden" title="Pergunta em aberto — confirme antes de dar como resolvido">[?]</span>
       </div>
       <button type="button" class="item-toggle no-print" aria-label="Expandir/recolher detalhes do item">▾</button>
     </div>
@@ -232,6 +281,14 @@
         <p class="leigo hidden">💬 <strong>Em outras palavras:</strong> <span class="leigo-text"></span></p>
         <p class="comofazer hidden">🧭 <strong>Como preencher:</strong> <span class="comofazer-text"></span></p>
       </div>
+      <!-- Campo estruturado opcional por item (ex.: "Valor solicitado (R$)",
+           "Linha temática") — tipo/rótulo variam por item, por isso o
+           conteúdo é montado em JS (renderExtra()) em vez de markup fixo
+           aqui; este <div> só serve de slot. -->
+      <div class="item-extra-slot"></div>
+      <!-- Observação livre opcional por item (textarea), distinta do campo
+           estruturado acima — rótulo também montado em JS. -->
+      <div class="item-textarea-slot"></div>
       <div class="resp-row">
         <label class="mini"><span>Responsável</span><input type="text" class="item-resp" placeholder="Nome"></label>
         <label class="mini"><span>Concluído em</span><input type="date" class="item-concluido-em"></label>
