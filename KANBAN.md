@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-04T08:45Z
+**Última sincronização**: 2026-08-04T11:46Z
 
 ## To Do
 
@@ -178,28 +178,38 @@ todas as colunas.
   de pesquisa), exportação em PDF do resumo executivo e do plano de
   submissão, e uma sugestão (nunca uma trava) para avançar o estágio no
   Kanban conforme o plano avança; além disso, barra de resumo/veredito
-  no topo, barra de ações fixa (expandir/recolher tudo, imprimir,
+  no topo (gate + prazo + pendências essenciais + perguntas em
+  aberto), barra de ações fixa (expandir/recolher tudo, imprimir,
   exportar), campos didáticos opcionais por item ("Em outras
   palavras"/"Como preencher"), responsável/concluído-em por item,
-  seção Riscos e seção Pós-aprovação/Contratação sempre visíveis e
-  não-bloqueantes, e CSS de impressão. Cada item do plano tem
-  associação obrigatória a um dos 4 estágios válidos do Kanban
-  (Elegibilidade, Em andamento, Validação, Submetido — ver A043), e o
-  plano é exibido agrupado visualmente por esses 4 estágios; o gate/
-  sugestão de avanço usa uma única fórmula reaproveitada nas 3
-  transições intermediárias: itens essenciais do grupo do estágio
-  atual concluídos (havendo ao menos um) → sugere avançar. Conforme
-  User Story 5 (P5), FR-032 a FR-048 em
+  campo estruturado opcional por item (texto/data/data-hora/seleção),
+  link externo e observação livre opcionais por item, indicador de
+  "pergunta em aberto" (item, sub-requisito ou risco), item condicional
+  (modalidades mutuamente exclusivas com sub-requisitos ramificados) e
+  item de cenário (cenários mutuamente exclusivos + campos de apoio)
+  como alternativas ao checkbox simples, seção "Identificação do
+  proponente", seção Riscos e seção Pós-aprovação/Contratação sempre
+  visíveis e não-bloqueantes, persistência do estado da página entre
+  sessões (sem exigir login adicional), e CSS de impressão. Cada item
+  do plano tem associação obrigatória a um dos 4 estágios válidos do
+  Kanban (Elegibilidade, Em andamento, Validação, Submetido — ver
+  A043), e o plano é exibido agrupado visualmente por esses 4
+  estágios; o gate/sugestão de avanço usa uma única fórmula
+  reaproveitada nas 3 transições intermediárias: itens essenciais do
+  grupo do estágio atual concluídos (havendo ao menos um) → sugere
+  avançar. Conforme User Story 5 (P5), FR-032 a FR-055 em
   `specs/001-manage-call-for-proposals/spec.md` (branch
   `001-manage-call-for-proposals`). Protótipo: `prototype/avulsa-A042/`
   — elevado ao nível de `docs/submissions/timeline-submission-finep-
   digital.html` (branch `finep-submission`) a pedido do usuário, que
-  achou a primeira versão rasa demais frente a esse padrão de
-  qualidade, e depois reorganizado para se integrar ao novo estágio
-  Elegibilidade (A043). Pedido direto do usuário, formalizado via
-  `/kanban-sync` → "Atualizar spec" em 2026-08-04 (três rodadas: FR-032
-  a FR-040; FR-041 a FR-048; e a revisão de FR-002/033/035/038/041/048
-  para o modelo de estágio unificado com A043).
+  achou as duas primeiras versões rasas demais frente a esse padrão de
+  qualidade (a 2ª vez apontando lacunas de mecanismo, não só visuais),
+  e reorganizado para se integrar ao novo estágio Elegibilidade (A043).
+  Pedido direto do usuário, formalizado via `/kanban-sync` → "Atualizar
+  spec" em 2026-08-04 (quatro rodadas: FR-032 a FR-040; FR-041 a
+  FR-048; a revisão de FR-002/033/035/038/041/048 para o modelo de
+  estágio unificado com A043; e FR-049 a FR-055 para paridade de campo
+  com o artefato de referência real).
 - [ ] A043 Novo estágio "Elegibilidade" no quadro de progresso, logo
   após "Backlog" (Backlog → Elegibilidade → Em andamento → Validação →
   Submetido → Aprovado/Não aprovado, 7 colunas) — é o estágio em que o
