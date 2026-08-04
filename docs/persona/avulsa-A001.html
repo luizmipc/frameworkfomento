@@ -3,32 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Persona — Beatriz Noronha (protótipo avulsa-A001, 11ª rodada) — frameworkfomento</title>
+<title>Persona — avulsa-A001 (protótipo) — Talita Farias (12ª rodada) e histórico — frameworkfomento</title>
 <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
 <div class="layout">
 
   <nav class="toc">
-    <p class="kicker group-label">docs/persona</p>
-    <a href="#top">Beatriz Noronha</a>
+    <p class="kicker group-label">12ª rodada — Talita Farias</p>
+    <a href="#top">Talita Farias</a>
     <a href="#canvas">Quem é essa persona</a>
     <a href="#tarefas">Tarefas testadas</a>
     <a href="#dores">Dores identificadas</a>
     <a href="#bem">O que funcionou bem</a>
     <a href="#resolver">Para quem resolver</a>
 
+    <p class="kicker group-label">Histórico (9ª–11ª rodada)</p>
+    <a href="#hist-top">Beatriz Noronha</a>
+
     <p class="kicker group-label">frameworkfomento</p>
     <a href="../index.html">Documentação</a>
   </nav>
 
   <main>
-    <p class="kicker">fundraiser-test · docs/persona · 11ª rodada (foco: confirmar as correções das tasks A039 e A040, feitas em resposta às Dores 4 e 5 levantadas por esta mesma persona na 10ª rodada — botão "→" desabilitado em qualquer estágio terminal do quadro Kanban, e selo "Vencido" não mais exibido em editais já Submetidos/Aprovados/Não aprovados; teste AO VIVO no Chrome, viewport desktop ~1568px, servido via <code>python3 -m http.server</code> local)</p>
-    <h1 id="top">Beatriz Noronha</h1>
-    <p class="quote">"Dessa vez cliquei duas vezes na seta, Validação virou Submetido, Submetido virou Aprovado — igualzinho a antes. Mas a terceira vez que fui clicar, sem nem pensar, a seta já não respondia mais, estava apagada. Tive que arrastar o card de propósito pra "Não aprovado" pra testar se ainda dava pra corrigir — e deu. Só que agora esse gesto é diferente do automatismo de "avançar", que é exatamente o que eu queria."</p>
-    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-08-03, via comando <code>/fundraiser-test</code>. Esta é a <strong>11ª rodada</strong> de teste deste protótipo, focada em confirmar se as correções feitas pelo <code>designer</code> em resposta às <a href="#dor-4">Dor 4</a> e <a href="#dor-5">Dor 5</a> da 10ª rodada resolvem, na prática, os problemas que esta mesma persona havia levantado — confirmado ao vivo para as duas. A <a href="#dor-1">Dor 1</a>, pendente só de confirmação ao vivo desde a 10ª rodada, também foi confirmada ao vivo nesta janela. A <a href="#dor-3">Dor 3</a>, cuja decisão de produto (task A037) estava pendente, foi formalizada em <code>spec.md</code> (FR-025/FR-029) e o protótipo corrigido e confirmado ao vivo na mesma janela. Todas as cinco dores registradas neste documento estão, portanto, resolvidas nesta rodada.</p>
+    <p class="kicker">fundraiser-test · docs/persona · 12ª rodada (persona nova — Talita Farias, coordenadora de captação numa ONG pequena — substitui Beatriz Noronha só nesta rodada para testar o protótipo com um perfil de organização, não de pesquisadora individual; teste AO VIVO no Chrome, viewport desktop ~1568px, servido via <code>python3 -m http.server</code> local, complementado por leitura de código em <code>script.js</code>)</p>
+    <h1 id="top">Talita Farias</h1>
+    <p class="quote">"Cliquei em 'Limpar filtros' torcendo pra sair da lista de Ignorados e voltar a ver tudo — e a tela não mudou nada. Levei um segundo pra entender que 'Ignorados' não é bem um filtro que se limpa, é outro lugar que se sai clicando em 'Ativos'. No Trello isso nunca seria confundido, porque trocar de lista e limpar um filtro de busca são dois botões em cantos bem diferentes da tela."</p>
+    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-08-04, via comando <code>/fundraiser-test</code>. Esta é a <strong>12ª rodada</strong> de teste deste protótipo, com uma persona nova — as 5 dores levantadas por Beatriz Noronha nas rodadas 9–11 (histórico preservado <a href="#hist-top">abaixo</a>) já estão todas resolvidas e confirmadas ao vivo; esta rodada não as repete, foca em achados novos com um perfil de captador diferente: alguém que capta para uma organização, não para si mesma, e que precisaria cadastrar editais nesta ferramenta, não só acompanhá-los.</p>
 
     <h2 id="canvas">Quem é essa persona</h2>
+    <table>
+      <tbody>
+        <tr><th>Papel</th><td>Coordenadora de captação de recursos, único cargo dedicado a isso na organização (divide a função com articulação institucional e comunicação)</td></tr>
+        <tr><th>Organização</th><td>Instituto Recomeço (fictício) — ONG de educação comunitária de pequeno porte, 12 pessoas no total, interior de Minas Gerais</td></tr>
+        <tr><th>Editais acompanhados hoje</th><td>10 a 14 simultaneamente — mistura de editais públicos municipais/estaduais, federais e privados de institutos e fundações empresariais; ela mesma é quem descobre a maioria (newsletters, grupos de WhatsApp de rede de ONGs) e quem cadastra no dia em que encontra, "senão esquece"</td></tr>
+        <tr><th>Ferramentas atuais</th><td>Quadro Trello (plano gratuito) com 4 listas — "Radar", "Em elaboração", "Enviado", "Resultado" — mais uma pasta no Google Drive por edital com os documentos exigidos, e um grupo de WhatsApp da equipe (3 pessoas colaboram nas propostas) para lembrar prazos</td></tr>
+        <tr><th>Familiaridade técnica</th><td>Média — usuária diária de Trello e Google Workspace (Docs, Drive, Sheets básico), confortável com quadros e cartões, mas não escreve fórmulas complexas nem é usuária avançada de planilha; nunca usou uma ferramenta feita especificamente para gestão de editais</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Objetivos</h3>
+    <ul>
+      <li>Ter um lugar único para registrar um edital assim que descobre — hoje isso significa criar um cartão no Trello na hora, porque se deixar para depois esquece.</li>
+      <li>Manter o quadro atualizado sozinha, sem depender de lembrar de cabeça em que pé está cada proposta, e sem duplicar trabalho entre Trello, Drive e WhatsApp.</li>
+      <li>Bater o olho e saber quantos editais estão realmente "ativos" (algo que ela ainda vai perseguir) e quantos já foram descartados — hoje isso exige abrir cada lista do Trello e contar manualmente.</li>
+      <li>Compartilhar essa visão com as outras 2 pessoas da equipe que ajudam a escrever propostas, sem precisar explicar de novo onde cada coisa está.</li>
+    </ul>
+    <h3>Frustrações atuais (antes de testar o protótipo)</h3>
+    <ul>
+      <li>Perde tempo copiando prazo e link manualmente do edital original para o cartão do Trello e depois de novo para o nome da pasta no Drive — três lugares para o mesmo dado.</li>
+      <li>Já perdeu um prazo porque um cartão ficou esquecido na lista errada do Trello por semanas, sem nenhum alerta de proximidade — só percebeu ao abrir o cartão por acaso.</li>
+      <li>Não tem hoje nenhuma contagem automática de quantos editais estão em cada fase — para saber isso, teria que abrir cada uma das 4 listas do Trello e contar os cartões visualmente.</li>
+    </ul>
+
+    <h2 id="tarefas">Tarefas testadas</h2>
+    <ol>
+      <li>Abrir o quadro Kanban e comparar mentalmente as 6 colunas (Backlog/Em andamento/Validação/Submetido/Aprovado/Não aprovado) com as 4 listas que usa hoje no Trello, para ver se reconhece o fluxo sem precisar de explicação.</li>
+      <li>Simular a ação que ela faria primeiro em qualquer ferramenta nova: acabou de ficar sabendo de um edital (por WhatsApp) e quer registrá-lo antes de esquecer — procurar um botão de "Novo edital"/"Adicionar" em ambas as visões (Tabela e Kanban).</li>
+      <li>Marcar o toggle "Ignorados" (só ele, sem busca nem filtro de instituição ativos) e clicar em "Limpar filtros" para ver se a tela volta a mostrar os editais ativos — tarefa desenhada para tocar o achado apontado na navegação desta sessão sobre o texto do indicador.</li>
+      <li>Buscar por instituição junto com um termo de busca (ex.: instituição "FAPESP (fictício)" + busca "saúde"), replicando o hábito dela de revisar, uma vez por mês, tudo que está pendente de um financiador específico.</li>
+      <li>Tentar corrigir a data de fechamento de um edital que ela percebeu estar desatualizada (procurar uma ação de "Editar" na Tabela ou no card do Kanban).</li>
+    </ol>
+
+    <h2 id="dores">Parecer — dores identificadas</h2>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-6">Dor 6 — o indicador chama "somente ignorados" de algo que "Limpar filtros" limpa, mas o botão nunca limpa essa parte</h3>
+        <span class="badge badge-low">🟢 baixa</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> com o toggle "Ignorados" marcado (sem busca nem filtro de instituição), a barra de indicador mostrou "Filtrando por: somente ignorados · Limpar filtros" — a mesma frase, o mesmo botão que aparece quando o que está ativo é uma busca de texto. Cliquei em "Limpar filtros" esperando voltar a ver os editais ativos (era exatamente isso que eu queria fazer naquele momento) e nada mudou na tela: continuei em "Ignorados". Só entendi o motivo lendo <code>script.js</code> (<code>updateFilterIndicator()</code>) — por decisão de produto já formalizada em FR-025/FR-029 (e corrigida em resposta à Dor 3 de Beatriz, 9ª/10ª rodada), o toggle Ativos/Ignorados é uma <em>visão</em>, não um <em>filtro</em>, e "Limpar filtros" nunca deveria mexer nele. O comportamento está certo — o texto ao lado do botão é que fala a mesma língua de "busca" e "instituição", que são de fato filtros limpáveis.</p>
+      <p><strong>Por que é um problema (na minha perspectiva):</strong> no Trello que uso hoje, trocar de lista e limpar uma busca são dois botões em cantos diferentes da tela — nunca teria essa dúvida. Aqui, "somente ignorados" aparece na mesma frase e ao lado do mesmo botão que "busca" e "instituição", então a primeira leitura natural é que o botão cobre tudo que está listado ali. Não perdi nenhum dado nem fiquei presa — bastou eu perceber e clicar em "Ativos" — mas, num dia de prazo apertado revisando editais descartados de um financiador recorrente, esse instante de "cliquei e não aconteceu nada, será que travou?" é exatamente o tipo de fricção pequena que se acumula quando se está sozinha na ferramenta, sem ninguém para confirmar se é ela que errou o clique ou a ferramenta que não respondeu.</p>
+      <p><strong>Recomendação:</strong> separar visualmente o "somente ignorados" do restante da frase — por exemplo, deixando claro que ele descreve a <em>visão atual</em> ("Vendo: somente ignorados") e mantendo "Filtrando por: ... · Limpar filtros" só para busca/instituição, que são o que o botão de fato afeta. Decisão de copy/UX, não muda nenhuma regra de negócio já formalizada.</p>
+    </section>
+
+    <div class="callout planned">
+      <p><strong>Observação de escopo (não é uma dor do protótipo) — cadastro, edição e correção de dados:</strong> nas Tarefas 2 e 5, não encontrei nenhum "Novo edital" nem "Editar" em nenhuma das duas visões — esperado, US2 (cadastro) e US3 (editar/remover) de <code>specs/001-manage-call-for-proposals/spec.md</code> não fazem parte do escopo original da task A001, que é só a referência de interação do quadro. Registro aqui porque, para o meu perfil especificamente, essa ausência pesa mais do que pesaria para uma pesquisadora que só acompanha editais que já conhece de outro lugar: sou eu quem descobre a maior parte dos editais que a organização segue, e o primeiro gesto que faço em qualquer ferramenta nova é cadastrar o que acabei de descobrir, na hora, antes de esquecer — e corrigir depois um prazo ou link que anotei errado é rotina, não exceção. Isso não é um bug do que já existe; é um sinal de prioridade para quando US2/US3 saírem do papel — o `product-owner` decide a ordem, eu só registro que, para uma captadora de organização (diferente de quem só acompanha editais já catalogados por outra pessoa), cadastro tende a ser o primeiro gesto, não um extra.</p>
+    </div>
+
+    <h2 id="bem">O que funcionou bem</h2>
+    <ul>
+      <li><strong>O quadro Kanban de 6 colunas é reconhecível sem explicação (Tarefa 1):</strong> mesmo os nomes não sendo idênticos às minhas 4 listas do Trello, entendi o mapeamento na hora — Backlog/Em andamento correspondem ao meu "Radar", Validação e Submetido ao meu "Em elaboração"/"Enviado", e Aprovado/Não aprovado detalham o que hoje chamo genericamente de "Resultado" em duas colunas separadas, o que é mais preciso do que o que eu tenho hoje.</li>
+      <li><strong>Os contadores por coluna e o total geral resolvem uma frustração real (Tarefa 1):</strong> hoje preciso abrir cada uma das 4 listas do Trello e contar cartões visualmente; aqui bati o olho e vi "6 editais exibidos" e o contador de cada coluna sem precisar contar nada.</li>
+      <li><strong>Os selos de prazo (Vence em até N dias / Vencido) endereçam diretamente a frustração de ter perdido um prazo por cartão esquecido (canvas):</strong> no Trello não tenho nenhum alerta de proximidade — aqui o alerta aparece sem eu precisar abrir nada.</li>
+      <li><strong>A separação Ativos/Ignorados é o conceito que eu queria, mesmo com o texto do indicador confuso (Dor 6):</strong> depois de entender que "Ativos"/"Ignorados" é a visão e "Limpar filtros" é outra coisa, o toggle em si faz exatamente o que eu queria — ver só o que ainda vou perseguir, sem contar manualmente.</li>
+      <li><strong>Busca combinada com filtro de instituição funcionou de primeira (Tarefa 4):</strong> instituição "FAPESP (fictício)" + busca "saúde" filtrou corretamente para o único edital que atende aos dois critérios ao mesmo tempo — é exatamente como eu revisaria pendências de um financiador específico.</li>
+    </ul>
+
+    <h2 id="resolver">Para quem resolver</h2>
+    <p><a href="#dor-6">Dor 6</a> (texto do indicador atribui a "somente ignorados" a mesma promessa de "Limpar filtros" que vale para busca/instituição) → <code>designer</code> (é uma questão de copy/apresentação do indicador, não de comportamento — o comportamento já está correto e formalizado em FR-025/FR-029).</p>
+    <p>Observação de escopo (ausência de cadastro/edição, acima) → <code>product-owner</code>, como insumo de priorização para quando US2/US3 entrarem em desenvolvimento — não é uma lacuna do protótipo A001, que nunca teve esse escopo.</p>
+
+    <p class="page-footer">Este documento não corrige nada — é insumo para o <code>product-owner</code>/<code>designer</code>/<code>scrum-master</code> agirem sobre o parecer, via <code>/quick-task</code> ou ajuste de <code>spec.md</code>, a critério de quem revisa.</p>
+
+    <hr>
+
+    <h1 id="hist-top">Beatriz Noronha <small style="font-weight:400; color: var(--muted);">— histórico, rodadas 9ª–11ª (todas as 5 dores resolvidas e confirmadas ao vivo)</small></h1>
+    <p class="kicker">fundraiser-test · docs/persona · 11ª rodada (foco: confirmar as correções das tasks A039 e A040, feitas em resposta às Dores 4 e 5 levantadas por esta mesma persona na 10ª rodada — botão "→" desabilitado em qualquer estágio terminal do quadro Kanban, e selo "Vencido" não mais exibido em editais já Submetidos/Aprovados/Não aprovados; teste AO VIVO no Chrome, viewport desktop ~1568px, servido via <code>python3 -m http.server</code> local)</p>
+    <p class="quote">"Dessa vez cliquei duas vezes na seta, Validação virou Submetido, Submetido virou Aprovado — igualzinho a antes. Mas a terceira vez que fui clicar, sem nem pensar, a seta já não respondia mais, estava apagada. Tive que arrastar o card de propósito pra "Não aprovado" pra testar se ainda dava pra corrigir — e deu. Só que agora esse gesto é diferente do automatismo de "avançar", que é exatamente o que eu queria."</p>
+    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-08-03, via comando <code>/fundraiser-test</code>. Esta foi a <strong>11ª rodada</strong> de teste deste protótipo, focada em confirmar se as correções feitas pelo <code>designer</code> em resposta às <a href="#hist-dor-4">Dor 4</a> e <a href="#hist-dor-5">Dor 5</a> da 10ª rodada resolvem, na prática, os problemas que esta mesma persona havia levantado — confirmado ao vivo para as duas. A <a href="#hist-dor-1">Dor 1</a>, pendente só de confirmação ao vivo desde a 10ª rodada, também foi confirmada ao vivo nessa janela. A <a href="#hist-dor-3">Dor 3</a>, cuja decisão de produto (task A037) estava pendente, foi formalizada em <code>spec.md</code> (FR-025/FR-029) e o protótipo corrigido e confirmado ao vivo na mesma janela. Todas as cinco dores registradas nesta seção estão, portanto, resolvidas.</p>
+
+    <h2 id="hist-canvas">Quem é essa persona</h2>
     <table>
       <tbody>
         <tr><th>Papel</th><td>Pesquisadora independente, doutora em Ciências Ambientais, sem vínculo institucional fixo no momento (entre um pós-doutorado encerrado e o próximo) — capta recursos para si mesma, não para uma organização</td></tr>
@@ -53,20 +128,20 @@
       <li>Já reabriu, sem perceber, a avaliação de um edital de um financiador recorrente que já tinha decidido não seguir num ciclo anterior, porque a linha riscada estava longe, fora da tela visível.</li>
     </ul>
 
-    <h2 id="tarefas">Tarefas testadas</h2>
+    <h2 id="hist-tarefas">Tarefas testadas</h2>
     <ol>
-      <li>Abrir o quadro Kanban e revisar visualmente as colunas Submetido, Aprovado e Não aprovado procurando o selo "Vencido", para confirmar se a correção da <a href="#dor-5">Dor 5</a> removeu esse alerta dos estágios terminais.</li>
-      <li>Repetir o gesto exato que causou a <a href="#dor-4">Dor 4</a> na 10ª rodada: mover um edital de "Validação" para "Submetido" clicando "→", depois de "Submetido" para "Aprovado" clicando "→" de novo — mesmo automatismo de dois cliques seguidos.</li>
+      <li>Abrir o quadro Kanban e revisar visualmente as colunas Submetido, Aprovado e Não aprovado procurando o selo "Vencido", para confirmar se a correção da <a href="#hist-dor-5">Dor 5</a> removeu esse alerta dos estágios terminais.</li>
+      <li>Repetir o gesto exato que causou a <a href="#hist-dor-4">Dor 4</a> na 10ª rodada: mover um edital de "Validação" para "Submetido" clicando "→", depois de "Submetido" para "Aprovado" clicando "→" de novo — mesmo automatismo de dois cliques seguidos.</li>
       <li>A partir de "Aprovado", verificar (com zoom) se o botão "→" agora aparece desabilitado, em vez de continuar clicável e silenciosamente reclassificar o card como "Não aprovado".</li>
       <li>Repetir a mesma verificação visual do botão "→" em cards já em "Não aprovado".</li>
       <li>Testar se a correção manual entre os dois estágios terminais (Aprovado ↔ Não aprovado) — que a spec (FR-002/FR-009) diz que deve continuar possível — de fato continua disponível por outro caminho, arrastando o card via drag-and-drop.</li>
     </ol>
 
-    <h2 id="dores">Parecer — dores identificadas</h2>
+    <h2 id="hist-dores">Parecer — dores identificadas</h2>
 
     <section class="story">
       <div class="story-head">
-        <h3 id="dor-1">Dor 1 — "Ignorar" some a linha sem nenhum sinal, contrariando o hábito de "riscar sem esconder" da planilha</h3>
+        <h3 id="hist-dor-1">Dor 1 — "Ignorar" some a linha sem nenhum sinal, contrariando o hábito de "riscar sem esconder" da planilha</h3>
         <span class="badge badge-passed">✅ resolvida (confirmada ao vivo em 2026-08-03)</span>
       </div>
       <p><strong>O que aconteceu antes:</strong> confirmado ao vivo na 9ª rodada — clicar "Ignorar" fazia a linha desaparecer instantaneamente, sem toast nem confirmação, só um contador pequeno mudando no canto.</p>
@@ -76,7 +151,7 @@
 
     <section class="story">
       <div class="story-head">
-        <h3 id="dor-2">Dor 2 — "Concluído" misturava dois momentos reais muito diferentes do processo de captação: submetido-aguardando e resultado-finalizado</h3>
+        <h3 id="hist-dor-2">Dor 2 — "Concluído" misturava dois momentos reais muito diferentes do processo de captação: submetido-aguardando e resultado-finalizado</h3>
         <span class="badge badge-passed">✅ resolvida (10ª rodada, confirmada ao vivo)</span>
       </div>
       <p><strong>O que aconteceu antes (9ª rodada):</strong> o quarto estágio "Concluído" juntava explicitamente "já submeti, aguardo o parecer" e "o resultado já saiu (aprovado ou recusado)" na mesma coluna, sem nenhuma distinção visual nem de dado.</p>
@@ -86,17 +161,18 @@
 
     <section class="story">
       <div class="story-head">
-        <h3 id="dor-3">Dor 3 — "Limpar filtros" também tira a Beatriz da visão "Ignorados", sem isso estar explícito em nenhum requisito</h3>
+        <h3 id="hist-dor-3">Dor 3 — "Limpar filtros" também tira a Beatriz da visão "Ignorados", sem isso estar explícito em nenhum requisito</h3>
         <span class="badge badge-passed">✅ resolvida (confirmada ao vivo em 2026-08-03)</span>
       </div>
       <p><strong>O que aconteceu antes:</strong> confirmado ao vivo na 9ª rodada — com busca, filtro de instituição e o toggle "Ignorados" todos ativos, "Limpar filtros" reseta os três de uma vez, incluindo devolver a visão para "Ativos".</p>
       <p><strong>O que mudou:</strong> a decisão pendente (task A037) foi formalizada em <code>spec.md</code> — FR-025 passa a cobrir só busca/instituição, FR-029 ganha a contrapartida de que o toggle Ativos/Ignorados é uma dimensão de visão separada, nunca resetada por "Limpar filtros" (novo Acceptance Scenario 9 de User Story 4). O <code>script.js</code> foi corrigido: o listener de <code>clearFiltersBtn</code> não chama mais <code>setMostrarIgnorados(false)</code>. Confirmado ao vivo em 2026-08-03: na visão "Ignorados" com filtro de instituição ativo, "Limpar filtros" limpa só a instituição e a Beatriz permanece em "Ignorados".</p>
       <p><strong>Por que isso resolve a dor:</strong> ao revisar, uma vez por ano, os editais de um financiador específico que já descartou, a Beatriz agora pode limpar o termo de busca sem perder o lugar de onde estava — "Limpar filtros" só limpa filtros, não troca de visão.</p>
+      <p><strong>Nota da 12ª rodada:</strong> uma persona diferente (Talita Farias, <a href="#dor-6">Dor 6</a> acima) apontou que o <em>texto</em> do indicador ainda lista "somente ignorados" ao lado de "Limpar filtros" como se fizesse parte do que o botão limpa — o comportamento aqui descrito continua correto, a observação nova é só sobre a redação do indicador, não sobre esta correção.</p>
     </section>
 
     <section class="story">
       <div class="story-head">
-        <h3 id="dor-4">Dor 4 — a mesma seta "→" que avança o processo também transformava um "Aprovado" em "Não aprovado", sem nenhum sinal de que essa é uma ação diferente</h3>
+        <h3 id="hist-dor-4">Dor 4 — a mesma seta "→" que avança o processo também transformava um "Aprovado" em "Não aprovado", sem nenhum sinal de que essa é uma ação diferente</h3>
         <span class="badge badge-passed">✅ resolvida (11ª rodada, confirmada ao vivo)</span>
       </div>
       <p><strong>O que aconteceu antes (10ª rodada):</strong> depois de dois cliques seguidos em "→" que corretamente avançaram um card de Validação → Submetido → Aprovado, um terceiro clique no mesmo botão — sem nenhuma confirmação, aviso ou diferença visual — movia o card, silenciosamente, de "Aprovado" para "Não aprovado". A causa, por leitura de código, era que <code>updateMoveButtons()</code> só desabilitava "→" no último índice do array <code>STATUSES</code>, e "Aprovado" não era o último item da lista mesmo sendo um estágio terminal.</p>
@@ -107,7 +183,7 @@
 
     <section class="story">
       <div class="story-head">
-        <h3 id="dor-5">Dor 5 — o selo "Vencido" aparecia, em vermelho, em editais já Submetidos, Aprovados ou Não aprovados</h3>
+        <h3 id="hist-dor-5">Dor 5 — o selo "Vencido" aparecia, em vermelho, em editais já Submetidos, Aprovados ou Não aprovados</h3>
         <span class="badge badge-passed">✅ resolvida (11ª rodada, confirmada ao vivo)</span>
       </div>
       <p><strong>O que aconteceu antes (10ª rodada):</strong> tanto na Tabela quanto no Kanban, editais cujo estágio já era Submetido, Aprovado ou Não aprovado (e cuja data de fechamento já tinha passado, o que é esperado nesse ponto do processo) exibiam o mesmo selo vermelho "Vencido" usado para um edital ainda ativo (Backlog/Em andamento/Validação) cujo prazo passou sem que a Beatriz tivesse enviado nada.</p>
@@ -115,7 +191,7 @@
       <p><strong>Por que isso resolve a dor:</strong> para a Beatriz, "Vencido" precisa significar uma coisa só — "preciso agir, posso ter perdido um prazo" — e não pode aparecer, com a mesma cor de alerta, num edital cujo processo já terminou. Batendo o olho nas colunas finais do quadro, um cenário frequente dado o volume de 6 a 9 editais que acompanha, ela não tem mais o instante de dúvida de "será que isso quer dizer que algo deu errado?" num card que ela sabe que já foi Aprovado.</p>
     </section>
 
-    <h2 id="bem">O que funcionou bem</h2>
+    <h2 id="hist-bem">O que funcionou bem</h2>
     <ul>
       <li><strong>A seta "→" agora respeita os dois estágios terminais (Tarefas 2 e 3, 11ª rodada):</strong> confirmado ao vivo — depois de dois avanços corretos (Validação → Submetido → Aprovado), o botão "→" ficou desabilitado tanto em cards "Aprovado" quanto "Não aprovado", sem exigir nenhum clique extra ou confirmação para descobrir isso; bastou olhar o botão.</li>
       <li><strong>A correção manual entre os dois estágios terminais continua funcionando (Tarefa 5, 11ª rodada):</strong> arrastar um card de "Aprovado" para "Não aprovado" via drag-and-drop funcionou normalmente, com os contadores das duas colunas atualizando corretamente — a regra de negócio de FR-002/FR-009 não foi perdida na correção da Dor 4, só deixou de ser sugerida pelo mesmo botão do avanço normal.</li>
@@ -124,12 +200,12 @@
       <li><strong>A distinção entre "aguardando resposta" e "resultado decidido" que a Beatriz pediu na 9ª rodada existe de verdade (confirmado na 10ª rodada):</strong> os dados mockados têm exemplos realistas em cada um dos três estágios terminais, então a diferença que antes só existia "de nome" agora tem conteúdo real para validar.</li>
     </ul>
 
-    <h2 id="resolver">Para quem resolver</h2>
-    <p><a href="#dor-1">Dor 1</a> (ação "Ignorar" sem confirmação) → resolvida, sem ação pendente.</p>
-    <p><a href="#dor-2">Dor 2</a> ("Concluído" misturando submetido-aguardando com resultado-finalizado) → resolvida, sem ação pendente.</p>
-    <p><a href="#dor-3">Dor 3</a> ("Limpar filtros" também reseta o toggle Ativos/Ignorados) → resolvida, sem ação pendente.</p>
-    <p><a href="#dor-4">Dor 4</a> (seta "→" transformando silenciosamente "Aprovado" em "Não aprovado") → resolvida (A039), sem ação pendente.</p>
-    <p><a href="#dor-5">Dor 5</a> (selo "Vencido" idêntico em editais Submetidos/Aprovados/Não aprovados e em editais ativos vencidos) → resolvida (A040), sem ação pendente.</p>
+    <h2 id="hist-resolver">Para quem resolver</h2>
+    <p><a href="#hist-dor-1">Dor 1</a> (ação "Ignorar" sem confirmação) → resolvida, sem ação pendente.</p>
+    <p><a href="#hist-dor-2">Dor 2</a> ("Concluído" misturando submetido-aguardando com resultado-finalizado) → resolvida, sem ação pendente.</p>
+    <p><a href="#hist-dor-3">Dor 3</a> ("Limpar filtros" também reseta o toggle Ativos/Ignorados) → resolvida, sem ação pendente.</p>
+    <p><a href="#hist-dor-4">Dor 4</a> (seta "→" transformando silenciosamente "Aprovado" em "Não aprovado") → resolvida (A039), sem ação pendente.</p>
+    <p><a href="#hist-dor-5">Dor 5</a> (selo "Vencido" idêntico em editais Submetidos/Aprovados/Não aprovados e em editais ativos vencidos) → resolvida (A040), sem ação pendente.</p>
 
     <p class="page-footer">Este documento não corrige nada — é insumo para o <code>product-owner</code>/<code>designer</code>/<code>scrum-master</code> agirem sobre o parecer, via <code>/quick-task</code> ou ajuste de <code>spec.md</code>, a critério de quem revisa.</p>
   </main>
