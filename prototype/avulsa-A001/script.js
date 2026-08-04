@@ -5,7 +5,15 @@
 // (Submetido → Aprovado / Não aprovado), resolvendo a ambiguidade da A036
 // ("submetido" vs. "resultado já saiu"). Transição continua livre entre
 // quaisquer colunas (sem guarda), mesmo comportamento de antes.
-const STATUSES = ["backlog", "andamento", "validacao", "submetido", "aprovado", "nao_aprovado"];
+//
+// FR-002 (2026-08-04): 7ª coluna "Elegibilidade" inserida logo após
+// "Backlog" — estágio em que o captador levanta e define o que é
+// necessário para a proposta ser elegível (monta os critérios/itens do
+// plano de submissão do US5, ver prototype/avulsa-A042/), sem
+// necessariamente já cumprir todos eles. Mesmo vocabulário de estágio usado
+// pelo campo obrigatório de FR-033 em avulsa-A042 (que só aceita
+// Elegibilidade/Em andamento/Validação/Submetido).
+const STATUSES = ["backlog", "elegibilidade", "andamento", "validacao", "submetido", "aprovado", "nao_aprovado"];
 
 // A039 (docs/persona/avulsa-A001.html#dor-4): Aprovado e Não aprovado são dois
 // desfechos terminais mutuamente exclusivos, sem ordem entre si — a seta "→"
@@ -31,6 +39,19 @@ const editais = [
     fechamento: "2026-08-05",
     link: "https://exemplo.gov.br/chamadas/inovacao-social-2026",
     status: "backlog",
+  },
+  {
+    id: "e8",
+    chamada: "Edital de Fomento à Pesquisa em Energias Renováveis",
+    descricao: "Financiamento de projetos de pesquisa aplicada em fontes renováveis de energia e eficiência energética.",
+    instituicao: "FINEP (fictício)",
+    abertura: "2026-05-15",
+    fechamento: "2026-11-30",
+    link: "https://exemplo.gov.br/chamadas/energias-renovaveis-2026",
+    // FR-002 (7ª coluna, 2026-08-04): estágio em que o captador ainda está
+    // levantando/definindo os critérios de elegibilidade da proposta —
+    // exemplo mockado para a coluna "Elegibilidade" ter pelo menos 1 edital.
+    status: "elegibilidade",
   },
   {
     id: "e2",
@@ -118,6 +139,7 @@ const editais = [
 // sem distinção. Agora são 3 estágios terminais mutuamente exclusivos.
 const STATUS_LABEL = {
   backlog: "Backlog",
+  elegibilidade: "Elegibilidade",
   andamento: "Em andamento",
   validacao: "Validação",
   submetido: "Submetido",
@@ -360,9 +382,15 @@ function renderTabela() {
       <td data-label="Instituição">${edital.instituicao}</td>
       <td data-label="Descrição">${edital.descricao}</td>
       <td data-label="Ações">
-        <button type="button" class="ignore-btn" data-id="${edital.id}">${
-          edital.ignorado ? "Reverter" : "Ignorar"
-        }</button>
+        <div class="actions-group">
+          <!-- FR-032: leva ao plano de submissão (US5) — link relativo fixo
+               porque este protótipo tem dado mockado único, sem roteamento
+               por id real (ver prototype/avulsa-A042/). -->
+          <a class="detail-link" href="../avulsa-A042/index.html" aria-label="Ver plano de submissão" title="Ver plano de submissão">🔍</a>
+          <button type="button" class="ignore-btn" data-id="${edital.id}">${
+            edital.ignorado ? "Reverter" : "Ignorar"
+          }</button>
+        </div>
       </td>
     `;
     corpo.appendChild(tr);

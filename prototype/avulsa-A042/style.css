@@ -23,6 +23,10 @@
   --amber: #b45309;
   --amber-bg: #fffbeb;
   --amber-border: #fde68a;
+  /* Cor de identificação por grupo de estágio do plano de submissão
+     (FR-033/FR-038, 2026-08-04) — reaproveita as cores já existentes
+     (indigo/amber/accent) e acrescenta só --blue para Validação. */
+  --blue: #2563eb;
   --radius: 8px;
   font-size: 16px;
 }
@@ -372,10 +376,71 @@ body {
   opacity: 0.9;
 }
 
-/* Lista do plano de submissão */
+/* Plano de submissão agrupado pelos 4 estágios (FR-033/FR-038, 2026-08-04)
+   — cada .plano-group é só apresentação (o modelo de dados continua uma
+   lista plana, ver script.js); borda esquerda colorida + numeração dão a
+   mesma leitura de "etapas" de docs/submissions/timeline-submission-finep-
+   digital.html sem reintroduzir fases com gate próprio. */
+.plano-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 0 0 1.25rem;
+}
+
+.plano-group {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--group-color, var(--accent));
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+}
+
+.plano-group[data-estagio="elegibilidade"] { --group-color: var(--indigo); }
+.plano-group[data-estagio="andamento"] { --group-color: var(--amber); }
+.plano-group[data-estagio="validacao"] { --group-color: var(--blue); }
+.plano-group[data-estagio="submetido"] { --group-color: var(--accent); }
+
+/* "Você está aqui" — o grupo do estágio atual do edital, mesmo grupo usado
+   pelo gate/sugestão de avanço (ver computeSuggestion() em script.js). */
+.plano-group.current {
+  background: var(--accent-soft);
+}
+
+.plano-group-title {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  margin: 0 0 0.6rem;
+  font-size: 0.95rem;
+  color: var(--group-color, var(--accent));
+}
+
+.plano-group.current .plano-group-title::before {
+  content: "📍 estágio atual";
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.group-progress {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.empty-group {
+  padding: 0.4rem 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Lista do plano de submissão (dentro de cada grupo) */
 .plano-list {
   list-style: none;
-  margin: 0 0 1.25rem;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
@@ -671,6 +736,7 @@ body {
   }
 
   .plano-item,
+  .plano-group,
   .panel,
   .riscos-box,
   .pos-aprovacao {

@@ -117,6 +117,14 @@
         <h2>Backlog <span class="col-count" data-status="backlog">0</span></h2>
         <div class="card-list" data-status="backlog"></div>
       </div>
+      <!-- FR-002 (7ª coluna, 2026-08-04): "Elegibilidade" — o captador levanta
+           e define o que é necessário para a proposta ser elegível (monta os
+           critérios/itens do plano de submissão de US5), sem necessariamente
+           já cumprir todos eles. -->
+      <div class="column" data-status="elegibilidade">
+        <h2>Elegibilidade <span class="col-count" data-status="elegibilidade">0</span></h2>
+        <div class="card-list" data-status="elegibilidade"></div>
+      </div>
       <div class="column" data-status="andamento">
         <h2>Em andamento <span class="col-count" data-status="andamento">0</span></h2>
         <div class="card-list" data-status="andamento"></div>
@@ -157,9 +165,14 @@
          neutro em vez de um "Ver chamada" clicável que não levaria a lugar nenhum. -->
     <span class="card-link-missing hidden">Link não informado</span>
     <div class="card-actions">
-      <div class="card-move-group">
-        <button type="button" class="move-btn" data-dir="-1" aria-label="Mover para coluna anterior">&larr;</button>
-        <button type="button" class="move-btn" data-dir="1" aria-label="Mover para próxima coluna">&rarr;</button>
+      <div class="card-actions-left">
+        <!-- FR-032: leva ao plano de submissão (US5) — mesmo link fixo da
+             tabela (dado mockado único, sem roteamento por id real). -->
+        <a class="card-detail-link" href="../avulsa-A042/index.html" aria-label="Ver plano de submissão" title="Ver plano de submissão">🔍</a>
+        <div class="card-move-group">
+          <button type="button" class="move-btn" data-dir="-1" aria-label="Mover para coluna anterior">&larr;</button>
+          <button type="button" class="move-btn" data-dir="1" aria-label="Mover para próxima coluna">&rarr;</button>
+        </div>
       </div>
       <!-- A018 / FR-027/FR-030: mesmo texto do botão de ação da tabela
            ("Ignorar" / "Reverter"), atualizado em renderKanban() conforme

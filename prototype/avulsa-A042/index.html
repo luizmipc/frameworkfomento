@@ -5,7 +5,8 @@
      HTML/CSS/JS puro, dados mockados em script.js, sem persistência real e
      sem geração de PDF real (exportações são simuladas via toast). Página de
      detalhe de UM edital específico — chegada simulada a partir do ícone de
-     lupa que existiria na tabela/kanban de prototype/avulsa-A001/.
+     lupa na tabela/kanban de prototype/avulsa-A001/ (link relativo fixo,
+     dado mockado único, sem roteamento por id real).
 
      Revisão de sofisticação visual/interativa (2026-08-04), pedida após
      comparação com docs/submissions/timeline-submission-finep-digital.html
@@ -17,9 +18,18 @@
      deste comentário e a mensagem de retorno do agente de design para a
      lista completa do que foi acrescentado além do texto literal de
      FR-032–FR-040 (seções Riscos/Pós-aprovação, blocos didáticos 💬/🧭,
-     campos responsável/concluído-em, categoria visual, barra de resumo no
-     topo) — precisa ser formalizado com o product-owner antes do dev
-     implementar de verdade. -->
+     campos responsável/concluído-em, barra de resumo no topo) — precisa ser
+     formalizado com o product-owner antes do dev implementar de verdade.
+
+     2026-08-04: FR-033 mudou de "categoria" de texto livre opcional para um
+     select obrigatório com os 4 estágios válidos do Kanban (Elegibilidade/
+     Em andamento/Validação/Submetido) — cada item pertence a exatamente 1
+     deles, e o plano é exibido agrupado por eles (continua lista plana por
+     baixo, sem hierarquia de fases). FR-038/FR-041: gate/sugestão de avanço
+     e barra de veredito reescritos para uma fórmula única aplicada ao grupo
+     do estágio atual do edital (ver gateStatus()/computeSuggestion() em
+     script.js), reutilizada nas 3 transições Elegibilidade→Em andamento→
+     Validação→Submetido. -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Detalhe do edital — Protótipo A042</title>
@@ -106,16 +116,49 @@
         <button type="button" id="suggestion-action"></button>
       </div>
 
-      <ul class="plano-list" id="plano-list"></ul>
+      <!-- FR-033/FR-038 (2026-08-04): plano de submissão agrupado
+           visualmente pelos 4 estágios válidos — cada item continua sendo 1
+           registro plano com 1 estágio (sem hierarquia de fases com gate
+           próprio, ver script.js); os grupos aqui são só apresentação. A
+           ordem das seções é a mesma ordem do funil no Kanban. -->
+      <div class="plano-groups" id="plano-groups">
+        <section class="plano-group" data-estagio="elegibilidade">
+          <h3 class="plano-group-title">Elegibilidade <span class="group-progress" data-estagio="elegibilidade"></span></h3>
+          <ul class="plano-list" data-estagio="elegibilidade"></ul>
+        </section>
+        <section class="plano-group" data-estagio="andamento">
+          <h3 class="plano-group-title">Em andamento <span class="group-progress" data-estagio="andamento"></span></h3>
+          <ul class="plano-list" data-estagio="andamento"></ul>
+        </section>
+        <section class="plano-group" data-estagio="validacao">
+          <h3 class="plano-group-title">Validação <span class="group-progress" data-estagio="validacao"></span></h3>
+          <ul class="plano-list" data-estagio="validacao"></ul>
+        </section>
+        <section class="plano-group" data-estagio="submetido">
+          <h3 class="plano-group-title">Submetido <span class="group-progress" data-estagio="submetido"></span></h3>
+          <ul class="plano-list" data-estagio="submetido"></ul>
+        </section>
+      </div>
 
       <form class="add-item-form" id="add-item-form">
         <div class="control-field">
           <label for="new-item-desc">Descrição do item</label>
           <input type="text" id="new-item-desc" placeholder="Ex.: Comprovante de regularidade fiscal" required>
         </div>
+        <!-- FR-033 (2026-08-04): substitui a "categoria" de texto livre
+             opcional por um select obrigatório com exatamente os 4 estágios
+             do Kanban válidos como preparação de submissão (Backlog e os 2
+             terminais ficam de fora — nada a planejar antes de começar, e
+             os terminais são desfecho, não etapa de preparação). -->
         <div class="control-field control-field-narrow">
-          <label for="new-item-categoria">Categoria (opcional)</label>
-          <input type="text" id="new-item-categoria" placeholder="Ex.: Financeiro">
+          <label for="new-item-estagio">Estágio do plano</label>
+          <select id="new-item-estagio" required>
+            <option value="" disabled selected>Selecione…</option>
+            <option value="elegibilidade">Elegibilidade</option>
+            <option value="andamento">Em andamento</option>
+            <option value="validacao">Validação</option>
+            <option value="submetido">Submetido</option>
+          </select>
         </div>
         <label class="checkbox-field">
           <input type="checkbox" id="new-item-essencial">
@@ -151,7 +194,11 @@
       <div><dt>Estágio atual</dt><dd id="resumo-estagio"></dd></div>
       <div><dt>Link</dt><dd id="resumo-link"></dd></div>
     </dl>
-    <h3>Pendências de elegibilidade</h3>
+    <!-- FR-038/FR-041 (2026-08-04): renomeado de "Pendências de
+         elegibilidade" — o gate agora é por estágio atual (não mais um
+         conceito único de "elegibilidade" cobrindo o plano inteiro; ver
+         gateStatus() em script.js). -->
+    <h3>Pendências do estágio atual</h3>
     <ul class="pendencias-list" id="pendencias-list" aria-live="polite"></ul>
     <button type="button" class="btn-secondary" id="export-resumo">Exportar resumo executivo (PDF)</button>
   </aside>
@@ -169,8 +216,10 @@
         <span class="item-desc"></span>
       </label>
       <div class="item-badges">
+        <!-- FR-033 (2026-08-04): o estágio (antes "categoria" de texto livre)
+             agora é comunicado pelo agrupamento visual da seção, não por um
+             badge por item — ver .plano-group em index.html/style.css. -->
         <span class="badge badge-e badge-essencial hidden" title="Essencial para elegibilidade">Essencial</span>
-        <span class="badge badge-c item-categoria hidden"></span>
       </div>
       <button type="button" class="item-toggle no-print" aria-label="Expandir/recolher detalhes do item">▾</button>
     </div>

@@ -406,10 +406,11 @@ tr.proximo td:first-child {
 /* Kanban */
 .board {
   display: grid;
-  /* A038 / FR-002: 6 colunas agora (era 4) — mesma abordagem minmax(0, 1fr),
-     só o repeat count muda. */
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  gap: 0.75rem;
+  /* A038 / FR-002: 6 colunas (era 4); FR-002 (2026-08-04) sobe para 7 com a
+     coluna "Elegibilidade" — mesma abordagem minmax(0, 1fr), só o repeat
+     count muda. */
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.6rem;
   align-items: start;
 }
 
@@ -417,7 +418,9 @@ tr.proximo td:first-child {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 0.75rem;
+  /* FR-002 (7 colunas, 2026-08-04): reduzido de 0.75rem para dar mais
+     espaço de conteúdo a cada coluna em telas de ~1280px (FR-031). */
+  padding: 0.6rem;
   min-height: 200px;
   /* Grid items têm min-width:auto por padrão, o que deixa a coluna crescer além
      da faixa reservada quando o conteúdo (título longo do card) pede mais espaço
@@ -429,10 +432,16 @@ tr.proximo td:first-child {
 
 .column h2 {
   margin: 0 0 0.75rem;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
+  /* FR-002 (7 colunas, 2026-08-04): "Elegibilidade" é a palavra mais longa
+     de todos os rótulos de coluna e, sem quebra, corre risco de vazar da
+     faixa de grid estreitada por column.min-width:0 (que impede a coluna de
+     crescer além do fr reservado). overflow-wrap permite quebrar dentro da
+     palavra só quando não há espaço, mesma técnica de .card-title. */
+  overflow-wrap: anywhere;
 }
 
 /* Contador de editais por coluna (A009) — recalculado a cada renderKanban() */
@@ -537,8 +546,10 @@ tr.proximo td:first-child {
 
 .card-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  gap: 0.35rem;
   margin-top: 0.5rem;
 }
 
@@ -561,6 +572,45 @@ tr.proximo td:first-child {
 .ignore-btn:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+/* FR-032: ícone de lupa que leva ao plano de submissão (US5,
+   avulsa-A042/) — mesmo estilo de botão/borda de .move-btn/.ignore-btn,
+   mas é um <a>, não um <button>. */
+.card-actions-left {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.detail-link,
+.card-detail-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 4px;
+  cursor: pointer;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.85rem;
+  text-decoration: none;
+  color: var(--text);
+  line-height: 1;
+}
+
+.detail-link:hover,
+.detail-link:focus-visible,
+.card-detail-link:hover,
+.card-detail-link:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.actions-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
 
 /* A018 / FR-027..FR-030: edital ignorado — mesmo tratamento visual nas duas
