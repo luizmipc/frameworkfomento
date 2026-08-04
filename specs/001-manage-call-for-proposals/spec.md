@@ -457,6 +457,36 @@ interfere na elegibilidade nem na sugestão de avanço.
     legível e completo — sem cortar plano de submissão, resumo executivo,
     Riscos ou Pós-aprovação — ocultando os controles de ação que não fazem
     sentido no papel.
+16. **Given** um item do plano de submissão, um sub-requisito de um item
+    condicional (Acceptance Scenario 17) ou um risco registrado (Acceptance
+    Scenario 13), **When** o captador marca o indicador de "pergunta em
+    aberto" (FR-052), **Then** o sistema exibe esse indicador junto ao
+    item/sub-requisito/risco, distinto do indicador de "essencial para
+    elegibilidade"/"Informativo" (FR-035), e o contador de "perguntas em
+    aberto" da barra de resumo/veredito (FR-041) aumenta em um; **When** ele
+    desmarca esse mesmo indicador, **Then** o contador diminui em um, sem
+    que a marcação, em nenhum dos dois sentidos, afete o status
+    Pendente/Concluído do item nem o gate de elegibilidade.
+17. **Given** um item condicional do plano de submissão com duas
+    modalidades mutuamente exclusivas, cada uma com seu próprio subconjunto
+    de sub-requisitos (FR-053), **When** o captador escolhe uma modalidade e
+    marca todos os sub-requisitos dela, **Then** o sistema passa a
+    considerar o item "Concluído"; **When** ele troca para a outra
+    modalidade, **Then** o sistema exibe apenas os sub-requisitos da nova
+    modalidade escolhida (os da modalidade anterior deixam de contar), e o
+    item volta a "Pendente" até que os sub-requisitos da nova modalidade
+    também estejam todos marcados.
+18. **Given** um item de cenário do plano de submissão com cenários
+    mutuamente exclusivos e um campo de apoio associado (FR-054), **When**
+    o captador escolhe um dos cenários sem preencher o campo de apoio,
+    **Then** o sistema já considera o item "Concluído", confirmando que o
+    campo de apoio é apenas registro de apoio, nunca condição para a
+    conclusão.
+19. **Given** o captador preencheu a identificação do proponente (FR-049),
+    concluiu itens do plano de submissão e moveu o edital de estágio,
+    **When** ele fecha e reabre a página de detalhe (ou atualiza o
+    navegador), **Then** todos esses dados preenchidos continuam lá, sem
+    exigir login ou conta de usuário adicional (FR-055).
 
 ---
 
@@ -797,11 +827,12 @@ interfere na elegibilidade nem na sugestão de avanço.
 - **FR-032**: O sistema DEVE oferecer, a partir de cada edital exibido na
   tabela (FR-001) e no quadro de progresso (FR-002), um ícone de lupa que
   leva o captador a uma página de detalhe exclusiva daquele edital, reunindo
-  os dados já cadastrados (FR-001, FR-006, FR-007), o plano de submissão
-  (FR-033 a FR-036), a sugestão de avanço no quadro de progresso quando
-  aplicável (FR-038), o resumo executivo (FR-037), a barra de
-  resumo/veredito (FR-041), a barra de ações fixa (FR-042, FR-043), a
-  seção Riscos (FR-047) e a seção Pós-aprovação / Contratação (FR-048).
+  a seção "Identificação do proponente" (FR-049), os dados já cadastrados
+  (FR-001, FR-006, FR-007), o plano de submissão (FR-033 a FR-036, FR-050 a
+  FR-054), a sugestão de avanço no quadro de progresso quando aplicável
+  (FR-038), o resumo executivo (FR-037), a barra de resumo/veredito
+  (FR-041), a barra de ações fixa (FR-042, FR-043), a seção Riscos (FR-047)
+  e a seção Pós-aprovação / Contratação (FR-048).
 - **FR-033**: O sistema DEVE permitir que o captador adicione, na página de
   detalhe de um edital, itens ao plano de submissão daquele edital, cada um
   com uma descrição em texto informada pelo captador (ex.: "Balanço
@@ -847,6 +878,16 @@ interfere na elegibilidade nem na sugestão de avanço.
   agrupamento/etiqueta visual da lista (trabalho de apresentação a cargo do
   `designer`), agora obrigatória e de valor fechado, e passa também a ser a
   base do cálculo da sugestão de avanço de estágio por grupo (FR-038).
+
+  Formalização adicional desta rodada: um item pode, alternativamente à
+  estrutura padrão de um único checkbox aqui descrita, ser cadastrado em uma
+  das duas estruturas alternativas de FR-053 (condicional, com
+  sub-requisitos ramificados por modalidade) ou FR-054 (cenário mutuamente
+  exclusivo com campos de apoio). Nos dois casos, a associação obrigatória a
+  um dos quatro estágios válidos e a participação no gate de FR-038
+  continuam se aplicando normalmente — apenas o critério de "Concluído"
+  (FR-034) muda conforme definido em cada um desses dois requisitos, em vez
+  do checkbox simples.
 - **FR-034**: O sistema DEVE permitir que o captador altere o status de
   qualquer item do plano de submissão entre "Pendente" e "Concluído", e DEVE
   exibir, na página de detalhe, quantos itens do plano de submissão já estão
@@ -862,6 +903,12 @@ interfere na elegibilidade nem na sugestão de avanço.
   essencial; é o cruzamento entre estágio associado e este atributo que
   FR-038 usa para calcular a sugestão de avanço, agrupando os itens
   essenciais por estágio.
+
+  Formalização adicional desta rodada: o sistema DEVE tornar esta marcação
+  visível de forma simétrica — tanto quando o item é essencial (indicador
+  ex.: "Essencial") quanto quando não é (indicador ex.: "Informativo", com o
+  sentido explícito de "não bloqueante para o avanço de estágio") —, nunca
+  deixando um dos dois estados apenas implícito pela ausência do outro.
 - **FR-036**: O sistema DEVE permitir que o captador registre, para um item
   do plano de submissão, uma referência ao documento correspondente (ex.:
   nome do arquivo ou uma anotação livre de onde ele está guardado), sem
@@ -958,13 +1005,18 @@ interfere na elegibilidade nem na sugestão de avanço.
   um edital em qualquer outro estágio (Backlog, Submetido, Aprovado, Não
   aprovado), onde FR-038 não define nenhuma sugestão de avanço para aquele
   estágio, a barra exibe o gate como não aplicável a esse estágio, mostrando
-  apenas os itens (b) e (c) a seguir; (b) a proximidade
+  apenas os itens (b), (c) e (d) a seguir; (b) a proximidade
   ou o vencimento do prazo de fechamento do próprio edital, reaproveitando
   os limiares e a codificação visual já definidos em FR-011 (prazo vencido)
-  e FR-022 (proximidade em quatro níveis); e (c) a quantidade de pendências
+  e FR-022 (proximidade em quatro níveis); (c) a quantidade de pendências
   essenciais ainda em aberto no plano de submissão (itens marcados como
   "essencial para elegibilidade" — FR-035 — com status "Pendente" —
-  FR-034). Este requisito é tratado como FR separado de FR-038 (e não uma
+  FR-034); e (d) a quantidade de indicadores de "pergunta em aberto"
+  (FR-052) atualmente ativos naquele edital, somando itens do plano de
+  submissão, sub-requisitos de itens condicionais (FR-053) e riscos
+  registrados (FR-047) marcados com esse indicador — item (d) formalizado
+  nesta rodada, junto com o próprio mecanismo de FR-052. Este requisito é
+  tratado como FR separado de FR-038 (e não uma
   reescrita dele) porque cobre um sinal distinto: FR-038 é uma sugestão
   condicional que aparece e desaparece conforme um limiar específico é
   cruzado (o momento de avançar de estágio); a barra de resumo/veredito é
@@ -1029,8 +1081,18 @@ interfere na elegibilidade nem na sugestão de avanço.
   durante a submissão). Esta seção segue o mesmo modelo de FR-006/FR-007/
   FR-017 — texto livre descritivo, sem controle individual de status
   "atendido/pendente" por item — e nunca é considerada no cálculo de
-  elegibilidade (FR-035, FR-038) nem na barra de resumo/veredito (FR-041):
-  é informativa, nunca bloqueante.
+  elegibilidade (FR-035, FR-038) nem nos itens (a)-(c) da barra de
+  resumo/veredito (FR-041), que são derivados desse cálculo: é informativa,
+  nunca bloqueante.
+
+  Formalização adicional desta rodada: um risco registrado pode,
+  opcionalmente, carregar o mesmo indicador de "pergunta em aberto" de
+  FR-052 — quando o risco em si representa uma ambiguidade do edital-fonte a
+  confirmar, não apenas um aviso processual comum. Essa marcação segue a
+  mesma natureza informativa e não-gated do restante desta seção: entra
+  apenas no contador (d) da barra de resumo/veredito (FR-041), nunca no
+  cálculo de elegibilidade (FR-035, FR-038) nem nos itens (a)-(c) dessa
+  mesma barra.
 - **FR-048**: O sistema DEVE oferecer, na página de detalhe de um edital
   (FR-032), uma seção "Pós-aprovação / Contratação" separada e visualmente
   distinta do plano de submissão (FR-033), na qual o captador registra
@@ -1062,6 +1124,107 @@ interfere na elegibilidade nem na sugestão de avanço.
   submissão e não-gated, em vez de um grupo do plano associado a um
   estágio.
 
+  Formalização dos FR-049 a FR-055 (esta rodada): comparando o protótipo da
+  página de detalhe (User Story 5) com um artefato de referência real —
+  `docs/submissions/timeline-submission-finep-digital.html`, gerado pela
+  skill `fundraiser-submission-timeline` a partir do Regulamento de um
+  edital FINEP real —, identificaram-se dez mecanismos do artefato de
+  referência ainda não formalizados nesta spec (mais do que polimento
+  visual: capacidades inteiras do modelo de dados). Os sete FRs a seguir
+  formalizam esses mecanismos, já implementados e testados ao vivo no
+  protótipo `prototype/avulsa-A042/`; FR-035, FR-041 e FR-047, acima, e
+  FR-033, acima, já receberam as extensões pontuais correspondentes.
+- **FR-049**: O sistema DEVE oferecer, na página de detalhe de um edital
+  (FR-032), uma seção "Identificação do proponente" sempre visível,
+  distinta dos dados do próprio edital (FR-001, FR-006, FR-007, FR-032) —
+  ela é sobre quem está submetendo a proposta, não sobre o edital em si —,
+  na qual o captador registra, em campos de texto editáveis, os dados da
+  submissão: organização proponente (razão social), CNPJ, instituição
+  parceira (quando houver) e responsável pela captação. Os quatro campos
+  são opcionais e informativos, seguindo o mesmo princípio de texto livre
+  não-gated de FR-047/FR-048: nenhum deles bloqueia a navegação, o gate de
+  elegibilidade (FR-035, FR-038) ou qualquer exportação (FR-039, FR-040). Os
+  valores preenchidos DEVEM ser preservados entre sessões (FR-055).
+- **FR-050**: O sistema DEVE permitir que o captador associe a um item do
+  plano de submissão (FR-033), opcionalmente, um campo estruturado de valor
+  adicional — distinto da descrição do item (FR-033) e dos textos didáticos
+  (FR-045) —, com um rótulo definido pelo captador e um tipo escolhido entre
+  texto livre curto, data, data e hora, ou seleção de uma lista fechada de
+  opções definida pelo captador (ex.: "Valor solicitado (R$)" como texto,
+  "Data/hora planejada de envio" como data e hora, "Linha temática" como
+  seleção). Quando presente, o valor preenchido pelo captador nesse campo é
+  salvo e exibido junto ao item; sua ausência ou seu preenchimento nunca
+  afetam o status Pendente/Concluído do item (FR-034) nem o cálculo de
+  elegibilidade (FR-035, FR-038) — é registro de apoio, na mesma linha do
+  responsável e da data de conclusão (FR-046).
+- **FR-051**: O sistema DEVE permitir que o captador associe a um item do
+  plano de submissão (FR-033), opcional e independentemente entre si: (a)
+  um link para uma referência externa relacionada ao item (ex.: a lista de
+  exclusão/impedimentos publicada por um financiador), exibido como um link
+  clicável junto à descrição do item; e (b) uma observação em texto livre e
+  longo, distinta do campo estruturado (FR-050) e dos textos didáticos
+  (FR-045), para registrar contexto adicional (ex.: outras propostas em
+  andamento relacionadas àquele item). Como os demais atributos opcionais do
+  item (FR-045, FR-046, FR-050), nenhum dos dois afeta o status
+  Pendente/Concluído (FR-034) ou o cálculo de elegibilidade (FR-035,
+  FR-038).
+- **FR-052**: O sistema DEVE permitir que o captador marque, de forma
+  independente de qualquer outra marcação, um item do plano de submissão
+  (FR-033), um sub-requisito de um item condicional (FR-053) ou um risco
+  registrado (FR-047) com um indicador de "pergunta em aberto" — sinalizando
+  que a exigência do edital-fonte correspondente é ambígua ou incerta e
+  precisa de confirmação externa (ex.: junto ao financiador) antes de poder
+  ser dada como de fato resolvida. Este indicador é independente de
+  "essencial para elegibilidade" (FR-035) — um item pode carregar as duas
+  marcações ao mesmo tempo, nenhuma delas, ou só uma — e não bloqueia, por
+  si só, o status Pendente/Concluído do item (FR-034) nem o cálculo de
+  elegibilidade (FR-035, FR-038): sinaliza incerteza para o captador
+  confirmar, não impede a conclusão do item. A quantidade total de
+  marcações ativas (itens, sub-requisitos e riscos) é contabilizada na
+  barra de resumo/veredito (FR-041).
+- **FR-053**: O sistema DEVE permitir que um item do plano de submissão
+  (FR-033) seja cadastrado, alternativamente à estrutura padrão de um único
+  checkbox, como uma escolha entre modalidades mutuamente exclusivas (ex.:
+  natureza jurídica da organização proponente — pessoa jurídica com fins
+  lucrativos ou organização da sociedade civil), cada modalidade revelando
+  seu próprio subconjunto de sub-requisitos a cumprir, visível apenas depois
+  de o captador escolher essa modalidade. Este item só é considerado
+  "Concluído" (FR-034) quando uma modalidade foi escolhida E todos os
+  sub-requisitos daquela modalidade estão marcados como cumpridos; escolher
+  uma modalidade diferente troca o subconjunto de sub-requisitos exibido e
+  considerado, sem misturar sub-requisitos de modalidades diferentes. Um
+  item deste tipo participa do mesmo gate de sugestão de avanço de estágio
+  (FR-038) que qualquer outro item, quando marcado como essencial para
+  elegibilidade (FR-035) e associado ao estágio atual do edital (FR-033) —
+  a condição "Concluído" usada por FR-038 é a definida aqui, não a de um
+  checkbox simples.
+- **FR-054**: O sistema DEVE permitir que um item do plano de submissão
+  (FR-033) seja cadastrado, alternativamente, como uma escolha entre
+  cenários mutuamente exclusivos (ex.: porte da organização proponente —
+  pequeno, médio ou grande), sem sub-requisitos ramificados (distinto de
+  FR-053), podendo carregar um ou mais campos de valor associados (ex.:
+  faturamento anual), no mesmo espírito do campo estruturado de FR-050, mas
+  como registro de apoio à escolha do cenário, não como condição para a
+  conclusão do item. Este item é considerado "Concluído" (FR-034) assim que
+  qualquer um dos cenários é escolhido, independentemente de os campos de
+  apoio associados estarem ou não preenchidos. Como o item condicional de
+  FR-053, um item de cenário participa normalmente do gate de sugestão de
+  avanço de estágio (FR-038) quando marcado como essencial para
+  elegibilidade (FR-035) e associado ao estágio atual do edital (FR-033) —
+  usando este critério de "Concluído" (escolha feita), não o checkbox
+  simples.
+- **FR-055**: O sistema DEVE preservar, entre sessões do captador (ex.:
+  fechar e reabrir o navegador, atualizar a página), os dados preenchidos na
+  página de detalhe de um edital (FR-032) — identificação do proponente
+  (FR-049), status e demais atributos de cada item do plano de submissão
+  (FR-033 a FR-036, FR-045, FR-046, FR-050 a FR-054) e o estágio de
+  acompanhamento do edital (FR-002) —, sem exigir que o captador crie uma
+  conta ou faça login adicional além do já assumido para acessar o sistema
+  (ver Assumptions). O mecanismo técnico de persistência (ex.: armazenamento
+  local do navegador vs. persistência no servidor) fica em aberto para a
+  fase de planejamento técnico; este requisito garante apenas o resultado
+  observável pelo captador — o dado preenchido não se perde entre visitas.
+
 ### Key Entities
 
 - **Edital (Chamada de Fomento)**: representa uma oportunidade de captação de
@@ -1075,6 +1238,13 @@ interfere na elegibilidade nem na sugestão de avanço.
   padrão não) — que, quando ativo, oculta o edital das visões padrão
   (tabela e quadro de progresso) sem alterar seu estágio de acompanhamento
   nem excluir seus dados (ver FR-027 a FR-030).
+- **Identificação do Proponente**: representa os dados de quem está
+  submetendo a proposta a um edital específico — distintos dos dados do
+  próprio edital (ver Edital). Pertence a exatamente um edital, dentro da
+  página de detalhe desse edital (FR-032, FR-049). Atributos, todos
+  opcionais e informativos, nunca bloqueantes do gate de elegibilidade
+  (FR-035, FR-038): organização proponente (razão social), CNPJ, instituição
+  parceira (quando houver) e responsável pela captação.
 - **Captador de Recursos**: pessoa responsável por identificar, avaliar e
   submeter propostas a editais de fomento em nome de uma organização
   proponente. É quem cadastra, acompanha e move os editais entre estágios.
@@ -1099,9 +1269,24 @@ interfere na elegibilidade nem na sugestão de avanço.
   opcionais: referência ao documento correspondente quando registrada
   (metadado em texto — nome do arquivo ou anotação de localização; não
   armazena o arquivo em si nesta feature, ver FR-036), paráfrase "Em outras
-  palavras" e orientação "Como preencher" (texto livre, cada um — FR-045), e
-  responsável e data de conclusão (FR-046). Pertence a exatamente um
-  edital; não existe independentemente dele.
+  palavras" e orientação "Como preencher" (texto livre, cada um — FR-045),
+  responsável e data de conclusão (FR-046), campo estruturado opcional de
+  valor (rótulo, tipo — texto/data/data e hora/seleção fechada — e o valor
+  preenchido, FR-050), link externo opcional relacionado ao item (texto do
+  link e URL, FR-051), observação livre opcional (texto longo, distinta do
+  campo estruturado, FR-051), e indicador de "pergunta em aberto" opcional
+  (sim/não, padrão não, FR-052). Pertence a exatamente um edital; não existe
+  independentemente dele.
+
+  Um item pode, alternativamente à estrutura padrão descrita acima (um
+  único checkbox Pendente/Concluído), ser cadastrado como item condicional —
+  com uma modalidade escolhida entre opções mutuamente exclusivas e um
+  subconjunto de sub-requisitos por modalidade, cada sub-requisito com seu
+  próprio indicador opcional de "pergunta em aberto" (FR-053) — ou como item
+  de cenário — com um cenário escolhido entre opções mutuamente exclusivas e
+  campos de apoio associados, sem sub-requisitos (FR-054). Em ambos os
+  casos, o critério de "Concluído" (FR-034) segue a definição específica de
+  FR-053 ou FR-054, não o checkbox simples.
 
 ## Success Criteria *(mandatory)*
 
