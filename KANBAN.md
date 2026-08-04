@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-04T06:51Z
+**Última sincronização**: 2026-08-04T07:22Z
 
 ## To Do
 
@@ -169,6 +169,22 @@ todas as colunas.
   claude-in-chrome nesta sessão) — confirmado por leitura de código: mover/
   drag-and-drop, contadores de coluna e botões de mover já iteravam sobre
   `STATUSES` genericamente, sem lógica hardcoded a 4 colunas.
+- [ ] A042 Página de detalhe de um edital, acessível por um ícone de lupa
+  a partir da tabela e do quadro de progresso: exibe os dados já
+  cadastrados do edital, um plano de submissão (lista de itens
+  pendente/concluído, opcionalmente marcados como "essenciais para
+  elegibilidade", com registro de documento anexado como metadado —
+  sem upload real de arquivo), um resumo executivo das pendências de
+  elegibilidade voltado a quem decide fora do sistema (ex.: coordenador
+  de pesquisa), exportação em PDF do resumo executivo e do plano de
+  submissão, e uma sugestão (nunca uma trava) para avançar o estágio no
+  Kanban conforme o plano avança (Em andamento → Validação quando todos
+  os itens essenciais estão concluídos; Validação → Submetido quando
+  100% dos itens estão concluídos). Conforme User Story 5 (P5),
+  FR-032 a FR-040 em `specs/001-manage-call-for-proposals/spec.md`
+  (branch `001-manage-call-for-proposals`). Protótipo:
+  `prototype/avulsa-A042/`. Pedido direto do usuário, formalizado via
+  `/kanban-sync` → "Atualizar spec" em 2026-08-04.
 ### (avulsas)
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento

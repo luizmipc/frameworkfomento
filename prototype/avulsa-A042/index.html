@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<!-- Protótipo não-funcional — task A042 (User Story 5, FR-032 a FR-040).
+     HTML/CSS/JS puro, dados mockados em script.js, sem persistência real e
+     sem geração de PDF real (exportações são simuladas via toast). Página de
+     detalhe de UM edital específico — chegada simulada a partir do ícone de
+     lupa que existiria na tabela/kanban de prototype/avulsa-A001/. -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Detalhe do edital — Protótipo A042</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <!-- Link simbólico: em prototype/avulsa-A001/ o acesso a esta tela viria
+       de um ícone de lupa na tabela/kanban (fora do escopo desta task). -->
+  <a class="back-link" href="../avulsa-A001/index.html">&larr; Voltar aos editais</a>
+  <h1 id="edital-nome"></h1>
+  <p class="subtitle" id="edital-instituicao"></p>
+  <p class="edital-status-line">Estágio atual: <span class="badge-estagio" id="edital-estagio-badge"></span></p>
+</header>
+
+<!-- Mesmo padrão de toast de prototype/avulsa-A001/ (feedback não-bloqueante,
+     some sozinho) — reaproveitado aqui para simular a exportação em PDF e o
+     avanço de estágio via sugestão. -->
+<div class="toast hidden" id="toast" role="status" aria-live="polite"></div>
+
+<main class="layout">
+  <div class="content">
+    <section class="panel" id="dados-edital">
+      <h2>Dados do edital</h2>
+      <dl class="field-list">
+        <div><dt>Descrição</dt><dd id="edital-descricao"></dd></div>
+        <div><dt>Link para a chamada</dt><dd id="edital-link"></dd></div>
+        <div><dt>Abertura</dt><dd id="edital-abertura"></dd></div>
+        <div><dt>Fechamento</dt><dd id="edital-fechamento"></dd></div>
+        <div><dt>Documentação exigida</dt><dd id="edital-documentacao"></dd></div>
+        <div><dt>Critérios de avaliação</dt><dd id="edital-criterios"></dd></div>
+      </dl>
+    </section>
+
+    <section class="panel" id="plano-submissao">
+      <div class="panel-header">
+        <h2>Plano de submissão</h2>
+        <button type="button" class="btn-secondary" id="export-plano">Exportar plano de submissão (PDF)</button>
+      </div>
+
+      <p class="progress-summary" id="progress-summary" aria-live="polite"></p>
+
+      <!-- Sugestão de avanço de estágio (FR-0xx da US5): visível e
+           não-bloqueante — nunca impede o captador de continuar editando o
+           plano, e desaparece sozinha (updateProgressAndSuggestion()) se o
+           progresso cair abaixo do limiar que a mostrou. -->
+      <div class="suggestion-banner hidden" id="suggestion-banner" role="status" aria-live="polite">
+        <span id="suggestion-text"></span>
+        <button type="button" id="suggestion-action"></button>
+      </div>
+
+      <ul class="plano-list" id="plano-list"></ul>
+
+      <form class="add-item-form" id="add-item-form">
+        <div class="control-field">
+          <label for="new-item-desc">Descrição do item</label>
+          <input type="text" id="new-item-desc" placeholder="Ex.: Comprovante de regularidade fiscal" required>
+        </div>
+        <label class="checkbox-field">
+          <input type="checkbox" id="new-item-essencial">
+          Essencial para elegibilidade
+        </label>
+        <button type="submit">Adicionar item</button>
+      </form>
+    </section>
+  </div>
+
+  <!-- Resumo executivo: painel sempre visível ao lado do plano (não uma aba
+       escondida) — quem decide fora do sistema (ex.: coordenador de
+       pesquisa) e o captador que está preenchendo o plano costumam olhar as
+       duas coisas juntas; uma visão alternável esconderia um dos dois
+       enquanto o outro está em uso. Em telas estreitas, empilha abaixo do
+       conteúdo principal (ver style.css). -->
+  <aside class="panel resumo-executivo" id="resumo-executivo" aria-label="Resumo executivo">
+    <h2>Resumo executivo</h2>
+    <p class="resumo-hint">Visão rápida para quem decide fora do sistema (ex.: coordenador de pesquisa).</p>
+    <dl class="field-list compact">
+      <div><dt>Chamada</dt><dd id="resumo-chamada"></dd></div>
+      <div><dt>Instituição</dt><dd id="resumo-instituicao"></dd></div>
+      <div><dt>Fechamento</dt><dd id="resumo-fechamento"></dd></div>
+      <div><dt>Estágio atual</dt><dd id="resumo-estagio"></dd></div>
+      <div><dt>Link</dt><dd id="resumo-link"></dd></div>
+    </dl>
+    <h3>Pendências de elegibilidade</h3>
+    <ul class="pendencias-list" id="pendencias-list" aria-live="polite"></ul>
+    <button type="button" class="btn-secondary" id="export-resumo">Exportar resumo executivo (PDF)</button>
+  </aside>
+</main>
+
+<template id="plano-item-template">
+  <li class="plano-item">
+    <label class="plano-item-check">
+      <input type="checkbox" class="item-concluido">
+      <span class="item-desc"></span>
+    </label>
+    <span class="badge-essencial hidden">Essencial para elegibilidade</span>
+    <!-- Só aparece quando o item está concluído — texto livre (nome/anotação),
+         não upload de arquivo real (protótipo não-funcional). -->
+    <div class="item-docref hidden">
+      <label>Referência do documento
+        <input type="text" class="item-docref-input" placeholder="Nome do arquivo ou anotação (ex.: cnd-2026-07.pdf)">
+      </label>
+    </div>
+  </li>
+</template>
+
+<script src="script.js"></script>
+</body>
+</html>
