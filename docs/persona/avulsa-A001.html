@@ -26,7 +26,7 @@
     <p class="kicker">fundraiser-test · docs/persona · 11ª rodada (foco: confirmar as correções das tasks A039 e A040, feitas em resposta às Dores 4 e 5 levantadas por esta mesma persona na 10ª rodada — botão "→" desabilitado em qualquer estágio terminal do quadro Kanban, e selo "Vencido" não mais exibido em editais já Submetidos/Aprovados/Não aprovados; teste AO VIVO no Chrome, viewport desktop ~1568px, servido via <code>python3 -m http.server</code> local)</p>
     <h1 id="top">Beatriz Noronha</h1>
     <p class="quote">"Dessa vez cliquei duas vezes na seta, Validação virou Submetido, Submetido virou Aprovado — igualzinho a antes. Mas a terceira vez que fui clicar, sem nem pensar, a seta já não respondia mais, estava apagada. Tive que arrastar o card de propósito pra "Não aprovado" pra testar se ainda dava pra corrigir — e deu. Só que agora esse gesto é diferente do automatismo de "avançar", que é exatamente o que eu queria."</p>
-    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-08-03, via comando <code>/fundraiser-test</code>. Esta é a <strong>11ª rodada</strong> de teste deste protótipo, focada em confirmar se as correções feitas pelo <code>designer</code> em resposta às <a href="#dor-4">Dor 4</a> e <a href="#dor-5">Dor 5</a> da 10ª rodada resolvem, na prática, os problemas que esta mesma persona havia levantado — confirmado ao vivo para as duas. A <a href="#dor-1">Dor 1</a>, pendente só de confirmação ao vivo desde a 10ª rodada, também foi confirmada ao vivo nesta janela e marcada como resolvida. Resta em aberto apenas a <a href="#dor-3">Dor 3</a>, decisão de produto ainda pendente (task A037), fora do escopo desta rodada.</p>
+    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A001/</code> (não-funcional, dados mockados, sem persistência), em 2026-08-03, via comando <code>/fundraiser-test</code>. Esta é a <strong>11ª rodada</strong> de teste deste protótipo, focada em confirmar se as correções feitas pelo <code>designer</code> em resposta às <a href="#dor-4">Dor 4</a> e <a href="#dor-5">Dor 5</a> da 10ª rodada resolvem, na prática, os problemas que esta mesma persona havia levantado — confirmado ao vivo para as duas. A <a href="#dor-1">Dor 1</a>, pendente só de confirmação ao vivo desde a 10ª rodada, também foi confirmada ao vivo nesta janela. A <a href="#dor-3">Dor 3</a>, cuja decisão de produto (task A037) estava pendente, foi formalizada em <code>spec.md</code> (FR-025/FR-029) e o protótipo corrigido e confirmado ao vivo na mesma janela. Todas as cinco dores registradas neste documento estão, portanto, resolvidas nesta rodada.</p>
 
     <h2 id="canvas">Quem é essa persona</h2>
     <table>
@@ -87,12 +87,11 @@
     <section class="story">
       <div class="story-head">
         <h3 id="dor-3">Dor 3 — "Limpar filtros" também tira a Beatriz da visão "Ignorados", sem isso estar explícito em nenhum requisito</h3>
-        <span class="badge badge-low">🟢 baixa</span>
+        <span class="badge badge-passed">✅ resolvida (confirmada ao vivo em 2026-08-03)</span>
       </div>
-      <p><strong>O que aconteceu:</strong> confirmado ao vivo na 9ª rodada — com busca, filtro de instituição e o toggle "Ignorados" todos ativos, "Limpar filtros" reseta os três de uma vez, incluindo devolver a visão para "Ativos".</p>
-      <p><strong>Não retestado ao vivo desde a 9ª rodada</strong> (fora do escopo tanto da 10ª quanto da 11ª rodada, ambas focadas no quadro Kanban de estágios) — o código atual (<code>script.js</code>, listener de <code>clearFiltersBtn</code>) continua chamando <code>setMostrarIgnorados(false)</code> ao limpar filtros, com o mesmo comentário referenciando a task A037 ainda pendente de decisão do <code>product-owner</code>. Comportamento inalterado desde a 9ª rodada.</p>
-      <p><strong>Por que é um problema:</strong> ao revisar, uma vez por ano, os editais de um financiador específico que já descartou, a Beatriz fica um tempo dentro da visão "Ignorados" com um filtro de instituição ativo. Se ela quiser só limpar o termo de busca, "Limpar filtros" também a tira de "Ignorados" de volta para "Ativos" — ela perde o lugar de onde estava.</p>
-      <p><strong>Recomendação:</strong> mesma das rodadas anteriores — para o <code>product-owner</code>, declarar em FR-025 ou FR-029 se resetar o toggle junto é intencional ou se o botão deveria preservar a visão atual.</p>
+      <p><strong>O que aconteceu antes:</strong> confirmado ao vivo na 9ª rodada — com busca, filtro de instituição e o toggle "Ignorados" todos ativos, "Limpar filtros" reseta os três de uma vez, incluindo devolver a visão para "Ativos".</p>
+      <p><strong>O que mudou:</strong> a decisão pendente (task A037) foi formalizada em <code>spec.md</code> — FR-025 passa a cobrir só busca/instituição, FR-029 ganha a contrapartida de que o toggle Ativos/Ignorados é uma dimensão de visão separada, nunca resetada por "Limpar filtros" (novo Acceptance Scenario 9 de User Story 4). O <code>script.js</code> foi corrigido: o listener de <code>clearFiltersBtn</code> não chama mais <code>setMostrarIgnorados(false)</code>. Confirmado ao vivo em 2026-08-03: na visão "Ignorados" com filtro de instituição ativo, "Limpar filtros" limpa só a instituição e a Beatriz permanece em "Ignorados".</p>
+      <p><strong>Por que isso resolve a dor:</strong> ao revisar, uma vez por ano, os editais de um financiador específico que já descartou, a Beatriz agora pode limpar o termo de busca sem perder o lugar de onde estava — "Limpar filtros" só limpa filtros, não troca de visão.</p>
     </section>
 
     <section class="story">
@@ -127,7 +126,7 @@
     <h2 id="resolver">Para quem resolver</h2>
     <p><a href="#dor-1">Dor 1</a> (ação "Ignorar" sem confirmação) → resolvida, sem ação pendente.</p>
     <p><a href="#dor-2">Dor 2</a> ("Concluído" misturando submetido-aguardando com resultado-finalizado) → resolvida, sem ação pendente.</p>
-    <p><a href="#dor-3">Dor 3</a> ("Limpar filtros" também reseta o toggle Ativos/Ignorados, sem previsão em FR-025/FR-029) → <code>product-owner</code>, decisão ainda pendente (task A037).</p>
+    <p><a href="#dor-3">Dor 3</a> ("Limpar filtros" também reseta o toggle Ativos/Ignorados) → resolvida, sem ação pendente.</p>
     <p><a href="#dor-4">Dor 4</a> (seta "→" transformando silenciosamente "Aprovado" em "Não aprovado") → resolvida (A039), sem ação pendente.</p>
     <p><a href="#dor-5">Dor 5</a> (selo "Vencido" idêntico em editais Submetidos/Aprovados/Não aprovados e em editais ativos vencidos) → resolvida (A040), sem ação pendente.</p>
 
