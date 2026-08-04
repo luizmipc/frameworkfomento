@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-04T07:51Z
+**Última sincronização**: 2026-08-04T08:45Z
 
 ## To Do
 
@@ -171,30 +171,56 @@ todas as colunas.
   `STATUSES` genericamente, sem lógica hardcoded a 4 colunas.
 - [ ] A042 Página de detalhe de um edital, acessível por um ícone de lupa
   a partir da tabela e do quadro de progresso: exibe os dados já
-  cadastrados do edital, um plano de submissão (lista de itens
-  pendente/concluído, opcionalmente marcados como "essenciais para
-  elegibilidade", com registro de documento anexado como metadado —
-  sem upload real de arquivo), um resumo executivo das pendências de
+  cadastrados do edital, um plano de submissão (itens pendente/
+  concluído, com registro de documento anexado como metadado — sem
+  upload real de arquivo), um resumo executivo das pendências de
   elegibilidade voltado a quem decide fora do sistema (ex.: coordenador
   de pesquisa), exportação em PDF do resumo executivo e do plano de
   submissão, e uma sugestão (nunca uma trava) para avançar o estágio no
-  Kanban conforme o plano avança (Em andamento → Validação quando todos
-  os itens essenciais estão concluídos; Validação → Submetido quando
-  100% dos itens estão concluídos); além disso, barra de resumo/veredito
+  Kanban conforme o plano avança; além disso, barra de resumo/veredito
   no topo, barra de ações fixa (expandir/recolher tudo, imprimir,
   exportar), campos didáticos opcionais por item ("Em outras
   palavras"/"Como preencher"), responsável/concluído-em por item,
-  categoria opcional por item (agrupamento visual, sem reintroduzir
-  fases), seção Riscos e seção Pós-aprovação/Contratação sempre
-  visíveis e não-bloqueantes, e CSS de impressão. Conforme User Story 5
-  (P5), FR-032 a FR-048 em `specs/001-manage-call-for-proposals/spec.md`
-  (branch `001-manage-call-for-proposals`). Protótipo:
-  `prototype/avulsa-A042/` — elevado ao nível de
-  `docs/submissions/timeline-submission-finep-digital.html` (branch
-  `finep-submission`) a pedido do usuário, que achou a primeira versão
-  rasa demais frente a esse padrão de qualidade. Pedido direto do
-  usuário, formalizado via `/kanban-sync` → "Atualizar spec" em
-  2026-08-04 (duas rodadas: FR-032 a FR-040, depois FR-041 a FR-048).
+  seção Riscos e seção Pós-aprovação/Contratação sempre visíveis e
+  não-bloqueantes, e CSS de impressão. Cada item do plano tem
+  associação obrigatória a um dos 4 estágios válidos do Kanban
+  (Elegibilidade, Em andamento, Validação, Submetido — ver A043), e o
+  plano é exibido agrupado visualmente por esses 4 estágios; o gate/
+  sugestão de avanço usa uma única fórmula reaproveitada nas 3
+  transições intermediárias: itens essenciais do grupo do estágio
+  atual concluídos (havendo ao menos um) → sugere avançar. Conforme
+  User Story 5 (P5), FR-032 a FR-048 em
+  `specs/001-manage-call-for-proposals/spec.md` (branch
+  `001-manage-call-for-proposals`). Protótipo: `prototype/avulsa-A042/`
+  — elevado ao nível de `docs/submissions/timeline-submission-finep-
+  digital.html` (branch `finep-submission`) a pedido do usuário, que
+  achou a primeira versão rasa demais frente a esse padrão de
+  qualidade, e depois reorganizado para se integrar ao novo estágio
+  Elegibilidade (A043). Pedido direto do usuário, formalizado via
+  `/kanban-sync` → "Atualizar spec" em 2026-08-04 (três rodadas: FR-032
+  a FR-040; FR-041 a FR-048; e a revisão de FR-002/033/035/038/041/048
+  para o modelo de estágio unificado com A043).
+- [ ] A043 Novo estágio "Elegibilidade" no quadro de progresso, logo
+  após "Backlog" (Backlog → Elegibilidade → Em andamento → Validação →
+  Submetido → Aprovado/Não aprovado, 7 colunas) — é o estágio em que o
+  captador levanta e define o que é necessário para a proposta ser
+  elegível (monta os critérios/itens do plano de submissão de A042),
+  não necessariamente já os tendo cumprido. Conforme FR-002 (e demais
+  FRs afetados: FR-009, FR-027, FR-029, FR-031) em
+  `specs/001-manage-call-for-proposals/spec.md` (branch
+  `001-manage-call-for-proposals`). Protótipo: `prototype/avulsa-A001/`.
+  Pedido direto do usuário, formalizado via `/kanban-sync` → "Atualizar
+  spec" em 2026-08-04.
+  Feito em 2026-08-04: `prototype/avulsa-A001/` atualizado —
+  `STATUSES`/`STATUS_LABEL` (script.js) e as colunas do quadro
+  (index.html) agora têm as 7 colunas; grid do quadro ajustado para
+  `repeat(7, ...)` e testado ao vivo sem rolagem horizontal em
+  ~1568px; ícone de lupa adicionado na tabela e no card do Kanban,
+  levando a `prototype/avulsa-A042/` (fecha FR-032, pendente desde a
+  criação de A042 — só o link de volta existia). Durante o teste ao
+  vivo, o botão "Ignorar" de cada card vazou para a coluna vizinha nas
+  7 colunas mais estreitas — corrigido com `flex-wrap` no grupo de
+  ações do card.
 ### (avulsas)
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento
