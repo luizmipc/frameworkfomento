@@ -270,7 +270,9 @@ ordenados pela proximidade da data de fechamento.
    progresso, **Then** um indicador visível (ex.: "Filtrando por: ... ·
    Limpar filtros") aparece próximo aos controles de busca/filtro, e, ao
    clicar em "Limpar filtros", a busca e o filtro por instituição são
-   resetados juntos, em uma única ação, sem alterar a ordenação aplicada.
+   resetados juntos, em uma única ação, sem alterar a ordenação aplicada e
+   sem alterar a visão de Ativos/Ignorados (FR-029) em que o captador estava
+   no momento do clique.
 8. **Given** uma busca e/ou um filtro por instituição deixam uma coluna do
    quadro de progresso sem nenhum edital correspondente, **When** o captador
    visualiza essa coluna, **Then** o sistema exibe, no lugar da coluna em
@@ -279,6 +281,12 @@ ordenados pela proximidade da data de fechamento.
    aplicado, não da falta de editais cadastrados naquele estágio, e o
    cabeçalho dessa coluna exibe a contagem 0 (FR-024), consistente com o
    total já filtrado (FR-023).
+9. **Given** o captador está na visão de editais "Ignorados" (FR-029) com um
+   filtro por instituição responsável ativo, **When** ele clica em "Limpar
+   filtros" só para limpar a busca ou o filtro de instituição, **Then** o
+   filtro por instituição é removido, mas o captador permanece na visão
+   "Ignorados" — a alternância Ativos/Ignorados não é afetada por "Limpar
+   filtros" (FR-025, FR-029).
 
 ---
 
@@ -495,6 +503,17 @@ ordenados pela proximidade da data de fechamento.
   o total de FR-023) como se fosse o total geral, e reportar um número
   incorreto a terceiros. Formalização de um comportamento já implementado e
   confirmado ao vivo no protótipo `prototype/avulsa-A001/` (task A013).
+  Escopo de "Limpar filtros": a ação reseta somente busca (FR-018) e filtro
+  por instituição responsável (FR-019) — a alternância entre a visão de
+  editais ativos e a de editais "Ignorados" (FR-029) é uma dimensão
+  diferente (qual conjunto de editais está sendo visualizado, não um filtro
+  de refinamento dentro desse conjunto) e permanece inalterada por essa
+  ação, inclusive quando o captador está na visão de Ignorados no momento do
+  clique (ver Acceptance Scenario 9 de User Story 4). Achado de teste de
+  usabilidade com persona (Beatriz Noronha, `docs/persona/avulsa-A001.html`):
+  sem essa distinção explícita, "Limpar filtros" também devolvia o captador
+  à visão "Ativos" quando ele só queria limpar a busca, tirando-o sem aviso
+  do lugar de onde estava.
 - **FR-026**: O sistema DEVE exibir, em qualquer coluna do quadro de
   progresso que fique sem nenhum edital correspondente por causa de uma
   busca e/ou filtro ativo, uma mensagem indicando que não há resultado para
@@ -550,7 +569,12 @@ ordenados pela proximidade da data de fechamento.
   visão/filtro dedicado"); agora que a decisão de UX foi tomada e
   implementada e confirmada ao vivo no protótipo `prototype/avulsa-A001/`
   (task A018), o requisito passa a especificar o padrão de interação real
-  em vez de permanecer livre.
+  em vez de permanecer livre. Por ser um seletor de qual conjunto de editais
+  está sendo visualizado — não um filtro de refinamento dentro de um
+  conjunto —, esta alternância NÃO é resetada pela ação "Limpar filtros"
+  (FR-025): trocar entre Ativos e Ignorados é uma ação distinta, feita
+  apenas por este próprio controle, nunca como efeito colateral de limpar
+  busca/instituição.
 - **FR-030**: O sistema DEVE permitir que o captador desmarque um edital
   como "Ignorado" a partir da visão de ignorados (FR-029), fazendo-o voltar
   a aparecer na tabela e no quadro de progresso, no mesmo estágio de

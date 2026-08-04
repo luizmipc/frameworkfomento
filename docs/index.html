@@ -77,7 +77,7 @@
       <li><code>FR-014</code> Remoção definitiva de um edital da lista de acompanhamento ativo.</li>
       <li><code>FR-027</code> Marcação de um edital como "Ignorado" — atributo de visibilidade ortogonal ao estágio de acompanhamento, distinto da remoção (FR-014) e não um sétimo estágio do quadro (FR-002 permanece com seis colunas). Cobre o caso de um edital avaliado e descartado por não ter a ver com a área de atuação do captador, sem perder o registro de que já foi avaliado.</li>
       <li><code>FR-028</code> Editais "Ignorado" ficam ocultos por padrão da tabela, do quadro de progresso e das contagens (FR-023/FR-024), mantendo o estágio de acompanhamento inalterado.</li>
-      <li><code>FR-029</code> Alternância entre a visão de editais ativos e a de editais marcados como "Ignorado", apresentada como um controle de duas posições nomeadas ("‹ Ativos" / "Ignorados ›", com contador) — não um checkbox/toggle liga-desliga, nem uma sétima coluna do quadro, nem uma rota separada.</li>
+      <li><code>FR-029</code> Alternância entre a visão de editais ativos e a de editais marcados como "Ignorado", apresentada como um controle de duas posições nomeadas ("‹ Ativos" / "Ignorados ›", com contador) — não um checkbox/toggle liga-desliga, nem uma sétima coluna do quadro, nem uma rota separada. É um seletor de qual conjunto de editais está sendo visualizado, não um filtro de refinamento — por isso a ação "Limpar filtros" (FR-025) nunca altera essa alternância.</li>
       <li><code>FR-030</code> Reversão da marcação "Ignorado", devolvendo o edital à tabela e ao quadro de progresso no estágio em que já estava.</li>
     </ul>
 
@@ -95,7 +95,7 @@
       <li><code>FR-020</code> Ordenação da tabela por data de fechamento (crescente ou decrescente).</li>
       <li><code>FR-021</code> Dentro de cada coluna do quadro de progresso, cartões ordenados por data de fechamento (mais próximo primeiro), como critério secundário ao agrupamento por estágio.</li>
       <li><code>FR-023</code> Número total de editais sendo exibidos, próximo ao título da tela ou aos controles de busca/filtro — total geral sem busca/filtro ativo, total já filtrado quando busca e/ou filtro por instituição estão aplicados.</li>
-      <li><code>FR-025</code> Indicador visível de busca/filtro ativo próximo aos controles ("Filtrando por: ... · Limpar filtros"), nas duas visões, com ação "Limpar filtros" que reseta busca e filtro por instituição juntos, sem alterar a ordenação.</li>
+      <li><code>FR-025</code> Indicador visível de busca/filtro ativo próximo aos controles ("Filtrando por: ... · Limpar filtros"), nas duas visões, com ação "Limpar filtros" que reseta busca e filtro por instituição juntos, sem alterar a ordenação e sem alterar a alternância Ativos/Ignorados (FR-029) — mesmo quando acionada a partir da visão de Ignorados.</li>
       <li><code>FR-026</code> Mensagem de estado vazio ("Nenhum edital encontrado com esses critérios.") em qualquer coluna do quadro de progresso que fique sem editais por causa de busca/filtro ativo.</li>
     </ul>
 
@@ -144,6 +144,7 @@
       <li>Marcar um edital como "Ignorado" é uma ação distinta de removê-lo (FR-014): não exclui o edital, apenas oculta-o por padrão da tabela e do quadro de progresso, preservando seu estágio de acompanhamento e todos os dados cadastrados.</li>
       <li>"Ignorado" não é um estágio do quadro de progresso — o quadro continua com exatamente seis colunas (Backlog, Em andamento, Validação, Submetido, Aprovado, Não aprovado); é um atributo de visibilidade que existe em paralelo ao estágio.</li>
       <li>Um edital ignorado pode ser desmarcado a qualquer momento, voltando a aparecer nas visões padrão no mesmo estágio em que estava antes de ser ignorado.</li>
+      <li>A alternância entre a visão de Ativos e a de Ignorados (FR-029) é uma dimensão diferente da busca e do filtro por instituição (qual conjunto de editais está sendo visualizado, não um refinamento dentro dele) — por isso a ação "Limpar filtros" (FR-025) nunca troca o captador de visão, mesmo quando ele está em Ignorados e só quer limpar busca/instituição.</li>
     </ul>
 
     <div class="callout">
