@@ -10,7 +10,7 @@ marcações entre rodadas até o checkbox correspondente virar `[x]` em
 "Criar nova tarefa") não têm `tasks.md` correspondente — vivem só aqui, em
 todas as colunas.
 
-**Última sincronização**: 2026-08-04T07:22Z
+**Última sincronização**: 2026-08-04T07:51Z
 
 ## To Do
 
@@ -180,11 +180,21 @@ todas as colunas.
   submissão, e uma sugestão (nunca uma trava) para avançar o estágio no
   Kanban conforme o plano avança (Em andamento → Validação quando todos
   os itens essenciais estão concluídos; Validação → Submetido quando
-  100% dos itens estão concluídos). Conforme User Story 5 (P5),
-  FR-032 a FR-040 em `specs/001-manage-call-for-proposals/spec.md`
+  100% dos itens estão concluídos); além disso, barra de resumo/veredito
+  no topo, barra de ações fixa (expandir/recolher tudo, imprimir,
+  exportar), campos didáticos opcionais por item ("Em outras
+  palavras"/"Como preencher"), responsável/concluído-em por item,
+  categoria opcional por item (agrupamento visual, sem reintroduzir
+  fases), seção Riscos e seção Pós-aprovação/Contratação sempre
+  visíveis e não-bloqueantes, e CSS de impressão. Conforme User Story 5
+  (P5), FR-032 a FR-048 em `specs/001-manage-call-for-proposals/spec.md`
   (branch `001-manage-call-for-proposals`). Protótipo:
-  `prototype/avulsa-A042/`. Pedido direto do usuário, formalizado via
-  `/kanban-sync` → "Atualizar spec" em 2026-08-04.
+  `prototype/avulsa-A042/` — elevado ao nível de
+  `docs/submissions/timeline-submission-finep-digital.html` (branch
+  `finep-submission`) a pedido do usuário, que achou a primeira versão
+  rasa demais frente a esse padrão de qualidade. Pedido direto do
+  usuário, formalizado via `/kanban-sync` → "Atualizar spec" em
+  2026-08-04 (duas rodadas: FR-032 a FR-040, depois FR-041 a FR-048).
 ### (avulsas)
 
 - [ ] A001 Página com tabela de todos os editais abertos no momento
