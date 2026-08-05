@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Persona — avulsa-A042 (protótipo) — Rodrigo Castilho — frameworkfomento</title>
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <nav class="toc">
+    <p class="kicker group-label">1ª rodada — Rodrigo Castilho</p>
+    <a href="#top">Rodrigo Castilho</a>
+    <a href="#canvas">Quem é essa persona</a>
+    <a href="#tarefas">Tarefas testadas</a>
+    <a href="#dores">Dores identificadas</a>
+    <a href="#bem">O que funcionou bem</a>
+    <a href="#resolver">Para quem resolver</a>
+
+    <p class="kicker group-label">frameworkfomento</p>
+    <a href="../index.html">Documentação</a>
+  </nav>
+
+  <main>
+    <p class="kicker">fundraiser-test · docs/persona · 1ª rodada (protótipo estático <code>prototype/avulsa-A042/</code>, task A042, User Story 5 de <code>specs/001-manage-call-for-proposals/spec.md</code> na branch <code>001-manage-call-for-proposals</code> — ainda não mergeada em <code>main</code>; teste AO VIVO no Chrome, viewport desktop ~1568px, servido via <code>python3 -m http.server</code> local, complementado por leitura de <code>index.html</code>/<code>script.js</code> para confirmar os mecanismos de UI dos achados 4-6)</p>
+    <h1 id="top">Rodrigo Castilho</h1>
+    <p class="quote">"Achei o campo 'pergunta em aberto' na hora — é literalmente a etiqueta que eu escreveria no Trello quando preciso confirmar algo com o financiador antes de fechar um item. Só que não tem onde clicar para marcá-la. Tentei no checkbox do item, tentei no ícone [?] que já aparecia em dois itens mockados, tentei no formulário de adicionar item novo — nada. É a única vez, nas cinco tarefas que tentei, que eu soube exatamente o que queria fazer e não achei o botão."</p>
+    <p class="lede">Teste de usabilidade do protótipo estático <code>prototype/avulsa-A042/</code> (não-funcional quanto à exportação de PDF, mas com dados mockados persistidos via <code>localStorage</code>), em 2026-08-05, via comando <code>/fundraiser-test</code>. Esta é a <strong>1ª rodada</strong> de teste deste protótipo específico (a página de detalhe de um edital — diferente de <code>avulsa-A001</code>, que cobre a listagem/quadro).</p>
+
+    <h2 id="canvas">Quem é essa persona</h2>
+    <table>
+      <tbody>
+        <tr><th>Papel</th><td>Coordenador de captação de recursos, único cargo dedicado full-time a isso; responde diretamente à direção executiva, que cobra atualização semanal sobre os editais "quentes" — os que estão em preparação ativa, não os que ainda estão só no radar</td></tr>
+        <tr><th>Organização</th><td>Instituto Vertente (fictício) — OSC de médio porte (48 pessoas, orçamento anual ~R$ 6 milhões) atuando em desenvolvimento territorial e educação profissionalizante, com um núcleo de 2 assistentes de projetos que o ajudam a montar a documentação de cada proposta</td></tr>
+        <tr><th>Editais acompanhados hoje</th><td>Cerca de 20 no radar geral (equivalente ao que <code>avulsa-A001</code> cobre), mas só 3 a 4 em preparação ativa a qualquer momento — é para esses poucos, já em "Em andamento" ou "Validação", que ele monta um checklist de documentação de verdade, um por edital, porque cada um exige coisas diferentes e ele não confia na própria memória para não esquecer um anexo</td></tr>
+        <tr><th>Ferramentas atuais</th><td>Uma planilha Google Sheets por edital em preparação ativa (aba "Checklist"), com colunas Item / Responsável / Status / Observação, compartilhada com os 2 assistentes; resumos para a direção são e-mails escritos à mão, resumindo a planilha em texto corrido, geralmente às sextas-feiras</td></tr>
+        <tr><th>Familiaridade técnica</th><td>Média-alta — usuário avançado de Google Sheets (fórmulas, validação de dados, compartilhamento com permissão granular), já usou Asana num emprego anterior para gestão de projeto, mas nunca uma ferramenta feita especificamente para o processo de submissão a um edital</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Objetivos</h3>
+    <ul>
+      <li>Ter, para cada edital em preparação ativa, uma lista única e organizada por fase do que falta, sem depender de lembrar de cabeça o que já foi resolvido.</li>
+      <li>Poder mandar pra direção um resumo pronto do que falta e se o edital está "elegível" no momento, sem precisar escrever esse e-mail toda sexta — hoje é trabalho manual de traduzir a planilha em texto corrido.</li>
+      <li>Registrar, no meio do processo, uma dúvida que surge ao ler o edital de novo ("isso aqui não ficou claro, preciso confirmar com o financiador") sem perder o rastro dela no meio de dezenas de outras linhas.</li>
+      <li>Saber, sem adivinhar, quando um edital já reúne o suficiente para passar para a fase seguinte de preparação — hoje isso é uma decisão de cabeça, olhando a planilha e contando manualmente quantas linhas estão marcadas.</li>
+    </ul>
+    <h3>Frustrações atuais (antes de testar o protótipo)</h3>
+    <ul>
+      <li>Já entregou uma proposta faltando um documento porque a linha da planilha estava marcada "Feito" por um assistente que, na real, só tinha começado a providenciar — não havia como saber, batendo o olho, se aquele "Feito" era essencial ou só um item informativo qualquer.</li>
+      <li>Escrever o resumo semanal pra direção é repetitivo e sujeito a erro — às vezes esquece de mencionar uma pendência que via na planilha mas não achou "importante o suficiente" para o e-mail, e depois é cobrado por algo que já estava lá.</li>
+      <li>Quando surge uma dúvida ("o edital pede 2 ou 3 anos de CND?"), ele anota num comentário da célula do Sheets — mas comentário de célula não aparece em lugar nenhum de forma agregada, e ele já perdeu uma dúvida assim por semanas até reabrir aquela célula específica por acaso.</li>
+    </ul>
+
+    <h2 id="tarefas">Tarefas testadas</h2>
+    <ol>
+      <li>Abrir a tela de detalhe do edital e, em poucos segundos, entender se ele está elegível agora e o que falta — o mesmo gesto que faz na sexta-feira antes de escrever o e-mail pra direção.</li>
+      <li>Desmarcar um item essencial que percebeu estar incompleto (situação real: um assistente marcou como pronto um documento que na verdade só foi solicitado, não recebido) e ver se a tela reage de forma que ele confiaria para tomar uma decisão.</li>
+      <li>Registrar uma pendência nova que acabou de descobrir relendo o edital ("precisamos de mais uma carta de anuência da prefeitura") no plano de submissão, incluindo o contexto que ele mesmo escreveria (o que é isso, como resolver) — o equivalente à coluna "Observação" da planilha dele, só que padronizado.</li>
+      <li>Marcar essa mesma pendência (ou uma dúvida que já existia) como algo que ele "precisa confirmar com o financiador antes de fechar" — o equivalente do comentário de célula que hoje se perde no Sheets.</li>
+      <li>Anotar um risco que identificou lendo o edital de novo (ex.: "o edital exige contrapartida financeira de 20% que ainda não está garantida") e verificar se consegue mandar o resumo executivo pra direção sem precisar reescrever tudo à mão.</li>
+    </ol>
+
+    <h2 id="dores">Parecer — dores identificadas</h2>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-1">Dor 1 — "pergunta em aberto" é exatamente o conceito que eu uso hoje (comentário de célula), mas não existe controle nenhum para marcá-lo</h3>
+        <span class="badge badge-high">🔴 alta</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> na Tarefa 4, tentei marcar um item do plano como "preciso confirmar isso com o financiador" — vi o badge <code>[?]</code> aparecendo em dois itens já mockados ("Confirmar limite de propostas simultâneas junto ao edital" e, dentro do item condicional de natureza jurídica, "Certidão de utilidade pública ou CEBAS") e também num dos riscos, então sabia que o conceito existia na ferramenta. Procurei um checkbox, um botão, qualquer controle perto do item para acionar isso — no cabeçalho do item, no corpo expandido, no formulário de adicionar item novo. Não achei nada. Confirmei lendo <code>script.js</code>: o badge é renderizado a partir de <code>item.openQuestion</code>, um valor fixo nos dados mockados (<code>const planoItems = [...]</code>), sem nenhum listener de clique associado a ele em nenhum lugar do arquivo — é dado de demonstração, não uma ação do captador.</p>
+      <p><strong>Por que é um problema (na minha perspectiva):</strong> essa é a única funcionalidade, das cinco tarefas que tentei, em que eu sabia com certeza o que queria fazer, reconheci que a ferramenta "fala minha língua" (o próprio badge já existe, com o mesmo significado que dou a um comentário de célula no Sheets) — e mesmo assim não consegui fazer. Isso é pior do que a funcionalidade simplesmente não existir: ela existe visualmente, então fico pensando se estou clicando errado, se preciso editar o item de outro jeito, ou se é um bug — perco tempo tentando de novo em vez de simplesmente aceitar que não dá.</p>
+      <p><strong>Recomendação:</strong> a spec (FR-052) já é explícita — "o sistema DEVE permitir que o captador marque... um indicador de pergunta em aberto" em item, sub-requisito ou risco. O protótipo mostra o resultado visual (badge) sem o mecanismo (toggle). Como o resto do plano de submissão já usa checkbox para "concluído", um segundo controle pequeno (ex.: ícone clicável ao lado do item, texto "Marcar como pergunta em aberto") no mesmo padrão resolveria — mas isso é decisão do <code>designer</code>, minha lente é só confirmar que falta o controle.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-2">Dor 2 — o item que acabei de criar não tem onde eu registre o "porquê" e o "como resolver", só a descrição nua</h3>
+        <span class="badge badge-medium">🟡 média</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> na Tarefa 3, adicionei um item novo ("Carta de anuência adicional da prefeitura", estágio Em andamento, marcado essencial) usando o formulário no fim do plano — funcionou, o item apareceu agrupado corretamente sob "Em andamento". Mas o formulário só tem 3 campos: descrição, estágio (select obrigatório) e o checkbox de essencial. Não há onde eu registre, no momento em que crio o item — que é justamente o momento em que tenho o contexto mais fresco na cabeça, tendo acabado de reler o edital — nem o campo estruturado (ex.: "prazo de validade exigido"), nem um link para o trecho do edital que motivou o item, nem uma observação livre. Reabri o item recém-criado e não achei, nem lá, nenhum controle para adicionar esses campos depois — só os campos "Responsável" e "Concluído em" (sempre presentes) e "Referência do documento" (que só aparece depois de marcar Concluído).</p>
+      <p><strong>Por que é um problema (na minha perspectiva):</strong> no meu fluxo hoje, a coluna "Observação" da planilha é onde registro justamente esse tipo de contexto — o porquê de um item existir, ou uma instrução para o assistente que vai executar. Um item mockado do protótipo (ex.: o de natureza jurídica) mostra que a ferramenta sabe fazer isso bem, com bloco "Em outras palavras"/"Como preencher" — só que essa riqueza está reservada aos itens que já vieram prontos, não aos que eu crio no meu próprio fluxo de trabalho. Isso empurra pra fora do sistema exatamente o tipo de anotação que eu mais preciso registrar rápido.</p>
+      <p><strong>Recomendação:</strong> a spec (FR-045/FR-050/FR-051) fala em "opcional, digitado pelo captador ao criar ou editar" — vale conferir com o <code>product-owner</code> se o texto já cobre isso e o gap é só do protótipo, ou se falta detalhar melhor esse "criar ou editar" no <code>spec.md</code>.</p>
+    </section>
+
+    <section class="story">
+      <div class="story-head">
+        <h3 id="dor-3">Dor 3 — Riscos e Pós-aprovação mostram o formato final de como eu preencheria, mas não têm onde eu escreva de fato</h3>
+        <span class="badge badge-medium">🟡 média</span>
+      </div>
+      <p><strong>O que aconteceu:</strong> na Tarefa 5, tentei anotar um risco novo ("contrapartida financeira de 20% ainda não garantida") na seção "Riscos e considerações". A seção existe, sempre visível, com uma lista de riscos já preenchidos (um deles até com o badge <code>[?]</code>) — mas é só uma lista estática. Não há textarea, campo de texto nem botão "Adicionar risco" em lugar nenhum da seção. Confirmei em <code>script.js</code>: <code>riscos</code> é um array fixo, renderizado num <code>forEach</code> sem nenhum listener de edição associado. O mesmo vale para "Pós-aprovação/Contratação".</p>
+      <p><strong>Por que é um problema (na minha perspectiva):</strong> os riscos que preciso registrar não são genéricos — surgem da leitura de cada edital específico (uma exigência de contrapartida, um prazo apertado de assinatura de termo, uma cláusula ambígua). Hoje registro isso numa aba separada da planilha ou, mais frequentemente, num e-mail avulso que se perde. A seção do protótipo parece pronta pra resolver exatamente isso — mostra até o formato ideal de como ficaria — mas sem o mecanismo de escrita ela não substitui nada do que já faço, só mostra uma demonstração de como ficaria se eu pudesse.</p>
+      <p><strong>Recomendação:</strong> FR-047/FR-048 já são explícitas ("o sistema DEVE permitir que o captador registre livremente, em texto") — mesmo caso da Dor 1, o protótipo mostra o resultado sem o mecanismo de entrada. Provavelmente resolvido junto com a Dor 1, já que os três (riscos, pós-aprovação, pergunta em aberto) compartilham o mesmo padrão de "dado mockado sem controle de escrita".</p>
+    </section>
+
+    <div class="callout planned">
+      <p><strong>Observação de escopo (não é uma dor da task) — placeholder americano <code>mm/dd/yyyy</code> nos campos de data:</strong> os campos "Concluído em" (por item) e o campo de data do item condicional usam <code>&lt;input type="date"&gt;</code> nativo, que no Chrome exibe o placeholder no formato americano, enquanto o resto da tela (ex.: "Fechamento: 15/09/2026" nos dados do edital) usa <code>dd/mm/yyyy</code>. Notei a inconsistência, mas na prática nunca cheguei a digitar errado — o seletor de calendário do navegador cobre isso, e uma vez que preencho o campo ele passa a mostrar a data já formatada. Não considero isso uma dor real para o meu fluxo; é comportamento padrão do navegador para o tipo de campo, não uma decisão da ferramenta, e registro só para constar.</p>
+    </div>
+
+    <h2 id="bem">O que funcionou bem</h2>
+    <ul>
+      <li><strong>A barra de resumo/veredito no topo resolve exatamente a Tarefa 1 (bater o olho e saber se está elegível agora):</strong> ao abrir a tela, "🟢 Habilitado" e "Pendências essenciais: 0" apareceram de cara, sem eu precisar rolar nem contar nada — é o mesmo tipo de leitura instantânea que hoje só consigo depois de abrir a planilha e contar linhas marcadas.</li>
+      <li><strong>Desmarcar um item essencial reage do jeito que eu confiaria para tomar uma decisão (Tarefa 2):</strong> desmarquei "Comprovante de regularidade fiscal (CND)" e, na hora, sem precisar recarregar nada, o veredito virou "🔴 Pendente (3/4)", a contagem de pendências foi para 1, o item apareceu listado no resumo executivo, e a faixa de sugestão de avanço de estágio sumiu imediatamente. É exatamente o tipo de "isso não está tão pronto quanto eu pensava" que eu preciso pegar antes de mandar o resumo semanal errado pra direção — hoje, na planilha, um "Feito" marcado errado por um assistente não me avisa de nada sozinho.</li>
+      <li><strong>O dado não se perde ao desmarcar (mesma Tarefa 2):</strong> o campo "Referência do documento" que eu tinha preenchido só ficou oculto, não apagado — remarcando o item, o valor reaparece. Isso evita o medo que tenho hoje de "se eu mexer nessa célula vou ter que digitar tudo de novo".</li>
+      <li><strong>Persistência entre sessões funcionou de verdade:</strong> depois de desmarcar o item e recarregar a página, o estado "Pendente (3/4)" continuou exatamente como deixei — diferente da minha planilha, aqui não corro o risco de um assistente reabrir uma cópia desatualizada.</li>
+      <li><strong>O item condicional de natureza jurídica é o tipo de coisa que eu levaria tempo pra montar na planilha e aqui já vem pronto:</strong> troca de "Pessoa jurídica com fins lucrativos" para "OSC sem fins lucrativos" e volta, exibindo só o sub-checklist da modalidade escolhida — hoje eu simplesmente duplico linhas na planilha para os dois casos e apago manualmente as que não se aplicam.</li>
+      <li><strong>Expandir/recolher tudo, na barra de ações fixa, ajuda exatamente no momento de "quero ver tudo de uma vez antes de escrever o resumo pra direção" (Tarefa 5):</strong> cliquei e todos os itens recolheram para uma linha só (descrição + status + badge) — bom pra revisão rápida de alto nível antes de decidir o que vai no e-mail.</li>
+    </ul>
+
+    <h2 id="resolver">Para quem resolver</h2>
+    <p><a href="#dor-1">Dor 1</a> ("pergunta em aberto" sem controle de UI para marcar/desmarcar, apesar do badge existir) → <code>designer</code> (falta o mecanismo de interação; a regra de negócio — FR-052 — já está formalizada em <code>spec.md</code>).</p>
+    <p><a href="#dor-2">Dor 2</a> (item criado pelo formulário não tem onde adicionar campos ricos ao criar nem depois, ao editar) → <code>designer</code> em primeira instância (mecanismo de UI do formulário/edição), com um aviso ao <code>product-owner</code> para conferir se FR-045/FR-050/FR-051 já cobrem "criar OU editar" com clareza suficiente para orientar essa correção.</p>
+    <p><a href="#dor-3">Dor 3</a> (Riscos e Pós-aprovação são só leitura, sem campo de escrita) → <code>designer</code> (mesmo padrão de mecanismo de UI faltando; FR-047/FR-048 já formalizam a regra de negócio).</p>
+    <p>Observação de escopo (placeholder americano em <code>&lt;input type="date"&gt;</code>) → sem ação recomendada; comportamento padrão do navegador, não uma decisão da ferramenta, e não atrapalhou nenhuma tarefa real.</p>
+
+    <p class="page-footer">Este documento não corrige nada — é insumo para o <code>product-owner</code>/<code>designer</code>/<code>scrum-master</code> agirem sobre o parecer, via <code>/quick-task</code> ou ajuste de <code>spec.md</code>, a critério de quem revisa.</p>
+  </main>
+
+</div>
+<script src="../assets/script.js" defer></script>
+</body>
+</html>
