@@ -2,7 +2,7 @@
 name: "coordenador-test"
 description: "Faz o subagente coordenador-de-pesquisa vestir a pele de um coordenador/diretor de pesquisa institucional (visão de portfólio, não de um único captador) e testar um protótipo estático (prototype/<slug-ou-avulsa>-<ID>/), devolvendo um documento de Persona (canvas completo + parecer/dores) salvo em docs/persona/<pasta>-coordenador.html. Use quando a intenção for 'quero saber se este protótipo serve à agenda estratégica de pesquisa do instituto e ao risco institucional, não só à experiência de um captador individual'. Para essa segunda lente (captador individual), use /fundraiser-test. Para testar a aplicação real já implementada, use /coordenador-production-test."
 argument-hint: "Opcional: nome da pasta do protótipo (ex.: avulsa-A001) — se vazio, detecta/pergunta"
-compatibility: "Requires prototype/*/ (protótipos estáticos gerados via kanban-sync), docs/assets/ (sistema de design compartilhado) e o subagente coordenador-de-pesquisa em .claude/agents/"
+compatibility: "Requires prototype/*/ (protótipos estáticos gerados via meeting), docs/assets/ (sistema de design compartilhado) e o subagente coordenador-de-pesquisa em .claude/agents/"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/coordenador-test/SKILL.md"
@@ -72,7 +72,7 @@ com `<nav class="toc">` + `<main>`, classes já existentes em
    este comando e por `/coordenador-production-test` (um link por rodada).
 8. **Log de reuniões estratégicas**: tabela vazia inicialmente (data |
    síntese | link), alimentada pelo Modo "Reunião estratégica" de
-   `/kanban-sync`.
+   `/meeting`.
 
 ## Passo 1 — Escolher o protótipo
 
@@ -86,7 +86,7 @@ com `<nav class="toc">` + `<main>`, classes já existentes em
    = a linha da task correspondente em `KANBAN.md` se encontrada).
 
 Se `prototype/` estiver vazio, informe isso ao usuário e pare — não há o
-que testar ainda (protótipos nascem via `/kanban-sync` → "Criar nova
+que testar ainda (protótipos nascem via `/meeting` → "Criar nova
 tarefa" → "Essa tarefa envolve tela/fluxo de usuário?" → "Sim").
 
 ## Passo 2 — Reunir o contexto real da task

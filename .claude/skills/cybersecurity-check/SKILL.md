@@ -19,7 +19,7 @@ $ARGUMENTS
 Este comando não corrige nada — é uma auditoria de segurança honesta contra
 a aplicação real, rodando de verdade. O resultado é um relatório; agir sobre
 ele (corrigir dependência, endurecer configuração, patchear código) é sempre
-um comando separado (`/quick-task`, `/kanban-sync` → "Criar nova tarefa"),
+um comando separado (`/quick-task`, `/meeting` → "Criar nova tarefa"),
 decidido pelo usuário depois de ler o relatório. Diferente do `qa`, aqui não
 existe variante de protótipo estático — segurança de um mockup HTML/CSS/JS
 sem backend não tem superfície de ataque real para testar.
@@ -145,7 +145,7 @@ conteúdo (não o HTML literal — adapte ids/âncoras ao `nav.toc`):
 - Documento completo: docs/cybersec-report/<data>.html
 
 Este comando não corrige nada — se algo aqui virar trabalho, use
-/kanban-sync → "Criar nova tarefa" → "A partir de achados de segurança
+/meeting → "Criar nova tarefa" → "A partir de achados de segurança
 (docs/cybersec-report/)", ou peça ao dev para agir sobre o parecer.
 ```
 

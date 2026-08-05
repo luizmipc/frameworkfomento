@@ -31,8 +31,9 @@ documento.
 
 1. Rode `find specs -mindepth 1 -maxdepth 1 -type d` para listar features.
 2. Para cada uma, confirme o que **realmente** está implementado em `app/`
-   (não confie só no `plan.md`): cheque a coluna `## Done` de `KANBAN.md`
-   para essa feature e rode algo como `find app -mindepth 1 -maxdepth 1
+   (não confie só no `plan.md`): cheque quantas tasks `T\d{3}` estão `[x]`
+   em `specs/<slug>/tasks.md` (o backlog/conclusão de `T\d{3}` vive só lá,
+   não em `KANBAN.md`) e rode algo como `find app -mindepth 1 -maxdepth 1
    -type d -not -name config` para ver se existe um app Django real além
    do scaffold.
 3. Se `$ARGUMENTS` nomear uma feature com implementação real, use-a.

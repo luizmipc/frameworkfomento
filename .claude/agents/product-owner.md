@@ -85,7 +85,7 @@ completas em `docs-sync/SKILL.md`.
   estiver no placeholder ("fresh scaffold... no established architecture"),
   isso não deve travar a escrita da spec, mas avise o `dev` quando a spec
   estiver pronta para que ele o atualize.
-- `/kanban-sync` consulta as seções `#sl`/`#fr` de `docs/index.html` para
+- `/meeting` consulta as seções `#sl`/`#fr` de `docs/index.html` para
   detectar desvio de escopo em tarefas novas ou existentes — quando isso
   acontecer e o usuário optar por "atualizar o docs e continuar", é você
   quem é acionado para atualizar a(s) seção(ões) relevante(s).

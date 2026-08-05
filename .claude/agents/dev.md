@@ -39,8 +39,9 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
   avulsas não têm) — trate isso como escopo travado (implemente só aquela
   task, não rode `speckit-implement` inteiro nem pule para a próxima da
   mesma fase) e marque `[x]` na linha correspondente ao terminar, porque é
-  esse checkbox que faz o próximo `kanban-sync` mover a task de In Progress
-  para Done no `KANBAN.md`.
+  esse checkbox que faz o próximo `meeting` remover a task de In Progress
+  no `KANBAN.md` — o `[x]` em `tasks.md` já é o registro definitivo de
+  Done, sem duplicação no quadro.
 
 ## Limites — delegue, não faça
 
@@ -87,7 +88,7 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
 - Você é dono das seções `#arch` (Arquitetura e Tecnologias) e `#cd`
   (Diagrama de Classes) dentro de `docs/index.html` (página HTML única, sem
   `.md` por trás — o HTML é a fonte, mantida via
-  `/kanban-sync`/`/kanban-start`, regras de edição em
+  `/meeting`/`/kanban-start`, regras de edição em
   `docs-sync/SKILL.md`) — mantenha-as atualizadas quando uma decisão técnica
   relevante mudar.
 
@@ -106,7 +107,7 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
   como bloqueante até você (ou o `product-owner`) resolvê-la.
 - Do `cybersecurity-blue` e do `devops`: achados de segurança
   (`docs/cybersec-report/`) e de prontidão de deploy (`docs/deploy-report/`)
-  chegam a você via `/kanban-sync` → "Criar nova tarefa" → "A partir de um
+  chegam a você via `/meeting` → "Criar nova tarefa" → "A partir de um
   relatório existente" — trate cada um como uma task normal (só você edita
   `Dockerfile`/`docker-compose.yml`/`.github/workflows/`, nunca eles). A
   checagem/config com lente de segurança é sempre do `cybersecurity-blue`;

@@ -24,7 +24,7 @@ renderizam.
   considerada pronta para o `dev` planejar.
 - Você não roda `speckit-plan`/`speckit-tasks`/`speckit-implement`/
   `speckit-analyze`/`speckit-taskstoissues` — isso fica com `dev`/`scrum-master`.
-- Quando `/kanban-sync` (modo "criar nova tarefa") marcar uma tarefa nova
+- Quando `/meeting` (modo "criar nova tarefa") marcar uma tarefa nova
   como envolvendo tela/fluxo de usuário, você é quem é acionado (via
   subagente) para criar um protótipo estático em
   `prototype/<slug-ou-avulsa>-<ID>/` (`index.html`/`style.css`/`script.js`,

@@ -32,10 +32,10 @@ Documentação viva do projeto:
 - `docs/qa-report/` — relatórios de conformidade a critérios de aceite gerados por `/qa-test` e `/qa-production-test`.
 - `docs/cybersec-report/` — relatórios de segurança (SAST/SCA/config/OWASP ZAP) gerados por `/cybersecurity-check`.
 - `docs/deploy-report/` — relatórios de prontidão operacional de deploy (CI/CD, build de imagem, servidor de produção vs. dev, Doze Fatores) gerados por `/check-deployment`.
-- `docs/coordenador-report/` — leituras estratégicas holísticas do projeto (portfólio, alinhamento com a agenda de pesquisa, risco institucional) geradas pelo modo "Reunião estratégica" de `/kanban-sync`.
+- `docs/coordenador-report/` — leituras estratégicas holísticas do projeto (portfólio, alinhamento com a agenda de pesquisa, risco institucional) geradas pelo modo "Reunião estratégica" de `/meeting`.
 - `.specify/memory/constitution.md` — princípios não-negociáveis do projeto (simplicidade/YAGNI, qualidade via QA antes de "Done", spec antes de código, etc.).
 - `specs/<feature>/` — spec, plano e tasks de cada feature, geradas pelo Spec Kit.
-- `KANBAN.md` — quadro To Do / In Progress / Done, única fonte de verdade do que está em andamento.
+- `KANBAN.md` — só o que `specs/*/tasks.md` não guarda sozinho: o quadro completo (To Do/In Progress/Done) das tarefas avulsas `A\d{3}` (sem spec própria), mais quais tasks `T\d{3}` estão atualmente In Progress. O backlog e a conclusão de tasks `T\d{3}` vivem só em `tasks.md` — nunca duplicados aqui.
 - `ref/<edital>/` — pasta canônica para material de referência bruto de editais reais (PDFs de Regulamento/Anexos), fonte de `/fundraiser-submission-timeline` e `/coordenador-edital-fit`.
 
 ### Comandos disponíveis
@@ -49,10 +49,10 @@ Documentação viva do projeto:
 | `/speckit-tasks` | Quebra o plano em tasks (`T001`, `T002`...) |
 | `/speckit-analyze` | Checa consistência entre spec/plano/tasks antes de implementar |
 | `/speckit-implement` | Executa as tasks (uso manual; o dia a dia normalmente passa pelo `/kanban-start`) |
-| `/kanban-sync` | "Reunião de scrum": sincroniza o quadro, cria uma tarefa avulsa, formaliza um gap como requisito em `spec.md`, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova/grande |
+| `/meeting` | "Reunião de scrum": sincroniza o quadro, cria uma tarefa avulsa, formaliza um gap como requisito em `spec.md` (atualizando o protótipo quando fizer sentido), ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova/grande, criando ou atualizando o protótipo dela |
 | `/kanban-start` | Escolhe uma tarefa do quadro (aqui no chat) e a implementa de ponta a ponta |
 | `/docs-sync` | Revisa e atualiza `docs/` a partir do estado real do projeto |
-| `/quick-task` | Atalho: cria uma tarefa avulsa e já a implementa (kanban-sync + kanban-start em um comando), para ajustes pequenos |
+| `/quick-task` | Atalho: cria uma tarefa avulsa e já a implementa (meeting + kanban-start em um comando), para ajustes pequenos |
 | `/fundraiser-test` | O `fundraiser` vira um captador de recursos real e testa um protótipo estático, devolvendo um documento de Persona com parecer/dores em `docs/persona/` |
 | `/fundraiser-production-test` | Igual ao anterior, mas testa a aplicação real já implementada (rodando de verdade), não o protótipo |
 | `/fundraiser-submission-timeline` | Cria, a partir dos PDFs (Regulamento/Anexos) de um edital real, um checklist HTML de submissão com portão de elegibilidade funcional em `docs/submissions/`, mais um roteiro de Google Forms equivalente |
@@ -66,9 +66,9 @@ Documentação viva do projeto:
 
 ### Por onde começar, de acordo com a intenção
 
-- **"Quero começar uma feature nova"** → `/kanban-sync` → "Começar feature grande (spec completa)" (roda specify → clarify → checklist → plan → tasks por trás; se preferir controlar cada etapa manualmente, os mesmos comandos `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` continuam disponíveis um a um). Depois, `/kanban-start` repetido até esvaziar o To Do da feature.
-- **"Quero corrigir/ajustar algo pequeno, sem spec formal, e já implementar"** → `/quick-task` (cria a tarefa avulsa e já a inicia; equivale a `/kanban-sync` → "Criar nova tarefa" → `/kanban-start` em um só passo).
-- **"Quero ver o que está pendente/em andamento"** → `/kanban-sync` → escolha "Acompanhamento".
+- **"Quero começar uma feature nova"** → `/meeting` → "Criar spec" (roda specify → clarify → checklist → plan → tasks por trás; se preferir controlar cada etapa manualmente, os mesmos comandos `/speckit-specify` → `/speckit-clarify` → `/speckit-plan` → `/speckit-tasks` continuam disponíveis um a um). Depois, `/kanban-start` repetido até esvaziar o To Do da feature.
+- **"Quero corrigir/ajustar algo pequeno, sem spec formal, e já implementar"** → `/quick-task` (cria a tarefa avulsa e já a inicia; equivale a `/meeting` → "Criar nova tarefa" → `/kanban-start` em um só passo).
+- **"Quero ver o que está pendente/em andamento"** → `/meeting` → escolha "Acompanhamento".
 - **"Quero implementar a próxima tarefa do quadro"** → `/kanban-start` (a seleção é feita aqui mesmo no chat, com opções clicáveis).
 - **"Achei um bug numa tarefa que já estava Done"** → `/quick-task` descrevendo o bug e referenciando o ID original (ex.: "Corrige regressão em T012: ..."). Nunca "reabra" a task antiga — `tasks.md`/`KANBAN.md` são um registro histórico; a correção é uma task nova e rastreável.
 - **"Quero atualizar a documentação do projeto"** → `/docs-sync`.
@@ -77,16 +77,16 @@ Documentação viva do projeto:
 - **"Preciso de um checklist de submissão real e confiável para este edital"** → `/fundraiser-submission-timeline <pasta-de-referência-do-edital em ref/>` (extrai os critérios eliminatórios dos PDFs do edital com âncora de item, valida com o `fundraiser` antes e depois de construir, e devolve um checklist HTML gated em `docs/submissions/` mais um roteiro de Google Forms — nunca inventa dado que não esteja no documento-fonte).
 - **"Quero saber se este protótipo/aplicação serve à agenda estratégica de pesquisa do instituto, não só a um captador individual"** → `/coordenador-test` (protótipo) ou `/coordenador-production-test` (aplicação real) — o `coordenador-de-pesquisa` testa com visão de portfólio/risco institucional, devolvendo o parecer em `docs/persona/` (sufixo `-coordenador`).
 - **"Quero saber se um edital real realmente serve à agenda do instituto, além do que está escrito"** → `/coordenador-edital-fit <pasta-de-referência-do-edital em ref/>` (cruza o texto do edital com a agenda estratégica do instituto e sinal informal/de relacionamento que você fornecer, devolvendo o veredito em `docs/edital-fit/`).
-- **"Quero uma leitura estratégica de como o projeto está indo, não tarefa por tarefa"** → `/kanban-sync` → "Reunião estratégica (coordenador de pesquisa)" — leitura holística do portfólio inteiro (alinhamento com a agenda, risco institucional/reputacional), nunca um gate nem um replay do quadro tarefa por tarefa.
-- **"Quero transformar dores achadas num teste de persona em tarefas"** → `/kanban-sync` → "Criar nova tarefa" → "A partir de um relatório existente" → "Teste de persona (docs/persona/)" (escolhe o arquivo, escolhe quais dores viram task — pode criar mais de uma de uma vez). A mesma lógica vale para achados de `/qa-test`/`/qa-production-test` (`docs/qa-report/`), `/cybersecurity-check` (`docs/cybersec-report/`), `/check-deployment` (`docs/deploy-report/`) e da "Reunião estratégica" (`docs/coordenador-report/`).
+- **"Quero uma leitura estratégica de como o projeto está indo, não tarefa por tarefa"** → `/meeting` → "Reunião estratégica (coordenador de pesquisa)" — leitura holística do portfólio inteiro (alinhamento com a agenda, risco institucional/reputacional), nunca um gate nem um replay do quadro tarefa por tarefa.
+- **"Quero transformar dores achadas num teste de persona em tarefas"** → `/meeting` → "Criar nova tarefa" → "A partir de um relatório existente" → "Teste de persona (docs/persona/)" (escolhe o arquivo, escolhe quais dores viram task — pode criar mais de uma de uma vez). A mesma lógica vale para achados de `/qa-test`/`/qa-production-test` (`docs/qa-report/`), `/cybersecurity-check` (`docs/cybersec-report/`), `/check-deployment` (`docs/deploy-report/`) e da "Reunião estratégica" (`docs/coordenador-report/`).
 - **"Quero saber se há vulnerabilidades de segurança conhecidas na aplicação"** → `/cybersecurity-check` (o `cybersecurity-blue` roda SAST/SCA/checagem de configuração/scan OWASP ZAP contra a aplicação real e devolve um parecer honesto em `docs/cybersec-report/`, sem corrigir nada).
 - **"Quero saber se a aplicação está pronta para ser implantada em produção"** → `/check-deployment` (o `devops` audita CI/CD, build da imagem Docker, servidor de produção vs. dev e os Doze Fatores, devolvendo um parecer honesto em `docs/deploy-report/`, sem corrigir nada).
-- **"Quero formalizar um gap ou insight como requisito real, não só uma tarefa avulsa"** → `/kanban-sync` → "Atualizar spec" (descreve o gap, o `product-owner` decide como formalizar em `spec.md` — novo FR, extensão de um existente, ou nova User Story — e opcionalmente já cria a tarefa avulsa correspondente na sequência).
+- **"Quero formalizar um gap ou insight como requisito real, não só uma tarefa avulsa"** → `/meeting` → "Atualizar spec" (descreve o gap, o `product-owner` decide como formalizar em `spec.md` — novo FR, extensão de um existente, ou nova User Story — e opcionalmente já cria a tarefa avulsa correspondente na sequência).
 - **"Quero mudar um princípio/regra do projeto"** → `/speckit-constitution`.
 
 O `/kanban-start` já cuida de acionar o `dev` para implementar, o `qa` como gate obrigatório (testes de UI e lógica antes de fechar a task) e, ao final, pergunta se algo deu errado — se sim, registra a lição aprendida no arquivo do agente/skill responsável, para o processo melhorar com o tempo. Depois dessa retrospectiva, pergunta também se deve commitar ou commitar e dar push — sempre em Conventional Commits, com uma mensagem detalhada o suficiente para o commit servir como documentação da mudança (o quê, por quê, decisões tomadas na implementação e resultado do QA).
 
-Cada feature ganha seu próprio branch (nome igual ao slug em `specs/<feature>/`), criado/trocado automaticamente por `/kanban-start`/`/kanban-sync`; tarefas avulsas (`A\d{3}`) sempre rodam em `main`. Quando todas as tasks de uma feature terminam e o branch já foi commitado e enviado, `/kanban-start` pergunta se quer abrir um PR para `main`.
+Cada feature ganha seu próprio branch (nome igual ao slug em `specs/<feature>/`), criado/trocado automaticamente por `/kanban-start`/`/meeting`; tarefas avulsas (`A\d{3}`) sempre rodam em `main`. Quando todas as tasks de uma feature terminam e o branch já foi commitado e enviado, `/kanban-start` pergunta se quer abrir um PR para `main`.
 
 ## Segurança
 

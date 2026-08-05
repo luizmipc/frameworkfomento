@@ -1,8 +1,8 @@
 ---
 name: "quick-task"
-description: "Cria uma tarefa avulsa (via kanban-sync) e já a inicia com kanban-start, em um só comando — para ajustes pequenos e pontuais que não precisam de spec formal. Use quando a intenção for 'quero corrigir/ajustar algo pequeno agora'."
+description: "Cria uma tarefa avulsa (via meeting) e já a inicia com kanban-start, em um só comando — para ajustes pequenos e pontuais que não precisam de spec formal. Use quando a intenção for 'quero corrigir/ajustar algo pequeno agora'."
 argument-hint: "Descrição do ajuste (linguagem natural) — se vazio, pergunta no chat"
-compatibility: "Requires as skills kanban-sync e kanban-start"
+compatibility: "Requires as skills meeting e kanban-start"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/quick-task/SKILL.md"
@@ -17,9 +17,9 @@ $ARGUMENTS
 ```
 
 Este comando é o ponto de entrada para o caminho "ajuste pequeno" descrito no
-README: `kanban-sync (criar nova tarefa) → kanban-start`, em um só passo. Para
-uma feature grande que merece spec própria, use `/kanban-sync` → "Começar
-feature grande (spec completa)" em vez deste.
+README: `meeting (criar nova tarefa) → kanban-start`, em um só passo. Para
+uma feature grande que merece spec própria, use `/meeting` → "Criar spec"
+em vez deste.
 
 **Regressão/bug encontrado numa task já Done**: não existe (nem deve existir)
 um comando para "reabrir" uma task — `tasks.md`/`KANBAN.md` são um registro
@@ -34,14 +34,14 @@ verdade atual — não se cria uma seção de "correção" separada.
 
 ## Passo 1 — Criar a tarefa avulsa
 
-Rode o **"Modo Criar nova tarefa"** de `kanban-sync/SKILL.md` com a descrição
+Rode o **"Modo Criar nova tarefa"** de `meeting/SKILL.md` com a descrição
 de `$ARGUMENTS` (ou peça a descrição no chat primeiro, se vazio) — **mas pare
 ao final do passo 8 dele (Sincronização); não execute o passo 9 (Retrospectiva)
 dele**. A retrospectiva deste fluxo combinado é só a do `kanban-start`, no
 final (Passo 3 abaixo) — evita perguntar feedback duas vezes.
 
 Anote o ID da tarefa criada (`A\d{3}`, com o slug/feature ou "avulsa" que
-`kanban-sync` tiver atribuído).
+`meeting` tiver atribuído).
 
 ## Passo 2 — Iniciar a tarefa
 

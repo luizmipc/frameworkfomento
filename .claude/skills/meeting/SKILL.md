@@ -1,11 +1,11 @@
 ---
-name: "kanban-sync"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria."
+name: "meeting"
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
 compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, e docs/ (ver item 0 do plano de implementação)"
 metadata:
   author: "frameworkfomento"
-  source: ".claude/skills/kanban-sync/SKILL.md"
+  source: ".claude/skills/meeting/SKILL.md"
 user-invocable: true
 disable-model-invocation: true
 ---
@@ -19,10 +19,10 @@ $ARGUMENTS
 Esta é a "reunião de scrum": uma sincronização de acompanhamento do quadro
 real de tasks, a criação de uma tarefa nova avulsa, ou a formalização de um
 gap como requisito em `spec.md`. Nunca dispara sozinha por inferência do
-modelo — só quando o usuário digitar `/kanban-sync`.
+modelo — só quando o usuário digitar `/meeting`.
 
 **Duas formas de usar este arquivo:**
-- **Ritual completo** (`/kanban-sync` chamado pelo usuário, ou por
+- **Ritual completo** (`/meeting` chamado pelo usuário, ou por
   `/quick-task`): Passo 0 → um dos quatro Modos → termina em Retrospectiva.
   Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
@@ -44,9 +44,10 @@ essa?"**
 - **"Ver mais opções"** — mostra as duas opções restantes (abaixo), fora do
   limite de 4 do `AskUserQuestion`: pergunte de novo via `AskUserQuestion`
   (2 opções): **"Que tipo de reunião de scrum é essa?"**
-  - **"Começar feature grande (spec completa)"** — rodar o fluxo completo do
-    Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova
-    que merece spec própria, carregando as tasks geradas direto no quadro.
+  - **"Criar spec"** — rodar o fluxo completo do Spec Kit
+    (specify→clarify→checklist→plan→tasks) para uma feature nova que merece
+    spec própria, carregando as tasks geradas direto no quadro e criando (ou
+    atualizando, se já existir) o protótipo correspondente.
   - **"Reunião estratégica (coordenador de pesquisa)"** — leitura holística
     e periódica do projeto inteiro pela lente do `coordenador-de-pesquisa`
     (portfólio, alinhamento com a agenda de pesquisa do instituto, risco
@@ -56,21 +57,28 @@ essa?"**
 Se `$ARGUMENTS` já contiver claramente uma descrição de tarefa nova (frase em
 linguagem natural, não um slug/caminho existente), pule esta pergunta e siga
 direto para o modo "Criar nova tarefa" com essa descrição — "Atualizar spec",
-"Começar feature grande (spec completa)" e "Reunião estratégica" só são
-alcançados escolhendo explicitamente na pergunta, nunca por inferência do
-`$ARGUMENTS` (texto livre não distingue de forma confiável um ajuste pequeno
-de uma feature grande ou de uma leitura estratégica).
+"Criar spec" e "Reunião estratégica" só são alcançados escolhendo
+explicitamente na pergunta, nunca por inferência do `$ARGUMENTS` (texto livre
+não distingue de forma confiável um ajuste pequeno de uma feature grande ou
+de uma leitura estratégica).
 
 ## Modo "Acompanhamento"
 
-1. Rode a **Sincronização** (seção abaixo).
-2. Antes de escrever `KANBAN.md`, releia as seções `#sl` e `#fr` de
-   `docs/index.html`. Se ainda estiverem no texto inicial ("A preencher"),
-   não há nada para comparar — siga sem checagem. Caso contrário, avalie
-   (por julgamento, não regra determinística) se alguma task reconciliada
-   parece ter saído do escopo documentado. Se sim, rode a **Checagem de
-   escopo** antes de continuar.
-3. Escreva `KANBAN.md` e reporte contagens/anomalias.
+1. Rode a **Sincronização** (seção abaixo) — já escreve `KANBAN.md` e
+   reporta as contagens/anomalias da sua própria alçada (tasks avulsas +
+   tasks `T\d{3}` em In Progress).
+2. Releia as seções `#sl` e `#fr` de `docs/index.html`. Se ainda estiverem
+   no texto inicial ("A preencher"), não há nada para comparar — siga sem
+   checagem. Caso contrário, avalie (por julgamento, não regra
+   determinística) se alguma task reconciliada parece ter saído do escopo
+   documentado. Se sim, rode a **Checagem de escopo** antes de continuar.
+3. Complemente o relatório da Sincronização com uma leitura **só-visão**
+   (nunca persistida em `KANBAN.md` — isso reintroduziria a duplicação) do
+   backlog real: para cada `specs/<slug>/tasks.md`, conte linhas `- [ ]` e
+   `- [x]` que batam com a regex de task (`grep -c`). Reporte como uma
+   linha extra por feature, ex.: `001-manage-call-for-proposals: 62
+   pendentes / 8 concluídas em tasks.md`. Isso preserva a visibilidade que
+   o modo sempre ofereceu, sem duplicar o dado em nenhum arquivo.
 4. Rode a **Retrospectiva**.
 
 ## Modo "Atualizar spec"
@@ -78,7 +86,7 @@ de uma feature grande ou de uma leitura estratégica).
 Formaliza um gap ou insight como requisito real em `spec.md` — o mesmo
 movimento que rodar `product-owner` manualmente para transformar uma dor de
 persona ou um pedido direto em FR/User Story, só que como caminho suportado
-do `/kanban-sync` em vez de uma ação avulsa.
+do `/meeting` em vez de uma ação avulsa.
 
 1. Se `$ARGUMENTS` não trouxer a descrição do gap, pergunte no chat (texto
    livre): "Qual o gap ou insight que deve virar requisito formal? Descreva
@@ -100,26 +108,49 @@ do `/kanban-sync` em vez de uma ação avulsa.
    documentando brevemente a decisão no próprio texto do requisito — mantendo
    o padrão de numeração/estilo já usado no arquivo, e sincronizando
    `docs/index.html`. Reforce explicitamente: **não** deve tocar
-   `tasks.md`/`KANBAN.md`/`plan.md` nem nada em `prototype/`/`app/` — isso é
-   decisão separada, do passo 5 abaixo.
-5. Quando o `product-owner` terminar, pergunte via `AskUserQuestion`
-   (2 opções): **"Requisito formalizado em spec.md. Criar já uma tarefa
-   avulsa para isso (protótipo e/ou lembrete de implementação)?"**
+   `tasks.md`/`KANBAN.md`/`plan.md` nem `app/` — isso é decisão separada, dos
+   passos 5 e 6 abaixo. Protótipo (`prototype/`) fica fora do escopo do
+   `product-owner` aqui, mas **pode** ser atualizado no passo 5, pelo
+   `designer`, depois que o requisito estiver formalizado.
+5. Cheque se existe protótipo relevante para este gap: primeiro
+   `find prototype -maxdepth 1 -type d -name '<slug>'` (protótipo da feature
+   inteira, criado pelo Modo "Criar spec"); se não houver, procure
+   protótipos avulsos já ligados a esta feature em `KANBAN.md` (linhas de
+   task sob o bucket da feature que apontem para `prototype/avulsa-<ID>/`).
+   - **Nenhum protótipo encontrado**: pule para o passo 6 sem perguntar —
+     não há o que atualizar ainda (criar um protótipo novo, se fizer
+     sentido, é decisão do passo 6 abaixo, via Modo "Criar nova tarefa").
+   - **Existe ao menos um**: pergunte via `AskUserQuestion` (até 4 opções se
+     houver mais de um candidato, rotuladas pelo caminho do protótipo)
+     **"O requisito recém-formalizado muda algo visível na tela? Atualizar
+     o protótipo `<caminho>` agora?"**
+     - **"Sim"** — acione o subagente `designer` (`subagent_type:
+       "designer"`) com o texto exato do requisito formalizado (FR/User
+       Story) e o caminho do protótipo escolhido, pedindo para refletir a
+       mudança **no protótipo existente**, sem recriar a pasta do zero.
+       Instrução explícita de ponytail: mudança mínima que reflete o
+       requisito novo, reaproveitando markup/JS já existente.
+     - **"Não"** — pule esta etapa.
+6. Quando o passo anterior terminar (ou for pulado), pergunte via
+   `AskUserQuestion` (2 opções): **"Requisito formalizado em spec.md. Criar
+   já uma tarefa avulsa para isso (protótipo e/ou lembrete de
+   implementação)?"**
    - **"Sim"** — vá para o **Modo "Criar nova tarefa"**, a partir do passo 2
      (a origem já está resolvida: "manual", com uma descrição que referencia
      o FR/User Story recém-formalizado; o passo 2 de lá já troca de volta
      para `main` automaticamente, mesmo que este modo tenha deixado o branch
      na feature no passo 3 acima). Ao terminar aquele modo, não rode a
-     Retrospectiva de novo — ela já roda uma vez só, no passo 6 abaixo.
-   - **"Não"** — siga direto ao passo 6.
-6. Rode a **Retrospectiva**.
+     Retrospectiva de novo — ela já roda uma vez só, no passo 7 abaixo.
+   - **"Não"** — siga direto ao passo 7.
+7. Rode a **Retrospectiva**.
 
-## Modo "Começar feature grande (spec completa)"
+## Modo "Criar spec"
 
 Fluxo completo do Spec Kit para uma feature nova que merece spec própria:
 specify → clarify → checklist → plan → tasks, carregando as tasks geradas
-direto no quadro. Equivalente ao antigo `/feature-start`, agora como um
-caminho suportado do `/kanban-sync` em vez de comando próprio.
+direto no quadro, além de criar (ou atualizar) o protótipo estático
+correspondente. Equivalente ao antigo `/feature-start`, agora como um
+caminho suportado do `/meeting` em vez de comando próprio.
 
 1. Se `$ARGUMENTS` não trouxer uma descrição clara da feature, pergunte no
    chat (texto livre): "Qual a descrição dessa feature nova?"
@@ -140,11 +171,34 @@ caminho suportado do `/kanban-sync` em vez de comando próprio.
    `kanban-start/SKILL.md` (seção "Branch da feature (canônico)"), com alvo
    o slug gerado no passo 2 — cria o branch (ainda não existe, feature nova)
    e troca para ele, sem perguntar confirmação.
-4. Acione o subagente `dev` (`subagent_type: "dev"`) com o caminho exato de
+4. Antes de perguntar, cheque se já existe um protótipo para esta feature:
+   `find prototype -maxdepth 1 -type d -name '<slug>'` (mesmo slug de
+   `specs/<slug>/` — distinto dos protótipos avulsos `prototype/avulsa-<ID>/`
+   que uma task específica dessa feature pode ganhar depois, via Modo
+   "Criar nova tarefa").
+   - **Se já existe**: pule a pergunta abaixo — acione o subagente `designer`
+     (`subagent_type: "designer"`) pedindo para **atualizar esse protótipo
+     existente** (`prototype/<slug>/`), refletindo as User Stories/FRs da
+     spec recém-gerada, sem recriar a pasta do zero.
+   - **Caso contrário**, pergunte via `AskUserQuestion` (2 opções): **"Essa
+     feature envolve tela/fluxo de usuário? Criar um protótipo estático?"**
+     - **"Sim"** — acione o `designer` pedindo a criação de um protótipo
+       estático **novo** em `prototype/<slug>/` com `index.html`,
+       `style.css` e `script.js` (HTML/CSS/JS puro, sem framework, sem
+       lógica real, com um comentário no topo do HTML identificando-o como
+       protótipo não-funcional — mesmo padrão de `prototype/avulsa-A001/`),
+       refletindo as User Stories/FRs principais da spec recém-gerada.
+     - **"Não"** — pule esta etapa.
+
+   Em ambos os ramos, instrução explícita ao `designer`: siga ponytail — o
+   mínimo de markup/JS que comunica o fluxo da spec, reaproveitando o que já
+   existe no protótipo (quando houver) em vez de reescrever do zero, sem
+   abstrações especulativas.
+5. Acione o subagente `dev` (`subagent_type: "dev"`) com o caminho exato de
    `specs/<slug>/spec.md` gerado no passo 2, pedindo que rode em sequência:
    `speckit-plan` (produz `plan.md`) e `speckit-tasks` (produz `tasks.md`).
-5. Rode a **Sincronização** (para carregar as tasks novas em `KANBAN.md`).
-6. Rode a **Retrospectiva**.
+6. Rode a **Sincronização** (para carregar as tasks novas em `KANBAN.md`).
+7. Rode a **Retrospectiva**.
 
 ## Modo "Reunião estratégica (coordenador de pesquisa)"
 
@@ -154,7 +208,7 @@ nenhuma task — é uma leitura consultiva do projeto inteiro, nunca um gate.
 1. **Checagem de estado vazio**: se não existir `KANBAN.md` **e**
    `find specs -mindepth 1 -maxdepth 1 -type d` não achar nada, informe
    "Ainda não há board nem specs para uma leitura estratégica — rode
-   `/kanban-sync` → Acompanhamento ou comece uma feature primeiro." e
+   `/meeting` → Acompanhamento ou comece uma feature primeiro." e
    **pare aqui** (sem Retrospectiva — mesmo padrão do ramo "Abandonar" da
    Checagem de escopo, a reunião não chegou a acontecer).
 2. **Reúna o contexto holístico** (só leitura, nenhuma edição neste passo):
@@ -444,7 +498,7 @@ corrige nada nem edita o arquivo de relatório — só lê.
 
 1. Liste os arquivos: `find docs/coordenador-report -maxdepth 1 -name
    '*.html'`. Se nenhum existir, informe "Nenhuma reunião estratégica
-   encontrada em docs/coordenador-report/ ainda — rode `/kanban-sync` →
+   encontrada em docs/coordenador-report/ ainda — rode `/meeting` →
    Reunião estratégica primeiro." e volte à pergunta do passo 1 do Modo
    "Criar nova tarefa" (o usuário escolhe manual ou desiste).
 2. Se houver mais de um arquivo, pergunte via `AskUserQuestion` (até 4
@@ -486,46 +540,45 @@ via `AskUserQuestion` (2 opções): **"O que você quer fazer?"**
 
 ## Sincronização
 
-1. Descubra `specs/*/tasks.md`: `find specs -mindepth 2 -maxdepth 2 -name tasks.md`.
-   Se nenhum existir, trate só as tarefas avulsas já presentes em `KANBAN.md`
-   (se houver) — não é erro, apenas não há features via Spec Kit ainda.
-2. Leia o `KANBAN.md` anterior, se existir. Para cada task-key (`<slug>#T\d{3}`
-   ou `avulsa#A\d{3}` / `<slug>#A\d{3}`), extraia sua coluna atual — é o
-   `estado_anterior`, necessário para preservar In Progress e todas as tasks
-   `A\d{3}` (que não têm fonte em nenhum `tasks.md`). Se `KANBAN.md` não
-   existir, `estado_anterior` começa vazio.
-3. Para cada `tasks.md` encontrado (respeitando um filtro de slug em
-   `$ARGUMENTS`, se dado no modo Acompanhamento): leia linha a linha.
-   - Detecte cabeçalhos de fase `^## Phase \d+: (.+)$` e associe a task
-     seguinte a essa fase, até o próximo cabeçalho.
-   - Aplique a regex `- \[([ x])\] (T\d{3}) ?(\[P\])? ?(\[US\d+\])? (.*)` a
-     cada linha candidata; ignore linhas que não batam (títulos, texto
-     livre, `**Checkpoint**:`).
-4. Classifique cada task:
-   - Com backing em `tasks.md`: `[x]` → **Done** (sempre, mesmo que estivesse
-     em In Progress); `[ ]` e já em In Progress no `estado_anterior` →
-     **In Progress**; `[ ]` novo → **To Do**.
-   - `A\d{3}` (avulsa, sem backing): **preserva a coluna do `estado_anterior`
-     sem alteração** — só muda quando `/kanban-start` (ou edição manual)
-     mexer nela.
-5. Detecte anomalias para reportar (não travam a sincronização):
-   - Chaves em `estado_anterior` como In Progress que não aparecem mais em
-     nenhum `tasks.md` desta rodada — descarte do quadro, mas reporte.
-   - Tasks novas que não existiam na versão anterior de `KANBAN.md`.
-6. Escreva `KANBAN.md` na raiz do repo (formato em `KANBAN.md` — Formato,
-   arquivo de referência do projeto). Pegue o timestamp com
-   `date -u +"%Y-%m-%dT%H:%MZ"`. Ordene features por nome de diretório
-   (o prefixo `NNN-` já ordena cronologicamente); dentro de cada feature,
-   preserve a ordem de `tasks.md`. Omita o cabeçalho de uma feature numa
-   coluna se ela não tiver task ali.
-7. Reporte:
+Mantém `KANBAN.md` — que só guarda o que `specs/*/tasks.md` não consegue
+guardar sozinho (ver o cabeçalho do próprio arquivo): a lista completa das
+tasks avulsas `A\d{3}` (nas três colunas) e quais tasks `T\d{3}` estão
+atualmente **In Progress**. Nunca lê nem escreve as colunas To Do/Done para
+tasks `T\d{3}` — essas vivem só em `tasks.md` (`[ ]`/`[x]`), sem duplicação.
+
+1. Leia o `KANBAN.md` anterior, se existir:
+   - Todas as linhas `A\d{3}`, em qualquer coluna — carregam para a nova
+     versão **sem alteração** (esta sub-rotina nunca move uma task avulsa de
+     coluna; isso é sempre `/kanban-start` ou o Modo "Criar nova tarefa").
+   - As linhas `T\d{3}` da coluna **In Progress**, com o slug da feature de
+     cada uma (prefixo `<slug>#` da task-key).
+   Se `KANBAN.md` não existir ainda, comece com tudo vazio — primeira
+   sincronização, normal se só houver tasks avulsas até agora.
+2. Para cada task `T\d{3}` encontrada em In Progress no passo anterior
+   (respeitando um filtro de slug em `$ARGUMENTS`, se dado no modo
+   Acompanhamento — pule a validação de tasks de outras features nesse
+   caso): abra `specs/<slug>/tasks.md` e localize a linha daquele ID
+   (regex `- \[([ x])\] (T\d{3}) ?(\[P\])? ?(\[US\d+\])? (.*)`).
+   - `[x]` → **remova de In Progress** — a task terminou; o estado
+     definitivo agora é o próprio `[x]` em `tasks.md`, não duplica em Done.
+   - Linha não encontrada (task removida/renumerada em `tasks.md`) →
+     **remova de In Progress** e reporte como anomalia.
+   - `[ ]` → mantenha em In Progress, sem alteração.
+3. Escreva `KANBAN.md` na raiz do repo (mesmo formato descrito no cabeçalho
+   do próprio arquivo). Pegue o timestamp com `date -u +"%Y-%m-%dT%H:%MZ"`.
+   Colunas **To Do** e **Done**: só as tasks `A\d{3}` carregadas do passo 1,
+   agrupadas pelo mesmo bucket (feature ou "(avulsas)") e ordem que já
+   tinham. Coluna **In Progress**: as `A\d{3}` carregadas do passo 1 mais as
+   `T\d{3}` que sobraram do passo 2, na ordem em que já apareciam.
+4. Reporte:
    ```
    ## Kanban sincronizado
 
-   - Features verificadas: N
-   - To Do: X tasks | In Progress: Y | Done: Z
-   - Novas tasks detectadas: [lista ou "nenhuma"]
-   - In Progress descartadas (sumiram de tasks.md): [lista ou "nenhuma"]
+   - Tasks T\d{3} em In Progress validadas: N (M concluídas e removidas,
+     P sem linha correspondente em tasks.md — removidas e reportadas como
+     anomalia)
+   - Tasks avulsas (A\d{3}): X em To Do | Y em In Progress | Z em Done
+     (sem alteração — esta sub-rotina nunca move avulsa de coluna)
 
    KANBAN.md atualizado em <caminho absoluto>.
    ```
@@ -536,7 +589,7 @@ Procedimento canônico definido em `kanban-start/SKILL.md`, seção
 "Retrospectiva" — não duplicado aqui. Pergunte da mesma forma ("Como foi essa
 reunião?" em vez de "Está funcionando?") e, se houver problema reportado,
 registre a lição aprendida no arquivo correto (um agente em
-`.claude/agents/*.md`, ou uma das nossas skills — `kanban-sync`,
+`.claude/agents/*.md`, ou uma das nossas skills — `meeting`,
 `kanban-start`, `docs-sync`, `quick-task` — nunca em
 `speckit-*`/`.specify/`).
 
@@ -551,10 +604,12 @@ registre a lição aprendida no arquivo correto (um agente em
       adicionada(s)
 - [ ] Se "atualizar spec": branch trocado para a feature (passo 3) antes de
       acionar o `product-owner`, requisito formalizado em
-      `spec.md`/`docs/index.html`, e a task avulsa (se aceita) seguiu o
+      `spec.md`/`docs/index.html`, protótipo existente atualizado quando
+      relevante e aceito (passo 5), e a task avulsa (se aceita) seguiu o
       Modo "Criar nova tarefa" a partir do passo 2
-- [ ] Se "começar feature grande": `spec.md` limpo em clarify/checklist,
-      branch da feature criado e ativo antes de gerar `plan.md`/`tasks.md`,
+- [ ] Se "criar spec": `spec.md` limpo em clarify/checklist, branch da
+      feature criado e ativo antes de gerar `plan.md`/`tasks.md`, protótipo
+      criado ou atualizado quando a feature envolve tela (passo 4),
       `plan.md` e `tasks.md` existem, e `KANBAN.md` reflete as tasks novas em
       To Do
 - [ ] Se "reunião estratégica": checagem de estado vazio rodou primeiro,

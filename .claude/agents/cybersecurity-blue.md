@@ -87,7 +87,7 @@ despejo cru de saída de ferramenta:
 ## Regras de handoff
 
 - Para o `dev`: todo achado com correção de código/config/dependência real
-  vira tarefa via `/kanban-sync` → "Criar nova tarefa" → "A partir de um
+  vira tarefa via `/meeting` → "Criar nova tarefa" → "A partir de um
   relatório existente" → "docs/cybersec-report/" — você continua dono de
   achados de configuração com LENTE DE SEGURANÇA (CVE, misconfig com CVSS,
   o que `trivy`/`manage.py check --deploy` já cobrem dentro de

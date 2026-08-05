@@ -2,7 +2,7 @@
 name: "fundraiser-test"
 description: "Faz o subagente fundraiser vestir a pele de um captador de recursos real e testar um protótipo estático (prototype/<slug-ou-avulsa>-<ID>/), devolvendo um documento de Persona (canvas completo + parecer/dores sobre o protótipo) salvo em docs/persona/. Use quando a intenção for 'quero saber que dores um captador de recursos sentiria usando o protótipo atual'. Para testar a aplicação real já implementada, use /fundraiser-production-test."
 argument-hint: "Opcional: nome da pasta do protótipo (ex.: avulsa-A001) — se vazio, detecta/pergunta"
-compatibility: "Requires prototype/*/ (protótipos estáticos gerados via kanban-sync), docs/assets/ (sistema de design compartilhado) e o subagente fundraiser em .claude/agents/"
+compatibility: "Requires prototype/*/ (protótipos estáticos gerados via meeting), docs/assets/ (sistema de design compartilhado) e o subagente fundraiser em .claude/agents/"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/fundraiser-test/SKILL.md"
@@ -34,7 +34,7 @@ etc.), decidido pelo usuário depois de ler o relatório.
    = a linha da task correspondente em `KANBAN.md` se encontrada).
 
 Se `prototype/` estiver vazio, informe isso ao usuário e pare — não há o
-que testar ainda (protótipos nascem via `/kanban-sync` → "Criar nova
+que testar ainda (protótipos nascem via `/meeting` → "Criar nova
 tarefa" → "Essa tarefa envolve tela/fluxo de usuário?" → "Sim").
 
 ## Passo 2 — Reunir o contexto real da task

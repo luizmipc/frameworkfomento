@@ -2,7 +2,7 @@
 name: "docs-sync"
 description: "Revisa e incrementa a documentação viva em docs/index.html (página HTML única, com seções, sem .md) com base no estado real do projeto (specs/, plan.md, código em app/, KANBAN.md) — sem inventar conteúdo além do que já existe ou foi decidido."
 argument-hint: "Opcional: qual grupo sincronizar (product-owner, dev, qa) — padrão: pergunta no chat"
-compatibility: "Requires docs/ (ver kanban-sync/SKILL.md, item 0) e os subagentes product-owner/dev/qa em .claude/agents/"
+compatibility: "Requires docs/ (ver meeting/SKILL.md, item 0) e os subagentes product-owner/dev/qa em .claude/agents/"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/docs-sync/SKILL.md"
@@ -53,8 +53,9 @@ Para cada grupo em escopo, leia as fontes relevantes:
   `app/pyproject.toml`, `Dockerfile`/`docker-compose.yml` (raiz),
   `specs/*/plan.md` (se existirem).
 - **qa**: seções de critérios de aceite em `specs/*/spec.md`, testes
-  existentes em `app/` (`grep -rl "class.*Test\|def test_" app/`), coluna
-  `## Done` de `KANBAN.md`.
+  existentes em `app/` (`grep -rl "class.*Test\|def test_" app/`), tasks
+  `[x]` em cada `specs/*/tasks.md` (backlog/conclusão de `T\d{3}` não vive
+  mais em `KANBAN.md` — só o `## Done` de tasks avulsas `A\d{3}` está lá).
 
 Se uma fonte não existir ainda (ex.: `specs/` vazio, nenhum teste em `app/`),
 isso não é erro — apenas significa que não há nada de novo para esse grupo

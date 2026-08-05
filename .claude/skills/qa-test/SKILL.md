@@ -2,7 +2,7 @@
 name: "qa-test"
 description: "Faz o subagente qa percorrer um protótipo estático (prototype/<slug-ou-avulsa>-<ID>/) verificando, critério de aceite por critério de aceite (FR-xxx de spec.md), se o protótipo demonstra que o critério é satisfazível/verificável — devolvendo um documento de conformidade (parecer por critério, gaps estruturais) salvo em docs/qa-report/. Use quando a intenção for 'quero saber se o protótipo atual sustenta os critérios de aceite da spec'. Para testar a aplicação real já implementada, use /qa-production-test."
 argument-hint: "Opcional: nome da pasta do protótipo (ex.: avulsa-A001) — se vazio, detecta/pergunta"
-compatibility: "Requires prototype/*/ (protótipos estáticos gerados via kanban-sync), docs/assets/ (sistema de design compartilhado) e o subagente qa em .claude/agents/"
+compatibility: "Requires prototype/*/ (protótipos estáticos gerados via meeting), docs/assets/ (sistema de design compartilhado) e o subagente qa em .claude/agents/"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/qa-test/SKILL.md"
@@ -35,7 +35,7 @@ relatório.
    = a linha da task correspondente em `KANBAN.md` se encontrada).
 
 Se `prototype/` estiver vazio, informe isso ao usuário e pare — não há o
-que testar ainda (protótipos nascem via `/kanban-sync` → "Criar nova
+que testar ainda (protótipos nascem via `/meeting` → "Criar nova
 tarefa" → "Essa tarefa envolve tela/fluxo de usuário?" → "Sim").
 
 ## Passo 2 — Reunir os critérios de aceite

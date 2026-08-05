@@ -71,7 +71,7 @@ verificado.
 Conhecimento de arquitetura, requisitos, regras de negócio e critérios de
 aceite DEVE viver em `docs/` e nos artefatos do Spec Kit (`specs/`), nunca
 apenas na cabeça de quem implementou. `docs/` e `KANBAN.md` são atualizados
-exclusivamente via `/kanban-sync`, `/kanban-start` e `/docs-sync` — nunca
+exclusivamente via `/meeting`, `/kanban-start` e `/docs-sync` — nunca
 deixados desatualizados silenciosamente após uma mudança relevante.
 
 **Rationale**: Um projeto open-source depende de contribuidores que entram e
@@ -113,7 +113,7 @@ Os papéis do projeto são fixos e definidos em `.claude/agents/`:
 `product-owner` (spec, negócio, docs de escopo), `dev` (arquitetura,
 implementação, docs técnicos), `designer` (UX, protótipos), `scrum-master`
 (kanban, gate de processo), `qa` (testes, critérios de aceite) e
-`fundraiser` (advogado do usuário final). `/kanban-sync` e `/kanban-start`
+`fundraiser` (advogado do usuário final). `/meeting` e `/kanban-start`
 são a forma oficial de mover trabalho entre estados; `KANBAN.md` é a fonte
 de verdade do quadro de trabalho. Toda reunião ou execução relevante termina
 em uma retrospectiva curta; problemas reportados nessa retrospectiva viram

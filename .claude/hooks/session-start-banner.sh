@@ -15,7 +15,7 @@ Spec Kit:
   /speckit-taskstoissues  converte tasks em issues do GitHub
 
 Kanban e atalhos:
-  /kanban-sync    reuniao de scrum: sincroniza o quadro, cria tarefa avulsa, ou comeca feature grande (specify->clarify->plan->tasks)
+  /meeting        reuniao de scrum: sincroniza o quadro, cria tarefa avulsa, ou cria spec de feature grande (specify->clarify->plan->tasks), criando/atualizando prototipo
   /kanban-start   escolhe e implementa uma tarefa do quadro (aqui no chat)
   /quick-task     atalho: cria e ja implementa uma tarefa pequena
   /docs-sync      atualiza docs/ a partir do estado real do projeto
@@ -29,7 +29,7 @@ Coordenador de Pesquisa (persona institucional, lente de portfolio/estrategia):
   /coordenador-test                 testa o prototipo estatico, devolve parecer em docs/persona/
   /coordenador-production-test      testa a aplicacao real ja implementada, devolve parecer em docs/persona/
   /coordenador-edital-fit           avalia se um edital real serve a agenda do instituto, devolve parecer em docs/edital-fit/
-  (tambem conduz a "Reuniao estrategica" de /kanban-sync — leitura holistica do projeto, nao tarefa por tarefa)
+  (tambem conduz a "Reuniao estrategica" de /meeting — leitura holistica do projeto, nao tarefa por tarefa)
 
 QA (guardiao de criterios de aceite):
   /qa-test             testa o prototipo estatico, devolve relatorio em docs/qa-report/

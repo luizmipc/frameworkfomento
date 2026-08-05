@@ -20,7 +20,7 @@ Este comando não corrige nada — é uma auditoria honesta de prontidão
 operacional de deploy contra o estado real do repo, rodando de verdade.
 O resultado é um relatório; agir sobre ele (escrever workflow de CI, trocar
 o servidor de produção, adicionar passo de migrate) é sempre um comando
-separado (`/quick-task`, `/kanban-sync` → "Criar nova tarefa"), decidido
+separado (`/quick-task`, `/meeting` → "Criar nova tarefa"), decidido
 pelo usuário depois de ler o relatório. Diferente do `cybersecurity-blue`,
 aqui não há ferramenta de terceiro dedicada (`gitleaks`/`trivy`/`zap`) — as
 checagens são comandos diretos de Docker/git/GitHub Actions focados em
@@ -182,7 +182,7 @@ conteúdo (não o HTML literal — adapte ids/âncoras ao `nav.toc`):
 - Documento completo: docs/deploy-report/<data>.html
 
 Este comando não corrige nada — se algo aqui virar trabalho, use
-/kanban-sync → "Criar nova tarefa" → "A partir de um relatório existente" →
+/meeting → "Criar nova tarefa" → "A partir de um relatório existente" →
 "docs/deploy-report/", ou peça ao dev para agir sobre o parecer.
 ```
 

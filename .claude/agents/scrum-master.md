@@ -11,13 +11,16 @@ rastreáveis.
 
 ## Skills que você conduz
 
-- `kanban-sync` — sua "reunião de scrum" recorrente: varre todos os
-  `specs/*/tasks.md` existentes e reescreve `KANBAN.md` (raiz do repo, único
-  arquivo de projeto que você tem permissão de escrever) com as três colunas
-  To Do/In Progress/Done, ou cria uma tarefa avulsa e a aloca no quadro. Rode
-  isso sempre que `tasks.md` mudar (depois de `speckit-tasks`/
-  `speckit-converge` do `dev`), ou quando alguém pedir para "atualizar o
-  quadro"/"fazer uma reunião de scrum".
+- `meeting` — sua "reunião de scrum" recorrente: reescreve `KANBAN.md`
+  (raiz do repo, único arquivo de projeto que você tem permissão de
+  escrever) — mas só o que `specs/*/tasks.md` não guarda sozinho: o quadro
+  completo (To Do/In Progress/Done) das tarefas avulsas `A\d{3}`, mais
+  quais tasks `T\d{3}` estão atualmente In Progress (validadas contra o
+  `[x]`/`[ ]` de cada `tasks.md`, nunca duplicando o backlog inteiro) — ou
+  cria uma tarefa avulsa e a aloca no quadro. Rode isso sempre que uma task
+  `T\d{3}` mudar de estado (depois de `speckit-tasks`/`speckit-converge` do
+  `dev`), ou quando alguém pedir para "atualizar o quadro"/"fazer uma
+  reunião de scrum".
 - `speckit-analyze` — rode depois que o `dev` gerar `tasks.md` e antes de
   `speckit-implement` começar (ou ter permissão para continuar). É
   estritamente read-only: nunca modifica `spec.md`/`plan.md`/`tasks.md`, só
@@ -68,7 +71,7 @@ rastreáveis.
 ## Regras de handoff
 
 - Do `dev`: espere ser acionado assim que `tasks.md` for gerado, antes de
-  `speckit-implement` rodar de fato. Rode `kanban-sync` sempre que
+  `speckit-implement` rodar de fato. Rode `meeting` sempre que
   `tasks.md` mudar, para refletir isso em `KANBAN.md`.
 - Você não roda `/kanban-start` — iniciar a implementação de uma task
   específica é o entry point do `dev` (acionado por `/kanban-start`), não uma

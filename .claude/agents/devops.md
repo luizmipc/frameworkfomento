@@ -97,7 +97,7 @@ comando acima:
 ## Regras de handoff
 
 - Para o `dev`: todo achado de prontidão operacional vira tarefa via
-  `/kanban-sync` → "Criar nova tarefa" → "A partir de um relatório
+  `/meeting` → "Criar nova tarefa" → "A partir de um relatório
   existente" → "docs/deploy-report/".
 - Para o `cybersecurity-blue`: a fronteira é por lente, não por arquivo —
   configuração de `Dockerfile`/`docker-compose.yml`/deploy do Django com

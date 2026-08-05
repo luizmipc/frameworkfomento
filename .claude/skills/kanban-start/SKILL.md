@@ -1,8 +1,8 @@
 ---
 name: "kanban-start"
-description: "Apresenta as tarefas To Do do KANBAN.md como opções selecionáveis no chat (com atalho para criar tarefas novas a partir das dores de um teste de persona em docs/persona/, sem precisar rodar /kanban-sync à parte), garante a branch certa da feature antes de implementar (main para tasks avulsas), deixa escolher o fluxo do Spec Kit (manual ou decidido pelo dev), delega a implementação ao dev, aciona o QA como gate obrigatório, oferece abrir PR quando a feature terminar, e roda uma retrospectiva de feedback ao final."
+description: "Apresenta as tarefas pendentes (avulsas To Do de KANBAN.md + tasks T\\d{3} pendentes lidas direto de specs/*/tasks.md) como opções selecionáveis no chat (com atalho para criar tarefas novas a partir das dores de um teste de persona em docs/persona/, sem precisar rodar /meeting à parte), garante a branch certa da feature antes de implementar (main para tasks avulsas), deixa escolher o fluxo do Spec Kit (manual ou decidido pelo dev), delega a implementação ao dev, aciona o QA como gate obrigatório, oferece abrir PR quando a feature terminar, e roda uma retrospectiva de feedback ao final."
 argument-hint: "Opcional: um Task ID (ex. T012 ou A001), com ou sem prefixo de slug, para pular a navegação por perguntas"
-compatibility: "Requires KANBAN.md (gerado por kanban-sync) e os subagentes dev/qa/designer/product-owner/scrum-master em .claude/agents/"
+compatibility: "Requires KANBAN.md (gerado por meeting) para tasks avulsas + specs/*/tasks.md para tasks T\\d{3}, e os subagentes dev/qa/designer/product-owner/scrum-master em .claude/agents/"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/kanban-start/SKILL.md"
@@ -18,29 +18,47 @@ $ARGUMENTS
 
 Se `$ARGUMENTS` for um Task ID (`T\d{3}` ou `A\d{3}`, com ou sem prefixo de
 slug), pule a navegação por perguntas do Passo 2 e vá direto ao Passo 3 usando
-esse ID — mas ainda valide que está em **To Do** antes de prosseguir (se
-estiver em Done/In Progress ou não existir, informe e pare, sem inventar
-fallback).
+esse ID — mas ainda valide que está pendente antes de prosseguir: `A\d{3}`
+deve estar em `## To Do` de `KANBAN.md`; `T\d{3}` deve ter `[ ]` no
+`tasks.md` da feature **e** não estar em `## In Progress` de `KANBAN.md`. Se
+já concluída, em progresso, ou não existir, informe e pare, sem inventar
+fallback.
 
 ## Passo 1 — Dados frescos
 
-Rode **apenas a sub-rotina "Sincronização"** de `kanban-sync/SKILL.md` (a
+Rode **apenas a sub-rotina "Sincronização"** de `meeting/SKILL.md` (a
 seção `## Sincronização`, não o "modo Acompanhamento" inteiro) — sem
 perguntar tipo de reunião, sem checagem de escopo, sem Retrospectiva; o
-objetivo é só garantir que `KANBAN.md` reflita o `tasks.md` mais recente
-antes de oferecer tarefas. Se não houver nenhuma task em To Do depois disso,
-reporte "Nenhuma tarefa em To Do — todas concluídas, em progresso, ou nenhuma
-feature tem tasks.md ainda (rode `speckit-tasks` numa feature, ou crie uma
-tarefa avulsa via `/kanban-sync`)." e pare.
+objetivo é podar de `KANBAN.md` qualquer task `T\d{3}` que já saiu de In
+Progress (concluída ou removida de `tasks.md`) antes de montar a lista de
+candidatas do Passo 2 — evita oferecer de novo uma task que já terminou.
+Depois disso, se não houver nenhuma task avulsa em `## To Do` de
+`KANBAN.md` **e** nenhuma linha `- [ ]` de task `T\d{3}` em nenhum
+`specs/*/tasks.md` fora de `## In Progress`, reporte "Nenhuma tarefa
+disponível — todas concluídas, em progresso, ou nenhuma feature tem
+tasks.md ainda (rode `speckit-tasks` numa feature, ou crie uma tarefa
+avulsa via `/meeting`)." e pare.
 
 ## Passo 2 — Selecionar a tarefa
 
-Leia a seção `## To Do` de `KANBAN.md` (inclui tasks `T\d{3}` com feature e
-`A\d{3}` avulsas), preservando a ordem em que aparecem — essa ordem já
-reflete prioridade/dependência (features ordenadas por diretório, tasks na
-ordem de `tasks.md` dentro de cada uma) e serve de base para a lista plana
-abaixo. **Não pergunte por feature/bucket antes de mostrar tasks** — vá
-direto às tasks reais.
+`KANBAN.md` só guarda o backlog (To Do) das tasks avulsas `A\d{3}` — o
+backlog das tasks `T\d{3}` vive só em `specs/<slug>/tasks.md` (ver
+cabeçalho de `KANBAN.md`). Monte a lista plana de candidatas combinando as
+duas fontes, na mesma ordem de sempre (features por diretório, avulsas por
+último; dentro de cada feature, suas `A\d{3}` bucketadas ali, depois suas
+`T\d{3}` na ordem de `tasks.md`):
+
+1. Leia `## To Do` de `KANBAN.md` (só `A\d{3}`, por bucket de feature ou
+   `(avulsas)`).
+2. Leia `## In Progress` de `KANBAN.md` para saber quais `T\d{3}` já estão
+   em andamento (excluir da lista abaixo).
+3. `find specs -mindepth 1 -maxdepth 1 -type d`; para cada feature, leia
+   `tasks.md` linha a linha (regex `- \[([ x])\] (T\d{3}) ?(\[P\])?
+   ?(\[US\d+\])? (.*)`) e colete as `[ ]` cujo ID não esteja em In
+   Progress (passo 2).
+
+**Não pergunte por feature/bucket antes de mostrar tasks** — vá direto às
+tasks reais.
 
 Rode `find docs/persona -maxdepth 1 -name '*.html'`. Se houver pelo menos um
 arquivo, reserve uma vaga para a opção fixa **"Criar tarefa a partir de
@@ -52,11 +70,9 @@ Respeite o limite de 4 opções por chamada de `AskUserQuestion` (mais o
 "Other" de texto livre, sempre disponível para o usuário digitar qualquer
 Task ID fora das opções mostradas, de qualquer bucket):
 
-- Monte a lista plana de todas as tasks em To Do, na ordem lida (todas as
-  features seguidas de `(avulsas)`, cada uma internamente já ordenada).
 - Reserve 1 vaga para a opção de persona (se aplicável) e, se a lista
-  plana tiver mais itens do que as vagas restantes, 1 vaga para **"Ver mais
-  tarefas"** (a última das 4).
+  plana montada acima tiver mais itens do que as vagas restantes, 1 vaga
+  para **"Ver mais tarefas"** (a última das 4).
 - Preencha o resto das vagas com as primeiras tasks da lista plana, na
   ordem. Rótulo: `T0xx/A0xx — <descrição curta>`; descrição: bucket de
   origem (slug da feature, ou "avulsa") + fase/story quando houver (ex.:
@@ -64,20 +80,22 @@ Task ID fora das opções mostradas, de qualquer bucket):
 - Se "Ver mais tarefas" for escolhida, repita a pergunta com o próximo
   lote da lista plana (mesma regra de vagas) até acabarem.
 - Se o usuário usar "Other" para digitar um ID fora das opções mostradas,
-  valide que existe e está em To Do (em qualquer bucket) antes de aceitar.
+  valide que existe e está pendente (`A\d{3}` em To Do de `KANBAN.md`, ou
+  `T\d{3}` com `[ ]` em algum `tasks.md` e fora de In Progress) antes de
+  aceitar.
 
 ## Origem: persona
 
 Sub-rotina do Passo 2, acionada ao escolher "Criar tarefa a partir de dores
-de persona" — evita ter que rodar `/kanban-sync` à parte antes de
+de persona" — evita ter que rodar `/meeting` à parte antes de
 `/kanban-start` só para este caso.
 
-1. Rode a sub-rotina **Origem: docs/persona/** de `kanban-sync/SKILL.md`
+1. Rode a sub-rotina **Origem: docs/persona/** de `meeting/SKILL.md`
    (escolha do arquivo de persona, extração das dores, seleção via
    `AskUserQuestion` com `multiSelect: true`) para obter uma lista de uma ou
    mais descrições de tarefa.
 2. Para cada descrição da lista, rode os passos 2 a 7 do **Modo "Criar nova
-   tarefa"** de `kanban-sync/SKILL.md` (branch para `main`, checagem de
+   tarefa"** de `meeting/SKILL.md` (branch para `main`, checagem de
    escopo, alocação em feature/avulsa, geração do próximo ID avulso, adição
    em `KANBAN.md`, pergunta sobre protótipo) — **pare antes do passo 8 dele**
    (Sincronização); quem sincroniza este fluxo combinado é o próprio
@@ -116,9 +134,12 @@ quadro já no branch certo: alvo é o slug da feature para tasks `T\d{3}`
 (mesmo nome do diretório em `specs/`), ou `main` para tasks `A\d{3}`
 (avulsas), independente do bucket em que a task apareça no `KANBAN.md`.
 
-Depois, edite `KANBAN.md`: mova a linha da task escolhida de `## To Do` para
-`## In Progress` (remova o cabeçalho da feature em To Do se ficar vazio),
-adicionando o sufixo de proveniência (`feature`, caminho de `tasks.md` — ou
+Depois, edite `KANBAN.md`: para `A\d{3}`, mova a linha da task escolhida de
+`## To Do` para `## In Progress` (remova o cabeçalho da feature em To Do se
+ficar vazio); para `T\d{3}` (que nunca teve linha em To Do de `KANBAN.md`
+— seu backlog é só `tasks.md`), **adicione** a linha direto em `## In
+Progress`, copiando o texto exato da task de `tasks.md`. Em ambos os casos,
+adicione o sufixo de proveniência (`feature`, caminho de `tasks.md` — ou
 "avulsa" — timestamp via `date -u +"%Y-%m-%dT%H:%MZ"`, `via /kanban-start`).
 **Não edite `specs/<slug>/tasks.md`** — o checkbox lá continua `[ ]` até o
 `dev` de fato terminar e marcar `[x]`.
@@ -126,9 +147,8 @@ adicionando o sufixo de proveniência (`feature`, caminho de `tasks.md` — ou
 ## Branch da feature (canônico)
 
 Procedimento usado por este comando (Passo 4) e referenciado pelos modos
-"Atualizar spec", "Criar nova tarefa" e "Começar feature grande (spec
-completa)" de `kanban-sync/SKILL.md` — troca automaticamente para o branch da
-feature (ou
+"Atualizar spec", "Criar nova tarefa" e "Criar spec" de `meeting/SKILL.md`
+— troca automaticamente para o branch da feature (ou
 `main`, para trabalho avulso/sem feature), sem perguntar confirmação a cada
 troca; a troca em si aparece só como uma linha no relato da etapa que a
 chamou, nunca como uma `AskUserQuestion` própria.
@@ -193,13 +213,14 @@ aceite dessa task/feature (ver `qa.md`).
 
 ## Passo 7 — Refletir o resultado
 
-Rode de novo **apenas a sub-rotina "Sincronização"** de `kanban-sync/SKILL.md`
+Rode de novo **apenas a sub-rotina "Sincronização"** de `meeting/SKILL.md`
 (mesma regra do Passo 1 — sem pergunta, sem checagem de escopo, sem
-Retrospectiva) para refletir o resultado das tasks com `tasks.md` (se o `dev`
-marcou `[x]`, some de In Progress e aparece em Done). Para tasks avulsas
-(`A\d{3}`, sem `tasks.md`), edite `KANBAN.md` você mesmo: se QA aprovou, mova
-a linha de In Progress para Done; se não, ela já ficou em In Progress com a
-nota do Passo 6.
+Retrospectiva) para refletir o resultado das tasks `T\d{3}` (se o `dev`
+marcou `[x]` em `tasks.md`, a Sincronização a remove de In Progress — o
+estado definitivo já é o `[x]` de lá, sem duplicar em Done). Para tasks
+avulsas (`A\d{3}`, sem `tasks.md`), edite `KANBAN.md` você mesmo: se QA
+aprovou, mova a linha de In Progress para Done; se não, ela já ficou em In
+Progress com a nota do Passo 6.
 
 ## Passo 8 — Atualização condicional de docs/
 
@@ -244,7 +265,7 @@ QA rodaram e passaram corretamente?"**
   1. Identifique o arquivo dono provável do problema: um agente em
      `.claude/agents/*.md` (`product-owner`, `dev`, `designer`,
      `scrum-master`, `fundraiser`, `coordenador-de-pesquisa`, `qa`) ou uma
-     das nossas skills (`kanban-sync`, `kanban-start`, `docs-sync`,
+     das nossas skills (`meeting`, `kanban-start`, `docs-sync`,
      `quick-task`, todas em `.claude/skills/`). **Nunca edite** skills
      `speckit-*` nem nada em `.specify/`.
   2. Adicione (ou crie) uma seção `## Lições aprendidas` ao final do arquivo
@@ -252,7 +273,7 @@ QA rodaram e passaram corretamente?"**
      que aconteceu e a regra concreta para evitar da próxima vez.
   3. Reporte ao usuário qual arquivo foi atualizado e o que foi adicionado.
 
-Este é o procedimento canônico de retrospectiva — `kanban-sync/SKILL.md`
+Este é o procedimento canônico de retrospectiva — `meeting/SKILL.md`
 referencia esta seção em vez de repeti-la.
 
 Ao final da Retrospectiva (nos dois ramos — "Sem problemas" e depois de
@@ -324,7 +345,7 @@ como abrir PR de um branch sem push).
 - Commit: <hash curto + resumo do título | "só commit, sem push" | "não commitado">
 - PR: <URL do PR criado | "não oferecido (task avulsa ou feature incompleta)" | "oferecido, recusado">
 
-Rode /kanban-start de novo para a próxima tarefa, ou /kanban-sync só para
+Rode /kanban-start de novo para a próxima tarefa, ou /meeting só para
 olhar o quadro.
 ```
 
@@ -342,7 +363,7 @@ olhar o quadro.
 - [ ] O subagente `qa` foi acionado como gate obrigatório antes de Done
 - [ ] Checkpoint de etapa rodou após dev, após QA aprovar, e após
       atualização de docs (quando esta última aconteceu)
-- [ ] `kanban-sync` rodou de novo após o ciclo dev/qa
+- [ ] `meeting` rodou de novo após o ciclo dev/qa
 - [ ] Retrospectiva rodou ao final (quando não houve bloqueio de QA)
 - [ ] Depois da Retrospectiva, perguntou-se sobre commit/push e, se aceito,
       o commit seguiu Conventional Commits com corpo detalhado, e o push
