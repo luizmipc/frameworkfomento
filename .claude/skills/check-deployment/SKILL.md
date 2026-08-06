@@ -28,9 +28,11 @@ prontidão, não em vulnerabilidade.
 
 ## Passo 1 — Descobrir e validar o pipeline de CI/CD
 
-1. `find .github/workflows -type f 2>/dev/null` a partir da raiz. Hoje deve
-   voltar vazio — registre honestamente "sem CI configurado", não invente
-   um workflow que não existe.
+1. `find .github/workflows -type f 2>/dev/null` a partir da raiz e registre
+   honestamente o que a checagem realmente encontrar — nem invente um
+   workflow que não existe, nem assuma "sem CI" sem checar; este arquivo
+   fica desatualizado facilmente porque CI é adicionado/mudado fora deste
+   comando.
 2. Se existir algum arquivo, leia-o e resuma o que roda (build/lint/teste/
    deploy) e em quais triggers (push, PR, tag).
 3. Não confunda com `.specify/workflows/speckit/workflow.yml` — isso é do
@@ -130,8 +132,10 @@ conteúdo (não o HTML literal — adapte ids/âncoras ao `nav.toc`):
    (🔴 Bloqueante/Alto, 🟡 Médio, 🟢 Baixo, ⚪ Informativo) **e** um
    parágrafo enquadrando a maturidade atual de CI/CD nos quatro níveis
    (0 — nenhuma automação; 1 — build/lint automatizado; 2 — testes
-   automatizados no push; 3 — deploy automatizado com rollback) — hoje,
-   nível 0, sem `.github/workflows/`.
+   automatizados no push; 3 — deploy automatizado com rollback) — classifique
+   pelo que o Passo 1 realmente encontrou nesta rodada, não por um nível
+   fixo assumido de antemão (hoje há `ci.yml` rodando lint+testes no push,
+   nível 2 — mas confirme contra o estado real do arquivo a cada rodada).
 3. **Escopo e metodologia**: quais das cinco checagens deste comando
    rodaram nesta rodada (completa ou parcial, se `$ARGUMENTS` restringiu) —
    tabela mapeando cada checagem ao que cobre:

@@ -60,10 +60,14 @@ rastreáveis.
 - `speckit-taskstoissues` deduplica contra issues existentes casando IDs de
   task (`T001` etc.) nos títulos das issues — não rode de novo esperando
   issues novas para tasks que já têm uma; reporte o que foi pulado.
-- Este repo ainda não tem CI além do que o próprio Spec Kit instalou
-  (`.specify/workflows/speckit/workflow.yml`) — se o gate de release precisar
-  de checagens de CI no futuro, isso é trabalho de infra do `dev`, não algo
-  que você configura.
+- Este repo já tem CI real (`.github/workflows/ci.yml`, roda `run_tests.sh`
+  — lint + testes Django + self-check de segurança — em todo push/PR para
+  `main`), separado de `.specify/workflows/speckit/workflow.yml` (automação
+  do próprio Spec Kit, não relacionada a build/teste da aplicação). CI
+  valida correção de código; `speckit-analyze` valida consistência entre
+  spec/plan/tasks — gates diferentes, você só é dono do segundo. Se o gate
+  de release precisar de checagens de CI novas no futuro, isso é trabalho
+  de infra do `dev`, não algo que você configura.
 - Mantenha seus relatórios concisos e acionáveis (o formato do relatório de
   analyze já inclui tabelas e um bloco de Next Actions) — não reescreva toda a
   spec/plano/tasks, resuma deltas e bloqueios.

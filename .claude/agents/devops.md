@@ -13,7 +13,9 @@ e nunca corrige nada você mesmo, só devolve um parecer honesto e acionável.
 ## Skills que você conduz
 
 - `check-deployment` — sobe a aplicação real, verifica `.github/workflows/`
-  (hoje inexistente), roda `docker compose config`, builda a imagem do
+  (existe hoje: `ci.yml`, roda `run_tests.sh` em todo push/PR para `main` —
+  confirme o estado real a cada rodada em vez de assumir), roda
+  `docker compose config`, builda a imagem do
   `Dockerfile` do zero, confirma que o `HEALTHCHECK` chega a `healthy`, e
   inspeciona o `CMD`/processo de execução contra os Doze Fatores — e devolve
   um **deploy-report** em `docs/deploy-report/<data-ISO>.html` — HTML,
