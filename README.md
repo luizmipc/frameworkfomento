@@ -22,7 +22,7 @@ Este projeto está em estágio inicial. A estrutura de código, funcionalidades 
 
 ## Fluxo de trabalho (tutorial básico)
 
-Este projeto é desenvolvido com o [GitHub Spec Kit](https://github.com/github/spec-kit) (fluxo orientado por spec) mais um quadro Kanban local (`KANBAN.md`) e nove agentes de papel em `.claude/agents/`: `product-owner`, `dev`, `designer`, `scrum-master`, `qa`, `fundraiser`, `coordenador-de-pesquisa`, `cybersecurity-blue` e `devops`. Cada um tem escopo e regras de handoff documentados no próprio arquivo.
+Este projeto é desenvolvido com o [GitHub Spec Kit](https://github.com/github/spec-kit) (fluxo orientado por spec) mais um quadro Kanban local (`KANBAN.md`) e nove agentes de papel em `.claude/agents/`: `product-owner`, `dev`, `designer`, `scrum-master`, `qa`, `fundraiser`, `coordenador-de-pesquisa`, `cybersecurity-blue` e `devops`. Cada um tem escopo e regras de handoff documentados no próprio arquivo. Para o passo a passo detalhado de cada fluxo (quem faz o quê, com quais artefatos, e por quê), ver `Workflow.md`.
 
 Documentação viva do projeto:
 - `docs/` — requisitos funcionais/não funcionais, regras de negócio, escopo, arquitetura, diagrama de classes, critérios de aceite. Site HTML autocontido, sem markdown — abra `docs/index.html` no navegador.
@@ -49,7 +49,7 @@ Documentação viva do projeto:
 | `/speckit-tasks` | Quebra o plano em tasks (`T001`, `T002`...) |
 | `/speckit-analyze` | Checa consistência entre spec/plano/tasks antes de implementar |
 | `/speckit-implement` | Executa as tasks (uso manual; o dia a dia normalmente passa pelo `/kanban-start`) |
-| `/meeting` | "Reunião de scrum": sincroniza o quadro, cria uma tarefa avulsa, formaliza um gap como requisito em `spec.md` (atualizando o protótipo quando fizer sentido), ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova/grande, criando ou atualizando o protótipo dela |
+| `/meeting` | "Reunião de scrum", cinco modos: sincroniza o quadro, cria uma tarefa avulsa, formaliza um gap como requisito em `spec.md` (atualizando o protótipo quando fizer sentido), roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova/grande criando/atualizando o protótipo, ou faz uma leitura estratégica holística do projeto pela lente do `coordenador-de-pesquisa` |
 | `/kanban-start` | Escolhe uma tarefa do quadro (aqui no chat) e a implementa de ponta a ponta |
 | `/docs-sync` | Revisa e atualiza `docs/` a partir do estado real do projeto |
 | `/quick-task` | Atalho: cria uma tarefa avulsa e já a implementa (meeting + kanban-start em um comando), para ajustes pequenos |
@@ -63,6 +63,7 @@ Documentação viva do projeto:
 | `/qa-production-test` | Igual ao anterior, mas testa a aplicação real já implementada, com testes automatizados + walkthrough ao vivo |
 | `/cybersecurity-check` | O `cybersecurity-blue` audita a aplicação real (SAST/SCA/config/OWASP ZAP), devolvendo um relatório de segurança em `docs/cybersec-report/` |
 | `/check-deployment` | O `devops` audita a prontidão operacional de deploy da aplicação real (CI/CD, build Docker, servidor de produção vs. dev, Doze Fatores), devolvendo um relatório em `docs/deploy-report/` |
+| `/create-reports` | Gera vários relatórios de uma vez (Segurança, Deploy, QA, Persona) em paralelo, reaproveitando os comandos acima — sem lógica própria, só fan-out |
 
 ### Por onde começar, de acordo com a intenção
 
@@ -83,6 +84,7 @@ Documentação viva do projeto:
 - **"Quero saber se a aplicação está pronta para ser implantada em produção"** → `/check-deployment` (o `devops` audita CI/CD, build da imagem Docker, servidor de produção vs. dev e os Doze Fatores, devolvendo um parecer honesto em `docs/deploy-report/`, sem corrigir nada).
 - **"Quero formalizar um gap ou insight como requisito real, não só uma tarefa avulsa"** → `/meeting` → "Atualizar spec" (descreve o gap, o `product-owner` decide como formalizar em `spec.md` — novo FR, extensão de um existente, ou nova User Story — e opcionalmente já cria a tarefa avulsa correspondente na sequência).
 - **"Quero mudar um princípio/regra do projeto"** → `/speckit-constitution`.
+- **"Quero gerar vários relatórios de uma vez (segurança, deploy, QA, persona)"** → `/create-reports` (escolhe quais, roda todos em paralelo, e sugere `/docs-sync` no final para cross-linkar os novos arquivos em `docs/index.html`).
 
 O `/kanban-start` já cuida de acionar o `dev` para implementar, o `qa` como gate obrigatório (testes de UI e lógica antes de fechar a task) e, ao final, pergunta se algo deu errado — se sim, registra a lição aprendida no arquivo do agente/skill responsável, para o processo melhorar com o tempo. Depois dessa retrospectiva, pergunta também se deve commitar ou commitar e dar push — sempre em Conventional Commits, com uma mensagem detalhada o suficiente para o commit servir como documentação da mudança (o quê, por quê, decisões tomadas na implementação e resultado do QA).
 

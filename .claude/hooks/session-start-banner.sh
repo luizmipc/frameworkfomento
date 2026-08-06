@@ -15,7 +15,7 @@ Spec Kit:
   /speckit-taskstoissues  converte tasks em issues do GitHub
 
 Kanban e atalhos:
-  /meeting        reuniao de scrum: sincroniza o quadro, cria tarefa avulsa, ou cria spec de feature grande (specify->clarify->plan->tasks), criando/atualizando prototipo
+  /meeting        reuniao de scrum, cinco modos: sincroniza o quadro, cria tarefa avulsa, formaliza gap em spec.md, cria spec de feature grande (specify->clarify->plan->tasks), ou reuniao estrategica (coordenador-de-pesquisa)
   /kanban-start   escolhe e implementa uma tarefa do quadro (aqui no chat)
   /quick-task     atalho: cria e ja implementa uma tarefa pequena
   /docs-sync      atualiza docs/ a partir do estado real do projeto
@@ -40,4 +40,7 @@ Cybersecurity Blue (guardiao de seguranca defensiva):
 
 Devops (auditoria de prontidao operacional de deploy):
   /check-deployment  builda a imagem, valida docker-compose/CI/CD e os Doze Fatores, devolve relatorio em docs/deploy-report/
+
+Relatorios em lote:
+  /create-reports  gera varios relatorios (seguranca/deploy/qa/persona) em paralelo, reaproveitando os comandos acima
 EOF

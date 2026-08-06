@@ -1,23 +1,22 @@
 <!--
 Sync Impact Report
-- Version change: (template, unratified) → 1.0.0
-- Modified principles: none (initial ratification)
-- Added principles:
-  - I. Desenvolvimento Orientado por Spec
-  - II. Simplicidade Antes de Abstração (YAGNI/Ponytail)
-  - III. Qualidade Verificável Antes de "Pronto"
-  - IV. Documentação Viva, Não Tribal
-  - V. Foco no Captador de Recursos (Domain-First)
-- Added sections:
-  - Padrões de Código
-  - Fluxo de Desenvolvimento e Papéis
+- Version change: 1.0.0 → 1.0.1
+- Modified principles: none
+- Modified sections:
+  - Fluxo de Desenvolvimento e Papéis — the fixed-roles enumeration named
+    only 6 of the 9 agents that exist in .claude/agents/ (missing
+    coordenador-de-pesquisa, cybersecurity-blue, devops, added in later
+    sessions but never back-ported here). Completed the list to match
+    reality; no role's authority or scope changed.
+- Added principles: none
+- Added sections: none
 - Removed sections: none
 - Templates requiring updates:
   - .specify/templates/plan-template.md ⚠ pending manual check (not modified by this command)
   - .specify/templates/spec-template.md ⚠ pending manual check (not modified by this command)
   - .specify/templates/tasks-template.md ⚠ pending manual check (not modified by this command)
   - .claude/skills/speckit-*/** ⚠ pending manual check (not modified by this command)
-- Follow-up TODOs: none — all placeholders resolved with values supplied by the project maintainer.
+- Follow-up TODOs: none.
 -->
 
 # frameworkfomento Constitution
@@ -112,8 +111,11 @@ opcional).
 Os papéis do projeto são fixos e definidos em `.claude/agents/`:
 `product-owner` (spec, negócio, docs de escopo), `dev` (arquitetura,
 implementação, docs técnicos), `designer` (UX, protótipos), `scrum-master`
-(kanban, gate de processo), `qa` (testes, critérios de aceite) e
-`fundraiser` (advogado do usuário final). `/meeting` e `/kanban-start`
+(kanban, gate de processo), `qa` (testes, critérios de aceite),
+`fundraiser` (advogado do usuário final), `coordenador-de-pesquisa`
+(leitura estratégica institucional, portfólio), `cybersecurity-blue`
+(auditoria de segurança defensiva, só reporta) e `devops` (auditoria de
+prontidão de deploy, só reporta). `/meeting` e `/kanban-start`
 são a forma oficial de mover trabalho entre estados; `KANBAN.md` é a fonte
 de verdade do quadro de trabalho. Toda reunião ou execução relevante termina
 em uma retrospectiva curta; problemas reportados nessa retrospectiva viram
@@ -134,4 +136,4 @@ estágio inicial, open-source, com um único mantenedor (luizmipc); a
 aprovação de emendas é dele. O processo pode evoluir para revisão por
 múltiplos mantenedores conforme o projeto crescer.
 
-**Version**: 1.0.0 | **Ratified**: 2026-07-30 | **Last Amended**: 2026-07-30
+**Version**: 1.0.1 | **Ratified**: 2026-07-30 | **Last Amended**: 2026-08-05

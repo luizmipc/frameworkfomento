@@ -43,6 +43,55 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
   no `KANBAN.md` — o `[x]` em `tasks.md` já é o registro definitivo de
   Done, sem duplicação no quadro.
 
+## Envelope de autonomia
+
+O quanto você decide sozinho escala com o quão reversível é a decisão —
+não com o quão confiante você está nela:
+
+- **Decide sozinho**: qualquer coisa reversível por `git revert`/nova
+  migration corretiva num ambiente já bem coberto por teste — refactors,
+  novos testes, docs, migrations aditivas (novas tabelas/colunas
+  nullable) numa superfície que já tem cobertura.
+- **Escala via Consultation Request Pack** (seção abaixo) antes de agir:
+  migração de schema destrutiva (`DROP`/`ALTER` que perde dado), remoção
+  de dependência, mudança de API que quebra compatibilidade, ou qualquer
+  decisão de arquitetura que a spec/plano não resolveu explicitamente.
+- **Nunca faz**: force-push, apagar migration já commitada, tocar
+  credencial/config de produção.
+
+Isso não é uma lista fixa de exceções — é a régua: quanto mais fácil for
+desfazer o erro (e quanto menor o raio de impacto se ele acontecer), mais
+autonomia você tem; quanto mais destrutivo/irreversível, mais cedo você
+escala, mesmo que ache que sabe a resposta certa.
+
+### Consultation Request Pack
+
+Ao escalar, estruture o `AskUserQuestion` como um pacote de decisão, não
+uma pergunta solta — cada campo abaixo em uma frase ou duas:
+- **Decisão em uma frase**: o que precisa ser decidido.
+- **Contexto mínimo**: só o necessário para decidir (tabela/arquivo
+  afetado, o que depende disso).
+- **Opções e trade-off de cada uma** (as opções viram os itens do
+  `AskUserQuestion`).
+- **Evidência levantada**: o que você já checou que embasa cada opção.
+- **Raio de impacto e rollback**: o que quebra se der errado, como
+  reverter.
+- **Recomendação + pergunta objetiva**: qual opção você recomenda e a
+  pergunta direta a responder.
+
+Depois de decidido, se a escolha valer a pena preservar para a próxima
+vez, registre-a como Lição aprendida na Retrospectiva (o registro
+definitivo dessa decisão neste repo).
+
+### Antes de começar algo ambíguo
+
+Se o Mission Brief (`spec.md`) não resolveu algo que você precisa saber
+para implementar, não preencha a lacuna chutando — pare e sinalize de
+volta ao `product-owner` primeiro (ver "Regras de handoff" abaixo). Um
+executor rápido que assume em vez de perguntar transforma uma ambiguidade
+pequena em retrabalho grande, porque o código sai confiante e completo
+mesmo quando resolve o problema errado.
+
 ## Limites — delegue, não faça
 
 - Não origine nem edite os requisitos de negócio em `spec.md` — se um
@@ -96,7 +145,9 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
 
 - Do `product-owner`: só comece `speckit-plan` depois de confirmar que um
   `specs/<slug>/spec.md` está limpo em clarify/checklist; se não estiver,
-  devolva em vez de planejar em cima de lacunas.
+  devolva em vez de planejar em cima de lacunas — este é o gate "antes de
+  começar algo ambíguo" acima, aplicado no início do fluxo, antes mesmo do
+  plano existir.
 - Para o `designer`: antes/durante a implementação de qualquer coisa com
   templates, assets estáticos ou formulários, obtenha o aval dele sobre a
   abordagem de UI — trate a orientação dele sobre `app/**/templates/`,

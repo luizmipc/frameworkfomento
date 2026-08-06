@@ -189,17 +189,29 @@ prompt que inclua, literalmente:
   `tasks.md` ao terminar (só se houver `tasks.md` — avulsa não tem checkbox
   em arquivo nenhum, você marca no Passo 7);
 - a proveniência: "Esta task foi selecionada via `/kanban-start`."
+- instrução para o relatório de conclusão incluir, além do `[x]`, um
+  resumo mínimo do que mudou e do que já foi verificado (arquivos
+  tocados, testes/comandos rodados) — é esse resumo que o Passo 6 repassa
+  ao `qa`, para ele validar em cima do que o `dev` já checou em vez de
+  reconstruir o contexto do zero.
 
 Quando o `dev` reportar a task como concluída, rode o **Checkpoint de etapa**
 (seção abaixo) — etapa que acabou: "o dev implementou a task"; etapa
 anterior: Passo 3 (escolher o fluxo). Só depois de "Seguir" vá ao Passo 6.
 
-## Passo 6 — Gate de QA (obrigatório)
+## Passo 6 — Gate de QA (obrigatório, merge-ready)
 
 Invoque o subagente `qa` (`subagent_type: "qa"`) com o mesmo Task
 ID/descrição/caminho de `tasks.md` (e o caminho do protótipo, se houver),
-pedindo que escreva e rode testes de UI e de Lógica cobrindo os critérios de
-aceite dessa task/feature (ver `qa.md`).
+mais o resumo do que o `dev` já mudou/verificou (Passo 5), pedindo que
+escreva e rode testes de UI e de Lógica cobrindo os critérios de aceite
+dessa task/feature (ver `qa.md`).
+
+Esta task, sozinha, fica **merge-ready** quando este passo aprova — não
+confunda com a feature inteira estar pronta para ir a `main`; isso só
+acontece no Passo 11, quando todas as tasks da feature estiverem `[x]` e
+o PR for aberto (**integration-ready**). São dois níveis de "pronto"
+diferentes, checados em passos diferentes.
 
 - **QA aprova** → rode o **Checkpoint de etapa** (seção abaixo) — etapa que
   acabou: "o QA validou e aprovou"; etapa anterior: Passo 5 (dev). Só depois
@@ -307,9 +319,11 @@ Se "Commit e push" ou "Só commit":
    (idempotente — define upstream no primeiro push de um branch novo, e se
    comporta como push normal depois disso).
 
-## Passo 11 — Abrir PR se a feature estiver completa
+## Passo 11 — Abrir PR se a feature estiver completa (integration-ready)
 
-Só roda para tasks `T\d{3}` cujo Passo 10 terminou em "Commit e push" — pule
+Este é o gate de **integration-ready** da feature (distinto do
+merge-ready por task do Passo 6 — ver nota lá). Só roda para tasks
+`T\d{3}` cujo Passo 10 terminou em "Commit e push" — pule
 silenciosamente para o Completion Report em qualquer outro caso (task
 `A\d{3}`, ou Passo 10 resultou em "Só commit"/"Não commitar agora": não há
 como abrir PR de um branch sem push).

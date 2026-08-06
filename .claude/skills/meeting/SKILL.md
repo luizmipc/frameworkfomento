@@ -23,7 +23,7 @@ modelo — só quando o usuário digitar `/meeting`.
 
 **Duas formas de usar este arquivo:**
 - **Ritual completo** (`/meeting` chamado pelo usuário, ou por
-  `/quick-task`): Passo 0 → um dos quatro Modos → termina em Retrospectiva.
+  `/quick-task`): Passo 0 → um dos cinco Modos → termina em Retrospectiva.
   Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
   `/quick-task` só para atualizar `KANBAN.md` a partir de `tasks.md`, sem
@@ -194,11 +194,32 @@ caminho suportado do `/meeting` em vez de comando próprio.
    mínimo de markup/JS que comunica o fluxo da spec, reaproveitando o que já
    existe no protótipo (quando houver) em vez de reescrever do zero, sem
    abstrações especulativas.
-5. Acione o subagente `dev` (`subagent_type: "dev"`) com o caminho exato de
+5. **Revisão de design (gate opcional)** — decoupla a etapa de design da de
+   engenharia: um checkpoint para aprovar spec+protótipo antes de investir
+   tempo/compute em plano técnico e código. Pergunte via `AskUserQuestion`
+   (2 opções): **"Rodar uma revisão de design (QA e/ou persona) no
+   protótipo antes de gerar o plano técnico?"**
+   - **"Sim"** — acione o subagente `qa` (`qa-test`, contra o protótipo do
+     passo 4) e, se já existir pelo menos um documento de persona anterior
+     em `docs/persona/` para este projeto, acione também `fundraiser` e/ou
+     `coordenador-de-pesquisa` (`fundraiser-test`/`coordenador-test`) pela
+     mesma lógica. Ao final, pergunte via `AskUserQuestion` (2 opções):
+     **"Spec e protótipo aprovados para seguir à implementação técnica
+     (plano + tasks)?"**
+     - **"Sim"** — siga ao passo 6.
+     - **"Não"** — peça o motivo (texto livre), registre como Lição
+       aprendida (mesmo formato da Retrospectiva) no arquivo responsável
+       pelo gap apontado, e volte ao passo 2 pedindo ao `product-owner`
+       para rodar só `speckit-clarify` (com o motivo como entrada) e
+       `speckit-checklist` de novo — sem repetir `speckit-specify` do
+       zero, a menos que o motivo indique que a spec inteira está errada.
+       Não avance para plano/tasks nesta rodada.
+   - **"Não"** — pule direto ao passo 6, comportamento padrão de hoje.
+6. Acione o subagente `dev` (`subagent_type: "dev"`) com o caminho exato de
    `specs/<slug>/spec.md` gerado no passo 2, pedindo que rode em sequência:
    `speckit-plan` (produz `plan.md`) e `speckit-tasks` (produz `tasks.md`).
-6. Rode a **Sincronização** (para carregar as tasks novas em `KANBAN.md`).
-7. Rode a **Retrospectiva**.
+7. Rode a **Sincronização** (para carregar as tasks novas em `KANBAN.md`).
+8. Rode a **Retrospectiva**.
 
 ## Modo "Reunião estratégica (coordenador de pesquisa)"
 
@@ -609,9 +630,10 @@ registre a lição aprendida no arquivo correto (um agente em
       Modo "Criar nova tarefa" a partir do passo 2
 - [ ] Se "criar spec": `spec.md` limpo em clarify/checklist, branch da
       feature criado e ativo antes de gerar `plan.md`/`tasks.md`, protótipo
-      criado ou atualizado quando a feature envolve tela (passo 4),
-      `plan.md` e `tasks.md` existem, e `KANBAN.md` reflete as tasks novas em
-      To Do
+      criado ou atualizado quando a feature envolve tela (passo 4), o gate
+      de revisão de design do passo 5 rodou (ou foi explicitamente pulado)
+      antes de gerar plano/tasks, `plan.md` e `tasks.md` existem, e
+      `KANBAN.md` reflete as tasks novas em To Do
 - [ ] Se "reunião estratégica": checagem de estado vazio rodou primeiro,
       nenhuma task individual foi tocada, e `docs/coordenador-report/<data>.html`
       + a linha em `docs/persona/coordenador-instituto.html` § "Log de
