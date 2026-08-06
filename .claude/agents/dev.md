@@ -79,9 +79,22 @@ uma pergunta solta — cada campo abaixo em uma frase ou duas:
 - **Recomendação + pergunta objetiva**: qual opção você recomenda e a
   pergunta direta a responder.
 
-Depois de decidido, se a escolha valer a pena preservar para a próxima
-vez, registre-a como Lição aprendida na Retrospectiva (o registro
-definitivo dessa decisão neste repo).
+Depois de decidido, a decisão em si (não só a lição sobre o processo) volta
+para o Mission Brief que ela afeta — nunca fica só registrada no chat:
+- Se mudou uma decisão técnica documentada em `plan.md` ou nas seções
+  `#arch`/`#cd` de `docs/index.html`, atualize esses arquivos você mesmo
+  (você já é dono deles — ver "Convenções a respeitar" abaixo) para
+  refletir a decisão real, não a original.
+- Se a decisão revelou que `spec.md` estava ambíguo/incompleto (não só o
+  plano técnico), sinalize de volta ao `product-owner` em vez de só
+  documentar do seu lado — mesmo gate de "Antes de começar algo ambíguo"
+  abaixo, aplicado retroativamente.
+Só *depois* disso, se houver uma lição sobre o processo em si (ex.: "devia
+ter perguntado antes", não a decisão técnica), registre-a como Lição
+aprendida na Retrospectiva. Pular o rollback para `plan.md`/`docs/` e só
+registrar a Lição aprendida é "Brief Rot" — a fonte de verdade documentada
+diverge da decisão real, e a próxima task/agente que ler `plan.md` vai
+trabalhar em cima de informação desatualizada.
 
 ### Antes de começar algo ambíguo
 

@@ -191,9 +191,14 @@ any), instruction to consult `spec.md`/`plan.md`, `codegraph_explore`
 reminder, ponytail reminder, and `dev.md`'s handoff rules. `dev` operates
 inside its **autonomy envelope** (`dev.md`) — deciding freely on
 reversible work, raising a **Consultation Request Pack** before anything
-destructive/hard-to-reverse. On completion, `dev`'s report includes a
-minimal work-artifact + evidence summary (what changed, what it already
-checked) — that summary is itself the Handoff Contract into step 3.6.
+destructive/hard-to-reverse. Once a consultation is resolved, `dev` rolls
+the *decision itself* back into `plan.md`/`docs/index.html` (not just a
+note in its own Lição aprendida) — the book calls skipping this "Brief
+Rot" (Ch4.6.8): a decision that only lives in chat/agent-notes leaves the
+Mission Brief lying to the next reader. On completion, `dev`'s report
+includes a minimal work-artifact + evidence summary (what changed, what
+it already checked) — that summary is itself the Handoff Contract into
+step 3.6.
 
 **3.6 — QA gate (mandatory) — the review-loop pattern, bounded.** `qa`
 receives that summary and tests against acceptance criteria.
@@ -323,3 +328,16 @@ here.
   what changed and whether it passed, not the fuller decision trail. Add
   the missing fields if a task's blast radius ever justifies the extra
   ceremony; most tasks here don't.
+- **CI-deterministic enforcement of the QA gate itself.** The book names
+  this exact risk (Ch8.6.4, "Using probabilistic guidance for mandatory
+  procedures"): calling a gate "obrigatório" in a skill file is still
+  prose an agent executes, not code that blocks a merge. This repo's
+  actual deterministic layer is narrower than the process layer: CI
+  (`.github/workflows/ci.yml`) enforces lint + Django tests + the
+  security self-check on every push/PR via `run_tests.sh`, but nothing
+  in CI verifies that a `qa-report` was produced for a given task before
+  it's considered Done — that part relies on `/kanban-start` actually
+  being the path used, not on a check GitHub itself blocks on. Acceptable
+  today (single maintainer, everything routes through `/kanban-start` by
+  convention); revisit if this repo ever gets outside contributors who
+  might merge without going through it.
