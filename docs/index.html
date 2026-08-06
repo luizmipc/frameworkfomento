@@ -186,7 +186,7 @@
     </div>
 
     <h2 id="sl">Escopo e Limitações</h2>
-    <p class="source">Dono: product-owner. Consultado por <code>/kanban-sync</code> para detectar desvio de escopo em tarefas novas ou existentes.</p>
+    <p class="source">Dono: product-owner. Consultado por <code>/meeting</code> para detectar desvio de escopo em tarefas novas ou existentes.</p>
 
     <h3 id="sl-editais">Feature: Gerenciamento de Editais de Fomento</h3>
     <p class="source">Spec de origem: <a href="../specs/001-manage-call-for-proposals/spec.md">specs/001-manage-call-for-proposals/spec.md</a></p>
@@ -289,7 +289,7 @@
     <!-- ============================== dev ============================== -->
 
     <h2 id="arch">Arquitetura e Tecnologias</h2>
-    <p class="lede">Dono: <code>dev</code>. Mantido via <code>/kanban-sync</code> e <code>/kanban-start</code>. Fonte: <a href="../specs/001-manage-call-for-proposals/plan.md">plan.md</a>/<a href="../specs/001-manage-call-for-proposals/data-model.md">data-model.md</a>.</p>
+    <p class="lede">Dono: <code>dev</code>. Mantido via <code>/meeting</code> e <code>/kanban-start</code>. Fonte: <a href="../specs/001-manage-call-for-proposals/plan.md">plan.md</a>/<a href="../specs/001-manage-call-for-proposals/data-model.md">data-model.md</a>.</p>
 
     <h3 id="arch-atual">Estado atual (implementado)</h3>
     <span class="badge badge-implemented">Implementado</span>
@@ -307,9 +307,11 @@
       <a href="../specs/001-manage-call-for-proposals/plan.md">specs/001-manage-call-for-proposals/plan.md</a>
       e
       <a href="../specs/001-manage-call-for-proposals/data-model.md">data-model.md</a>.
-      Ainda não foi construído em <code>app/</code> — <code>tasks.md</code> tem 40 tasks
-      (T001–T040), todas em "To Do" no <code>KANBAN.md</code>, até a implementação
-      rodar via <code>/kanban-start</code>/<code>speckit-implement</code>.
+      Ainda não foi construído em <code>app/</code> — <code>tasks.md</code> tem 69 tasks
+      (T001–T069), todas <code>[ ]</code> ainda, até a implementação
+      rodar via <code>/kanban-start</code>/<code>speckit-implement</code> (backlog e conclusão de
+      tasks <code>T\d{3}</code> vivem só em <code>tasks.md</code>, nunca em
+      <code>KANBAN.md</code> — ver o cabeçalho de <code>KANBAN.md</code>).
     </div>
 
     <h4>Resumo</h4>
@@ -386,7 +388,7 @@
     cobrindo os Acceptance Scenarios de <code>spec.md</code>.</p>
 
     <h2 id="cd">Diagrama de Classes</h2>
-    <p class="lede">Dono: <code>dev</code>. Mantido via <code>/kanban-sync</code> e <code>/kanban-start</code>. Fonte: <a href="../specs/001-manage-call-for-proposals/data-model.md">data-model.md</a>.</p>
+    <p class="lede">Dono: <code>dev</code>. Mantido via <code>/meeting</code> e <code>/kanban-start</code>. Fonte: <a href="../specs/001-manage-call-for-proposals/data-model.md">data-model.md</a>.</p>
 
     <p><strong>Estado atual (implementado):</strong> nenhum model Django existe ainda em <code>app/</code> —
     confirmar com <code>find app -name "*.py" -not -path "*/.venv/*"</code>.</p>
