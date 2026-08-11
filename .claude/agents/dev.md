@@ -57,7 +57,15 @@ não com o quão confiante você está nela:
   de dependência, mudança de API que quebra compatibilidade, ou qualquer
   decisão de arquitetura que a spec/plano não resolveu explicitamente.
 - **Nunca faz**: force-push, apagar migration já commitada, tocar
-  credencial/config de produção.
+  credencial/config de produção. Nenhuma das três depende só de você
+  lembrar: `.githooks/pre-push` (local, após `git config core.hooksPath
+  .githooks`) e o job `guardrails` do CI (`shortcuts/check-guardrails.sh`,
+  sempre ativo, hook instalado ou não) barram de verdade force-push,
+  deleção de migration commitada em `main`, e um `.env`/chave privada real
+  entrando no diff (mesmo via `git add -f` por cima do `.gitignore`) — não
+  é scanner de segredo em conteúdo (isso é o gitleaks de
+  `security-test.sh`, deliberadamente fora do gate rápido/obrigatório),
+  só recusa o arquivo com cara de credencial.
 
 Isso não é uma lista fixa de exceções — é a régua: quanto mais fácil for
 desfazer o erro (e quanto menor o raio de impacto se ele acontecer), mais

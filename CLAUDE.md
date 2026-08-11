@@ -52,6 +52,15 @@ the target UI lives in `prototype/avulsa-A001/`.
   check`) e roda a suíte de testes Django. Se algo for sinalizado, corrija
   antes de prosseguir — só então siga para commit e push, conforme as
   regras abaixo.
+- Setup único por clone: `git config core.hooksPath .githooks` — ativa o
+  hook `pre-push` versionado que bloqueia localmente force-push para
+  `main`, apagar migration já commitada, e um `.env`/chave privada real
+  entrando no diff (backstop determinístico do "Nunca faz" de `dev.md`,
+  não só prosa). O job `guardrails` em `.github/workflows/ci.yml` (via
+  `shortcuts/check-guardrails.sh`) roda a mesma checagem no CI — vale
+  mesmo sem o hook instalado, e também barra marcar uma task como Done
+  (`[x]` em `KANBAN.md`/`tasks.md`) sem evidência de QA
+  (`docs/qa-report/*.html` ou `tests.py` no mesmo diff).
 - Commit messages always follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`, etc.).
 - Every commit body ends with a trailer crediting Claude as co-author: `Co-Authored-By: Claude <noreply@anthropic.com>`. Applies to every commit in this repo, including ones made inside `/kanban-start`/`/meeting`/`/quick-task` flows, not just ones following the generic commit steps.
 - After committing, push right away unless the user says otherwise.

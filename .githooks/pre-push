@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Enforces dev.md's "Nunca faz" (force-push, apagar migration já commitada)
+# locally, before the push leaves your machine. CI's `guardrails` job is the
+# real backstop (this hook can be skipped with --no-verify or on a clone
+# that never ran the one-time `git config core.hooksPath .githooks` from
+# CLAUDE.md) — this just gives faster feedback.
+set -euo pipefail
+repo_root="$(git rev-parse --show-toplevel)"
+z40="0000000000000000000000000000000000000000"
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ "$remote_ref" = "refs/heads/main" ] || continue
+  [ "$local_sha" = "$z40" ] && continue # deleting the branch, nothing to check
+
+  if [ "$remote_sha" != "$z40" ] && ! git merge-base --is-ancestor "$remote_sha" "$local_sha"; then
+    echo "error: refusing to force-push to main (dev.md 'Nunca faz': force-push)." >&2
+    echo "       A push to main must be a fast-forward." >&2
+    exit 1
+  fi
+
+  base="$remote_sha"
+  if [ "$base" = "$z40" ]; then
+    base="$(git rev-list --max-parents=0 "$local_sha" | tail -1)"
+  fi
+  "$repo_root/shortcuts/check-guardrails.sh" "$base" "$local_sha" || exit 1
+done
+
+exit 0

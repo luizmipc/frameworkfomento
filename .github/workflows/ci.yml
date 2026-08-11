@@ -22,3 +22,37 @@ jobs:
 
       - name: Run lint + test suite
         run: ./run_tests.sh
+
+  guardrails:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Reject force-push to main
+        if: github.event_name == 'push' && github.event.forced
+        run: |
+          echo "::error::Force-push to main is blocked (dev.md 'Nunca faz': force-push)."
+          exit 1
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Resolve diff range
+        id: range
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "base=origin/${{ github.base_ref }}" >> "$GITHUB_OUTPUT"
+            echo "head=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          else
+            before="${{ github.event.before }}"
+            zero="0000000000000000000000000000000000000000"
+            if [ -z "$before" ] || [ "$before" = "$zero" ] || ! git cat-file -e "$before" 2>/dev/null; then
+              echo "base=" >> "$GITHUB_OUTPUT"
+            else
+              echo "base=$before" >> "$GITHUB_OUTPUT"
+            fi
+            echo "head=${{ github.sha }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: No deleted migrations, no Done without QA evidence
+        if: steps.range.outputs.base != ''
+        run: ./shortcuts/check-guardrails.sh "${{ steps.range.outputs.base }}" "${{ steps.range.outputs.head }}"
