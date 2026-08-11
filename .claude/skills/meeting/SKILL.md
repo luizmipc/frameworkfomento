@@ -35,33 +35,28 @@ modelo — só quando o usuário digitar `/meeting`.
 
 ## Passo 0 — Tipo de reunião
 
-Pergunte via `AskUserQuestion` (4 opções): **"Que tipo de reunião de scrum é
-essa?"**
-- **"Acompanhamento"** — sincronizar o quadro a partir do estado real das
-  tasks.
-- **"Criar nova tarefa"** — descrever uma tarefa nova e alocá-la no quadro.
-- **"Atualizar spec"** — descrever um gap/insight (de um teste de persona,
-  de observação direta do quadro, ou de qualquer outra origem) e formalizá-lo
-  como requisito em `spec.md`, sem necessariamente criar task avulsa junto.
-- **"Ver mais opções"** — mostra as quatro opções restantes (abaixo), fora
-  do limite de 4 do `AskUserQuestion`: pergunte de novo via
-  `AskUserQuestion` (4 opções): **"Que tipo de reunião de scrum é essa?"**
-  - **"Implementar spec"** — implementar uma task pendente (`T\d{3}` de
-    `specs/*/tasks.md` ou `A\d{3}` avulsa) — mesmo ciclo de
-    dev/QA/commit de rodar `/kanban-start` diretamente.
-  - **"Atualizar protótipo"** — ajustar um protótipo estático já existente
-    (mudança puramente visual/estrutural, sem requisito novo por trás) sem
-    formalizar nada em `spec.md` nem criar task no quadro — a via rápida
-    quando não há processo a rastrear, só o protótipo a corrigir.
-  - **"Criar spec"** — rodar o fluxo completo do Spec Kit
-    (specify→clarify→checklist→plan→tasks) para uma feature nova que merece
-    spec própria, carregando as tasks geradas direto no quadro e criando (ou
-    atualizando, se já existir) o protótipo correspondente.
-  - **"Reunião estratégica (coordenador de pesquisa)"** — leitura holística
-    e periódica do projeto inteiro pela lente do `coordenador-de-pesquisa`
-    (portfólio, alinhamento com a agenda de pesquisa do instituto, risco
-    institucional/reputacional) — nível estratégico, não tático/operacional
-    (isso é do modo "Acompanhamento") nem sobre uma task específica.
+Liste as sete opções de uma vez, em texto simples no chat (nunca via
+`AskUserQuestion` aqui — o tool trava em 4 opções por chamada, o que forçaria
+paginação; a pergunta abaixo é justamente para não precisar disso), e espere
+o usuário responder digitando o nome ou o número:
+
+```
+Que tipo de reunião de scrum é essa?
+
+1. Acompanhamento — sincronizar o quadro a partir do estado real das tasks.
+2. Criar nova tarefa — descrever uma tarefa nova e alocá-la no quadro.
+3. Atualizar spec — descrever um gap/insight e formalizá-lo como requisito
+   em spec.md, sem necessariamente criar task avulsa junto.
+4. Implementar spec — implementar uma task pendente (mesmo ciclo de
+   dev/QA/commit de rodar /kanban-start diretamente).
+5. Atualizar protótipo — ajustar um protótipo existente (mudança
+   puramente visual/estrutural) sem formalizar nada em spec.md/KANBAN.md.
+6. Criar spec — fluxo completo do Spec Kit (specify→clarify→checklist→
+   plan→tasks) para uma feature nova que merece spec própria.
+7. Reunião estratégica (coordenador de pesquisa) — leitura holística e
+   periódica do projeto inteiro, nível estratégico, não sobre uma task
+   específica.
+```
 
 Se `$ARGUMENTS` já contiver claramente uma descrição de tarefa nova (frase em
 linguagem natural, não um slug/caminho existente), pule esta pergunta e siga
@@ -333,31 +328,23 @@ nenhuma task — é uma leitura consultiva do projeto inteiro, nunca um gate.
      quer criar essa tarefa nova?"**
      - **"Descrever manualmente"** (Recomendado) — pergunte no chat (texto
        livre): "Qual a descrição dessa tarefa nova?". Uma única descrição.
-     - **"A partir de um relatório existente"** — pergunte via
-       `AskUserQuestion` (4 opções): **"De qual relatório?"**
-       - **"Teste de persona (docs/persona/)"** — rode a sub-rotina
-         **Origem: docs/persona/** (abaixo); ela devolve uma lista de uma
-         ou mais descrições (uma por dor escolhida).
-       - **"Relatório de QA (docs/qa-report/)"** — rode a sub-rotina
-         **Origem: docs/qa-report/** (abaixo); ela devolve uma lista de uma
-         ou mais descrições (uma por critério/achado escolhido).
-       - **"Achados de segurança (docs/cybersec-report/)"** — rode a
-         sub-rotina **Origem: docs/cybersec-report/** (abaixo); ela devolve
-         uma lista de uma ou mais descrições (uma por achado escolhido).
-       - **"Ver mais origens"** — mostra as duas restantes, fora do limite
-         de 4: pergunte de novo via `AskUserQuestion` (2 opções): **"De
-         qual relatório?"**
-         - **"Achados de prontidão de deploy (docs/deploy-report/)"** —
-           rode a sub-rotina **Origem: docs/deploy-report/** (abaixo); ela
-           devolve uma lista de uma ou mais descrições (uma por achado
-           escolhido).
-         - **"Reunião estratégica (docs/coordenador-report/)"** — rode a
-           sub-rotina **Origem: docs/coordenador-report/** (abaixo); ela
-           devolve uma lista de uma ou mais descrições (uma por achado
-           escolhido).
-       Se uma 6ª origem de relatório existir no futuro, pagine do mesmo
-       jeito (3 primeiras + "Ver mais", igual ao Passo 2 de
-       `kanban-start/SKILL.md`).
+     - **"A partir de um relatório existente"** — liste as seis origens de
+       uma vez, em texto simples (mesmo motivo do Passo 0: acima do limite
+       de 4 do `AskUserQuestion`), e espere o usuário responder digitando o
+       nome ou o número:
+       ```
+       De qual relatório?
+
+       1. Teste de persona (docs/persona/)
+       2. Relatório de QA (docs/qa-report/)
+       3. Achados de segurança (docs/cybersec-report/)
+       4. Achados de prontidão de deploy (docs/deploy-report/)
+       5. Reunião estratégica (docs/coordenador-report/)
+       ```
+       Rode a sub-rotina **Origem: `<caminho escolhido>`** correspondente
+       (abaixo); ela devolve uma lista de uma ou mais descrições (uma por
+       achado/dor/critério escolhido). Se uma 6ª origem de relatório
+       existir no futuro, acrescente à mesma lista — nunca pagine.
    - Repita os passos 3 a 7 abaixo **para cada descrição** da lista resultante,
      na ordem, antes de seguir ao passo 8 (uma única Sincronização/Retrospectiva
      no final, mesmo que várias tarefas tenham sido criadas).
