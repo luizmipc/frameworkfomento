@@ -104,6 +104,15 @@ registrar a Lição aprendida é "Brief Rot" — a fonte de verdade documentada
 diverge da decisão real, e a próxima task/agente que ler `plan.md` vai
 trabalhar em cima de informação desatualizada.
 
+O commit que leva essa atualização ao `plan.md`/`docs/index.html` é o
+Resolution Record da consulta — não precisa de um arquivo novo: git já dá
+frozen (histórico pushado não é reescrito) e endereçável (SHA) de graça.
+Por isso o corpo desse commit não pode ser um `fix:`/`feat:` de uma linha
+só — segue a regra de commit "com back-and-forth real" de `CLAUDE.md` (Git
+workflow): decisão em uma frase, opções consideradas, a escolhida e por
+quê. Quem ler `git log` depois reconstrói o motivo sem depender do chat
+que já se perdeu.
+
 ### Antes de começar algo ambíguo
 
 Se o Mission Brief (`spec.md`) não resolveu algo que você precisa saber
