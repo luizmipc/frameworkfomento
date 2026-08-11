@@ -249,16 +249,20 @@ days before it becomes integration-ready as a whole.
 
 ## Path 4 — Fix Problem
 
-Trigger: `/quick-task` (small, spec-less fixes), or `/meeting` → Modo
-"Criar nova tarefa" → "A partir de um relatório existente" followed by
-`/kanban-start` (when the fix should still show up as a normal avulsa
-task on the board with full traceability to its source report). The two
-entry points aren't identical past step 4.5: `/quick-task` explicitly
+Trigger: `/quick-task` (small, spec-less fixes), `/meeting` → Modo
+**"Corrigir problema"** (pure redirect to `/quick-task`, same as Path 3's
+`/meeting` entry point), or `/meeting` → Modo "Criar nova tarefa" → "A
+partir de um relatório existente" followed manually by `/kanban-start`
+(when the fix should still show up as a normal avulsa task on the board
+with full traceability to its source report, and you want the task
+created without immediately implementing it). The manual "Criar nova
+tarefa" route isn't identical to the other two past step 4.5:
+`/quick-task` (and "Corrigir problema", which redirects to it) explicitly
 tells `meeting` to stop before its own step 9 (Retrospectiva), so the
 combined flow gets exactly one, at `/kanban-start`'s end. The manual
-`/meeting` call has no such instruction — its own Retrospectiva runs in
-full before the separately-invoked `/kanban-start` adds its own, so this
-entry point runs two.
+`/meeting` → "Criar nova tarefa" call has no such instruction — its own
+Retrospectiva runs in full before the separately-invoked `/kanban-start`
+adds its own, so that entry point runs two.
 
 **4.1 — Pick the report source.** One of the five "Origem:
 `docs/*-report/`" sub-routines in `meeting/SKILL.md`: persona

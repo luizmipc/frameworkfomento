@@ -1,8 +1,8 @@
 ---
 name: "meeting"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/, ou de um relatório de QA/segurança/deploy/reunião estratégica) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), redireciona para a skill kanban-start para implementar uma task pendente, ajusta um protótipo existente diretamente via designer sem exigir requisito formal ou task nova (para tweaks puramente visuais), redireciona para a skill create-reports para rodar QA/segurança/deploy/persona em paralelo, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/, ou de um relatório de QA/segurança/deploy/reunião estratégica) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), redireciona para a skill kanban-start para implementar uma task pendente, ajusta um protótipo existente diretamente via designer sem exigir requisito formal ou task nova (para tweaks puramente visuais), redireciona para a skill create-reports para rodar QA/segurança/deploy/persona em paralelo, redireciona para a skill quick-task para criar uma tarefa e já implementá-la num passo só, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
-compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, docs/ (ver item 0 do plano de implementação), e as skills kanban-start (.claude/skills/kanban-start/SKILL.md, modo Implementar spec) e create-reports (.claude/skills/create-reports/SKILL.md, modo Criar relatórios)"
+compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, docs/ (ver item 0 do plano de implementação), e as skills kanban-start (.claude/skills/kanban-start/SKILL.md, modo Implementar spec), create-reports (.claude/skills/create-reports/SKILL.md, modo Criar relatórios) e quick-task (.claude/skills/quick-task/SKILL.md, modo Corrigir problema)"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/meeting/SKILL.md"
@@ -20,14 +20,15 @@ Esta é a "reunião de scrum": uma sincronização de acompanhamento do quadro
 real de tasks, a criação de uma tarefa nova avulsa, a formalização de um
 gap como requisito em `spec.md`, a implementação de uma task pendente
 (redirecionamento para `kanban-start`), o ajuste direto de um protótipo
-existente sem processo por trás, ou a geração de relatórios de QA/
-segurança/deploy/persona (redirecionamento para `create-reports`). Nunca
-dispara sozinha por inferência do modelo — só quando o usuário digitar
-`/meeting`.
+existente sem processo por trás, a geração de relatórios de QA/segurança/
+deploy/persona (redirecionamento para `create-reports`), ou a correção
+completa de um problema pequeno — criar a tarefa e já implementá-la
+(redirecionamento para `quick-task`). Nunca dispara sozinha por inferência
+do modelo — só quando o usuário digitar `/meeting`.
 
 **Duas formas de usar este arquivo:**
 - **Ritual completo** (`/meeting` chamado pelo usuário, ou por
-  `/quick-task`): Passo 0 → um dos oito Modos → termina em Retrospectiva.
+  `/quick-task`): Passo 0 → um dos nove Modos → termina em Retrospectiva.
   Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
   `/quick-task` só para atualizar `KANBAN.md` a partir de `tasks.md`, sem
@@ -37,7 +38,7 @@ dispara sozinha por inferência do modelo — só quando o usuário digitar
 
 ## Passo 0 — Tipo de reunião
 
-Liste as oito opções de uma vez, em texto simples no chat (nunca via
+Liste as nove opções de uma vez, em texto simples no chat (nunca via
 `AskUserQuestion` aqui — o tool trava em 4 opções por chamada, o que forçaria
 paginação; a pergunta abaixo é justamente para não precisar disso), e espere
 o usuário responder digitando o nome ou o número:
@@ -46,7 +47,8 @@ o usuário responder digitando o nome ou o número:
 Que tipo de reunião de scrum é essa?
 
 1. Acompanhamento — sincronizar o quadro a partir do estado real das tasks.
-2. Criar nova tarefa — descrever uma tarefa nova e alocá-la no quadro.
+2. Criar nova tarefa — descrever uma tarefa nova e alocá-la no quadro (só
+   cria; não implementa — para isso, use a opção 9).
 3. Atualizar spec — descrever um gap/insight e formalizá-lo como requisito
    em spec.md, sem necessariamente criar task avulsa junto.
 4. Implementar spec — implementar uma task pendente (mesmo ciclo de
@@ -60,17 +62,20 @@ Que tipo de reunião de scrum é essa?
    específica.
 8. Criar relatórios — rodar QA/segurança/deploy/persona em paralelo
    (mesmo redirecionamento de rodar /create-reports diretamente).
+9. Corrigir problema — criar a tarefa E já implementá-la num passo só
+   (mesmo redirecionamento de rodar /quick-task diretamente); para um
+   ajuste pequeno, sem spec formal, que você já sabe que quer resolver
+   agora.
 ```
 
 Se `$ARGUMENTS` já contiver claramente uma descrição de tarefa nova (frase em
 linguagem natural, não um slug/caminho existente), pule esta pergunta e siga
 direto para o modo "Criar nova tarefa" com essa descrição — "Atualizar spec",
 "Implementar spec", "Atualizar protótipo", "Criar spec", "Reunião
-estratégica" e "Criar relatórios" só são alcançados escolhendo explicitamente
-na pergunta, nunca por inferência do `$ARGUMENTS` (texto livre não distingue
-de forma confiável um ajuste pequeno de uma feature grande, uma correção só
-de protótipo, ou
-uma leitura estratégica).
+estratégica", "Criar relatórios" e "Corrigir problema" só são alcançados
+escolhendo explicitamente na pergunta, nunca por inferência do `$ARGUMENTS`
+(texto livre não distingue de forma confiável um ajuste pequeno de uma
+feature grande, uma correção só de protótipo, ou uma leitura estratégica).
 
 ## Modo "Acompanhamento"
 
@@ -209,6 +214,23 @@ lógica é duplicada aqui.
 2. Não rode a Retrospectiva deste arquivo depois — a de `create-reports`
    já é a definitiva desta invocação (mesma razão do Modo "Implementar
    spec").
+
+## Modo "Corrigir problema"
+
+Puro redirecionamento — mesmo padrão dos Modos "Implementar spec" e "Criar
+relatórios". Diferente do Modo "Criar nova tarefa" (que só cria a task e
+para), este cobre o ciclo completo — criar a task **e** já implementá-la —
+que hoje só existe como `quick-task/SKILL.md`: cria a tarefa avulsa via o
+próprio Modo "Criar nova tarefa" deste arquivo (sem rodar a Retrospectiva
+dele) e encadeia direto para `kanban-start` com o ID recém-criado. Nenhuma
+lógica é duplicada aqui.
+
+1. Rode a skill `quick-task` diretamente (`Skill` tool, mesmo
+   comportamento de digitar `/quick-task`), passando `$ARGUMENTS` adiante
+   se já trouxer a descrição do ajuste.
+2. Não rode a Retrospectiva deste arquivo depois — a de `kanban-start`
+   (repassada por `quick-task`) já é a definitiva desta invocação (mesma
+   razão do Modo "Implementar spec").
 
 ## Modo "Criar spec"
 
@@ -702,6 +724,8 @@ registre a lição aprendida no arquivo correto (um agente em
       pasta nova), `designer` ajustou o protótipo, e nada foi escrito em
       `spec.md`/`KANBAN.md` neste modo
 - [ ] Se "criar relatórios": a skill `create-reports` rodou até o fim, e a
+      Retrospectiva deste arquivo **não** rodou duas vezes
+- [ ] Se "corrigir problema": a skill `quick-task` rodou até o fim, e a
       Retrospectiva deste arquivo **não** rodou duas vezes
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
       a escolha do usuário (abandonar ou atualizar docs)
