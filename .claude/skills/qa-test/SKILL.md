@@ -129,6 +129,17 @@ por critério, `.story`/`.story-head` por critério, tabelas para o resumo
 de escopo). Estrutura de conteúdo (não o HTML literal — adapte ids/âncoras
 ao `nav.toc`):
 
+Este documento, mais os commits do Resolution Record que ele referencia
+(ver "Consultation Request Pack" em `dev.md`), É o Merge-Readiness Pack
+deste repo — sem manifesto/arquivo novo: os itens 2-3 abaixo cobrem
+completude funcional, o item 3 verificação, o item 5 (novo) higiene de
+engenharia, o item 6 (novo) racional, e o conjunto — âncoras estáveis,
+achados linkáveis por `#fr-N`, mais o `git log` dos commits referenciados
+— cobre auditabilidade sem precisar de checksums/manifesto separado. Isso
+é proporcional à escala de uma task/feature; para o Done rápido de uma
+task avulsa sem essa rodada de teste, `shortcuts/check-guardrails.sh` já
+exige pelo menos `tests.py` como evidência mínima.
+
 1. **Cabeçalho**: título com o alvo testado como `h1` (ex.: "Conformidade
    de critérios — prototype/avulsa-A001"), uma `.lede` dizendo o que foi
    testado (protótipo ou produção), data, comando usado, e histórico de
@@ -142,17 +153,26 @@ ao `nav.toc`):
    veredito (`badge-passed` ✅ / `badge-medium` 🟡 / `badge-high` 🔴 /
    `badge-na` ⚪), seguido de:
    - se passou/não-aplicável: "O que foi verificado" + "Evidência" (trecho
-     de teste ou descrição de screenshot);
+     de teste ou descrição de screenshot) — nomeie o método (teste
+     unitário, integração, walkthrough ao vivo) para deixar a força da
+     verificação auditável, não só o resultado;
    - se parcial/falhou: "O que aconteceu" + "Por que é um problema" +
      "Recomendação".
 4. **O que funcionou bem**: breve, honesto (critérios sem ressalva).
-5. **Achados fora do escopo dos critérios** *(só existe na variante
+5. **Higiene de engenharia**: resultado desta rodada de `./run_tests.sh`
+   (lint + self-check de segurança) em uma linha — pass/fail basta, o log
+   completo já mora na saída do comando/CI, não duplique aqui.
+6. **Mudanças e não-mudanças**: lista curta de arquivos tocados nesta
+   rodada com o porquê, e o que foi cogitado e descartado com o porquê
+   (Pattern "Pedantic Accountability") — é o que dá racional ao pacote sem
+   forçar o revisor a reconstruir o raciocínio a partir do diff sozinho.
+7. **Achados fora do escopo dos critérios** *(só existe na variante
    produção de `/qa-production-test` — omita esta seção aqui)*.
-6. **Para quem resolver**: uma linha por critério com problema, linkando
+8. **Para quem resolver**: uma linha por critério com problema, linkando
    `#fr-N`, roteado para `product-owner` (lacuna/ambiguidade de critério)
    ou `designer` (causa raiz visual/UX) — `qa-test` nunca roteia para
    `dev`, porque o protótipo não tem código de produção a corrigir.
-7. `.page-footer` com o disclaimer padrão (ver Passo 5 abaixo).
+9. `.page-footer` com o disclaimer padrão (ver Passo 5 abaixo).
 
 ## Passo 5 — Reportar
 
