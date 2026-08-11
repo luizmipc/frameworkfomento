@@ -1,8 +1,8 @@
 ---
 name: "meeting"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/, ou de um relatório de QA/segurança/deploy/reunião estratégica) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), redireciona para a skill kanban-start para implementar uma task pendente, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
-compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, e docs/ (ver item 0 do plano de implementação)"
+compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, docs/ (ver item 0 do plano de implementação), e a skill kanban-start em .claude/skills/kanban-start/SKILL.md (modo Implementar spec)"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/meeting/SKILL.md"
@@ -17,13 +17,14 @@ $ARGUMENTS
 ```
 
 Esta é a "reunião de scrum": uma sincronização de acompanhamento do quadro
-real de tasks, a criação de uma tarefa nova avulsa, ou a formalização de um
-gap como requisito em `spec.md`. Nunca dispara sozinha por inferência do
-modelo — só quando o usuário digitar `/meeting`.
+real de tasks, a criação de uma tarefa nova avulsa, a formalização de um
+gap como requisito em `spec.md`, ou a implementação de uma task pendente
+(redirecionamento para `kanban-start`). Nunca dispara sozinha por
+inferência do modelo — só quando o usuário digitar `/meeting`.
 
 **Duas formas de usar este arquivo:**
 - **Ritual completo** (`/meeting` chamado pelo usuário, ou por
-  `/quick-task`): Passo 0 → um dos cinco Modos → termina em Retrospectiva.
+  `/quick-task`): Passo 0 → um dos seis Modos → termina em Retrospectiva.
   Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
   `/quick-task` só para atualizar `KANBAN.md` a partir de `tasks.md`, sem
@@ -41,9 +42,12 @@ essa?"**
 - **"Atualizar spec"** — descrever um gap/insight (de um teste de persona,
   de observação direta do quadro, ou de qualquer outra origem) e formalizá-lo
   como requisito em `spec.md`, sem necessariamente criar task avulsa junto.
-- **"Ver mais opções"** — mostra as duas opções restantes (abaixo), fora do
+- **"Ver mais opções"** — mostra as três opções restantes (abaixo), fora do
   limite de 4 do `AskUserQuestion`: pergunte de novo via `AskUserQuestion`
-  (2 opções): **"Que tipo de reunião de scrum é essa?"**
+  (3 opções): **"Que tipo de reunião de scrum é essa?"**
+  - **"Implementar spec"** — implementar uma task pendente (`T\d{3}` de
+    `specs/*/tasks.md` ou `A\d{3}` avulsa) — mesmo ciclo de
+    dev/QA/commit de rodar `/kanban-start` diretamente.
   - **"Criar spec"** — rodar o fluxo completo do Spec Kit
     (specify→clarify→checklist→plan→tasks) para uma feature nova que merece
     spec própria, carregando as tasks geradas direto no quadro e criando (ou
@@ -143,6 +147,20 @@ do `/meeting` em vez de uma ação avulsa.
      Retrospectiva de novo — ela já roda uma vez só, no passo 7 abaixo.
    - **"Não"** — siga direto ao passo 7.
 7. Rode a **Retrospectiva**.
+
+## Modo "Implementar spec"
+
+Puro redirecionamento — implementar uma task já é o trabalho de
+`kanban-start/SKILL.md`, que sozinha cobre o ciclo inteiro (seleção de
+task, branch + lock, handoff pro `dev`, gate obrigatório de QA,
+Sincronização e Retrospectiva próprias). Nenhuma lógica é duplicada aqui.
+
+1. Rode a skill `kanban-start` diretamente (`Skill` tool, mesmo
+   comportamento de digitar `/kanban-start`), passando `$ARGUMENTS` adiante
+   se já trouxer um Task ID ou descrição.
+2. Não rode a Retrospectiva deste arquivo depois — a de `kanban-start` já é
+   a definitiva desta invocação (mesma razão do passo 6 do Modo "Atualizar
+   spec": duas Retrospectivas para o mesmo ciclo seria ruído, não sinal).
 
 ## Modo "Criar spec"
 
@@ -638,6 +656,8 @@ registre a lição aprendida no arquivo correto (um agente em
       nenhuma task individual foi tocada, e `docs/coordenador-report/<data>.html`
       + a linha em `docs/persona/coordenador-instituto.html` § "Log de
       reuniões estratégicas" existem ao final
+- [ ] Se "implementar spec": a skill `kanban-start` rodou até o fim, e a
+      Retrospectiva deste arquivo **não** rodou duas vezes
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
       a escolha do usuário (abandonar ou atualizar docs)
 - [ ] Retrospectiva rodou e, se houve problema reportado, o arquivo correto

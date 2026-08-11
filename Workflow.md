@@ -170,8 +170,9 @@ separate Yes/No was added on top of it.
 
 ## Path 3 — Implement Spec (Engineering Phase)
 
-Trigger: `/kanban-start`, run once per pending task, repeated until the
-feature's `tasks.md` is 100% `[x]`.
+Trigger: `/kanban-start`, or `/meeting` → Modo **"Implementar spec"** (pure
+redirect, no duplicated logic — see `meeting/SKILL.md`). Run once per
+pending task, repeated until the feature's `tasks.md` is 100% `[x]`.
 
 **3.1 — Fresh data.** Runs `meeting/SKILL.md`'s **Sincronização**
 sub-routine alone (no ritual) to prune any task that already left In
