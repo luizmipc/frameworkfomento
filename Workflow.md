@@ -1,12 +1,10 @@
 # Workflow Runbook
 
-This document is this repo's **Workflow Runbook** in the sense used by
-*Agentic Software Engineering: Foundational Pillars and a Research
-Roadmap* (Hassan et al., 2025) — the Standard
-Operating Procedure for the development loop: named stages, explicit
-gates, required outputs. It exists so a human can read one file and know
-what happens, which agent does it, and why — instead of tracing five
-skill files to reconstruct the picture.
+This document is this repo's Workflow Runbook: the Standard Operating
+Procedure for the development loop — named stages, explicit gates,
+required outputs. It exists so a human can read one file and know what
+happens, which agent does it, and why — instead of tracing five skill
+files to reconstruct the picture.
 
 **Spec Kit is the backbone and is never bypassed.** Every path below sits
 on top of the standard Spec Kit artifacts — `specs/<slug>/spec.md`,
@@ -15,8 +13,7 @@ on top of the standard Spec Kit artifacts — `specs/<slug>/spec.md`,
 `speckit-plan`, `speckit-tasks`, `speckit-analyze`, `speckit-implement`,
 `speckit-converge`, `speckit-taskstoissues`, `speckit-constitution`). None
 of it is replaced. What follows names the roles those artifacts already
-play in the book's vocabulary and adds the small set of behaviors that
-were genuinely missing.
+play and adds the small set of behaviors that were genuinely missing.
 
 Two standing constraints, unchanged by anything below:
 - **`/meeting` never auto-triggers.** It only runs when the user types
@@ -37,12 +34,10 @@ Two standing constraints, unchanged by anything below:
   every mission, not just one.
 - **Mentorship Pack** — `CLAUDE.md` + `.specify/memory/constitution.md` +
   `.claude/agents/*.md`: the institutional rulebook every agent loads
-  before doing anything (norms, boundaries, "what good looks like here").
-  The book names this pattern directly: practitioners already use
-  project-level configuration files like `CLAUDE.md` and `AGENT.md` to
-  load "institutional knowledge" before every agent task (§8.1,
-  "Meta-prompt files (AGENT.md, CLAUDE.md)") — this repo is one of them,
-  nothing new was built.
+  before doing anything (norms, boundaries, "what good looks like here")
+  — this repo's version of the project-config-file pattern (`CLAUDE.md`,
+  `AGENT.md`-style files) already common practice elsewhere; nothing new
+  was built.
 - **Handoff Contract** — the explicit package one agent hands the next:
   what changed, what to do next, what proof already exists. Named inline
   at each handoff below.
@@ -50,16 +45,23 @@ Two standing constraints, unchanged by anything below:
   before an irreversible/high-blast-radius decision (defined in full in
   `dev.md` § "Envelope de autonomia").
 - **Merge-Readiness Pack** — the evidence bundle that proves a task is
-  done: `docs/qa-report/*.html` + the task's `KANBAN.md`/`tasks.md` state.
-  A deliberately smaller subset of the book's five MRP criteria (§4.2.4:
-  Functional Completeness, Sound Verification, Exemplary SE Hygiene,
-  Clear Rationale and Communication, Full Auditability) — this repo's
-  version is a pass/fail verdict, not the fuller evidence bundle (test
-  plan, static-analysis reports, frozen versioned-artifact trail) the
-  book describes; see "What was deliberately not built."
+  done. At feature-level closeout, `qa-test/SKILL.md`'s report template
+  (`docs/qa-report/*.html`) covers functional completeness, verification
+  soundness, engineering hygiene ("Higiene de engenharia"), and rationale
+  ("Mudanças e não-mudanças"); auditability comes from the doc's stable
+  anchors plus the git history of the Resolution Record commits it
+  references, not a separate manifest file. The lighter per-task Done gate
+  (`shortcuts/check-guardrails.sh`, enforced in CI) only requires a
+  pass/fail signal — a `qa-report` or a changed `tests.py` in the diff —
+  proportional to how small most tasks here are; see "What was
+  deliberately not built."
 - **Resolution Record** — this repo's "Lição aprendida": a dated entry a
   Retrospectiva writes into the responsible `.claude/agents/*.md` or
-  `.claude/skills/*/SKILL.md` file.
+  `.claude/skills/*/SKILL.md` file. For a decision reached via a
+  Consultation Request Pack, the pushed commit that rolls it into
+  `plan.md`/`docs/index.html` is the actual record — frozen and
+  addressable by its SHA, not a separate file (see `dev.md` § "Envelope
+  de autonomia").
 - **Layered readiness** — a task passing QA makes it *merge-ready*; a
   whole feature with every task `[x]` and a PR opened is
   *integration-ready*. Two different levels of "done," checked at two
@@ -84,13 +86,9 @@ descrição dessa feature nova?"
 (writes `specs/<slug>/spec.md`), then `speckit-clarify` (resolves
 ambiguity — no `[NEEDS CLARIFICATION]` marker may remain), then
 `speckit-checklist` (its own Definition-of-Ready gate). *Why a gate here:*
-this repo's own name for applying that gate at the mission level — an
-ambiguous brief must be clarified before anyone builds against it, in the
-same spirit as the book's warning that agents "cannot infer the
-expectations or 'stakes' of a task; they may 'overthink' a simple request
-or under-deliver on a critical one" (§4.2.3) — a fast executor turns a
-small ambiguity into large rework at full confidence. If `product-owner`
-reports a block,
+an ambiguous brief must be clarified before anyone builds against it — a
+fast executor turns a small ambiguity into large rework at full
+confidence. If `product-owner` reports a block,
 **stop** — no branch, no Sincronização, no Retrospectiva. The mission
 never started.
 
@@ -194,14 +192,13 @@ decide, or run `speckit-clarify`/replan/`speckit-analyze` before starting.
 **3.4 — Branch + lock.** The canonical **Branch da feature** routine
 switches to the feature's branch (or `main` for `A\d{3}`). Then the task
 line moves into `KANBAN.md`'s `## In Progress`. *This lock is this repo's
-lightweight answer to a need the book raises only as an open research
-problem, not a solved one:* multi-agent SE "needs runtime support for
-isolation, reproducibility, scheduling, and cost control" (§7.5,
-"Distributed Compute Fabrics for Agents") — machinery this repo doesn't
-need because it runs one `dev` on one task on one branch at a time by
-design, but the underlying need (no two people silently working the same
-surface) is met exactly the same way, at the scale this repo actually
-operates at: one task locked In Progress, one branch per feature.
+lightweight answer to a coordination problem that needs much heavier
+machinery at fleet scale (many agents planning around each other on
+shared surfaces)* — this repo doesn't need that machinery because it runs
+one `dev` on one task on one branch at a time by design, but the
+underlying need (no two people silently working the same surface) is met
+exactly the same way, at the scale this repo actually operates at: one
+task locked In Progress, one branch per feature.
 
 **3.5 — Handoff to `dev`.** The prompt is this step's Handoff Contract:
 Task ID + verbatim description, exact `tasks.md` path, prototype path (if
@@ -213,15 +210,10 @@ destructive/hard-to-reverse. Once a consultation is resolved, `dev` rolls
 the *decision itself* back into `plan.md`/`docs/index.html` (not just a
 note in its own Lição aprendida) — this repo's name for skipping that
 step is "Brief Rot": a decision that only lives in chat/agent-notes
-leaves the Mission Brief lying to the next reader. The book's own,
-narrower version of this requirement points the same direction: feedback
-and clarifications exchanged with an agent "must be incorporated back
-into the BriefingScript as versioned updates" (§4.2.2) — a brief that
-doesn't absorb its own resolutions stops being the source of truth. On
-completion, `dev`'s report includes a minimal work-artifact + evidence
-summary (what changed, what
-it already checked) — that summary is itself the Handoff Contract into
-step 3.6.
+leaves the Mission Brief lying to the next reader. On completion, `dev`'s
+report includes a minimal work-artifact + evidence summary (what changed,
+what it already checked) — that summary is itself the Handoff Contract
+into step 3.6.
 
 **3.6 — QA gate (mandatory) — the review-loop pattern, bounded.** `qa`
 receives that summary and tests against acceptance criteria.
@@ -231,14 +223,14 @@ receives that summary and tests against acceptance criteria.
   failing → **stop**, leave the task In Progress with a note, report to
   the user. *Why bounded at one retry:* this repo's own bounded-escalation
   convention — after one rejection, stop and hand the decision to a human
-  rather than looping forever. It's in the same spirit as the book's call
-  for human-in-the-loop control that can pause or "stop low-value work
-  without restarting the whole loop" (§7.2), just enforced as a hard N=1
-  here, proportional to this repo's scale.
+  rather than looping forever, enforced as a hard N=1, proportional to
+  this repo's scale.
 
 **3.7 — Reflect the result.** Sincronização again (T\d{3} `[x]` → drops
 out of In Progress automatically) or, for `A\d{3}`, move the line to Done
-by hand.
+by hand. `shortcuts/check-guardrails.sh` (local pre-push hook + CI) then
+backstops this mechanically: a diff that flips a task to Done with no
+`qa-report`/`tests.py` evidence alongside it fails the `guardrails` check.
 
 **3.8 — Conditional docs update.** Only if `dev`/`qa` flagged that a
 documented requirement/architecture decision was actually wrong.
@@ -336,55 +328,30 @@ here.
 
 - **Fleet-scale multi-agent runtime machinery** (shared-workspace
   isolation, scheduling, cost control across concurrently running agents).
-  The book flags this as an open research gap, not a solved pattern to
-  copy: multi-agent SE "needs runtime support for isolation,
-  reproducibility, scheduling, and cost control" (§7.5) — this repo runs
-  one `dev` on one task at a time by design (Path 3, step 3.4), so it
-  doesn't need that machinery yet. The lightweight equivalents that solve
-  the same underlying problem — `KANBAN.md`'s In Progress lock, one branch
-  per feature, the Handoff Contract already carried in every subagent
-  prompt — already exist and are named above. Build the heavier versions
-  only if this repo starts running multiple agents concurrently on the
-  same feature.
+  This repo runs one `dev` on one task at a time by design (Path 3, step
+  3.4), so it doesn't need that machinery yet. The lightweight equivalents
+  that solve the same underlying problem — `KANBAN.md`'s In Progress lock,
+  one branch per feature, the Handoff Contract already carried in every
+  subagent prompt — already exist and are named above. Build the heavier
+  versions only if this repo starts running multiple agents concurrently
+  on the same feature.
 - **Autonomy-envelope boilerplate on every agent.** Only `dev` touches
   infra/schema/prod-adjacent surfaces, so only `dev.md` carries an
   explicit autonomy envelope and Consultation Request Pack structure.
   Copying that section onto `product-owner`/`designer`/`qa`/others would
-  be ceremony applied where the risk doesn't warrant it — the book itself
-  frames its own engineering-activities list as scaffold, not a checklist
-  to apply uniformly regardless of a project's actual risk profile ("this
-  section does not present a definitive or exhaustive list," §5).
+  be ceremony applied where the risk doesn't warrant it.
 - **New artifact file types** (a `mission-brief.md`, a `handoff/`
   directory, etc.). Every artifact above reuses a file this repo already
-  has. SASE itself is explicit that rigid, universal process is the wrong
-  target — it "acknowledges that SE is a 'wicked problem' where rigid,
-  universal processes are futile" (p.3) — so adding artifact types this
-  repo's scale doesn't need would cut against the framework's own premise,
-  not fulfill it.
-- **The full Merge-Readiness Pack field set.** The book's five MRP
-  criteria (§4.2.4) are Functional Completeness, Sound Verification,
-  Exemplary SE Hygiene, Clear Rationale and Communication, and Full
-  Auditability — each with its own evidence type (end-to-end test
-  results; the test *plan* plus new test cases, not just pass/fail;
-  static-analysis/lint/complexity reports; a human-readable rationale
-  summary; a frozen, versioned trail of the exact BriefingScript/
-  MentorScript/trajectory used). This repo's version is just
-  `docs/qa-report/*.html` + `KANBAN.md` state — a pass/fail verdict, not
-  that fuller evidence bundle. Add the missing fields if a task's blast
-  radius ever justifies the extra ceremony; most tasks here don't.
-- **CI-deterministic enforcement of the QA gate itself.** This repo names
-  its own risk here, since the book doesn't discuss CI enforcement of a
-  process gate directly: calling a gate "obrigatório" in a skill file is
-  still prose an agent executes, not code that blocks a merge. The book's
-  related, more general observation is that no mainstream agentic tooling
-  today provides "a unified, interlinked revision control system" for
-  process artifacts the way it does for code (§6.1) — this repo's actual
-  deterministic layer is narrower than the process layer: CI
-  (`.github/workflows/ci.yml`) enforces lint + Django tests + the
-  security self-check on every push/PR via `run_tests.sh`, but nothing
-  in CI verifies that a `qa-report` was produced for a given task before
-  it's considered Done — that part relies on `/kanban-start` actually
-  being the path used, not on a check GitHub itself blocks on. Acceptable
-  today (single maintainer, everything routes through `/kanban-start` by
-  convention); revisit if this repo ever gets outside contributors who
-  might merge without going through it.
+  has. Adding artifact types this repo's scale doesn't need would be
+  ceremony, not rigor.
+- **A machine-readable manifest for the Merge-Readiness Pack.**
+  `qa-test/SKILL.md`'s report template plus the Resolution Record commits
+  it links to already give stable anchors and a git-backed history —
+  enough auditability at this repo's scale without a separate manifest
+  file enumerating evidence with checksums. Add one if the evidence volume
+  ever outgrows what a human can review by following links.
+- **Progressive/evidence-driven widening of `dev`'s autonomy envelope.**
+  It's static — defined once in `dev.md`, not something that widens after
+  a track record of clean merges or narrows after a regression. Reasonable
+  for a single maintainer running one `dev` at a time; revisit if that
+  changes.
