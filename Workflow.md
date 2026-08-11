@@ -291,9 +291,11 @@ point, `meeting`'s Retrospectiva runs here before Path 3 starts.
 
 ## Path 5 — Create Report (Dynamic Parallelization)
 
-Trigger: `/create-reports` (`create-reports/SKILL.md`) — the one path
-with no prior equivalent; nothing previously let you pick several report
-types and run them together.
+Trigger: `/create-reports`, or `/meeting` → Modo **"Criar relatórios"**
+(pure redirect, same as Path 3's `/meeting` entry point) —
+`create-reports/SKILL.md` is the one skill with no prior equivalent;
+nothing previously let you pick several report types and run them
+together.
 
 **5.1 — Select report types.** Multi-select `AskUserQuestion`: Segurança
 (`cybersecurity-blue`), Deploy (`devops`), QA (`qa`, then a sub-choice of

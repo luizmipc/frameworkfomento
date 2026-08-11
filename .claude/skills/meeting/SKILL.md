@@ -1,8 +1,8 @@
 ---
 name: "meeting"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/, ou de um relatório de QA/segurança/deploy/reunião estratégica) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), redireciona para a skill kanban-start para implementar uma task pendente, ajusta um protótipo existente diretamente via designer sem exigir requisito formal ou task nova (para tweaks puramente visuais), ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/, ou de um relatório de QA/segurança/deploy/reunião estratégica) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), redireciona para a skill kanban-start para implementar uma task pendente, ajusta um protótipo existente diretamente via designer sem exigir requisito formal ou task nova (para tweaks puramente visuais), redireciona para a skill create-reports para rodar QA/segurança/deploy/persona em paralelo, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
-compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, docs/ (ver item 0 do plano de implementação), e a skill kanban-start em .claude/skills/kanban-start/SKILL.md (modo Implementar spec)"
+compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, docs/ (ver item 0 do plano de implementação), e as skills kanban-start (.claude/skills/kanban-start/SKILL.md, modo Implementar spec) e create-reports (.claude/skills/create-reports/SKILL.md, modo Criar relatórios)"
 metadata:
   author: "frameworkfomento"
   source: ".claude/skills/meeting/SKILL.md"
@@ -19,13 +19,15 @@ $ARGUMENTS
 Esta é a "reunião de scrum": uma sincronização de acompanhamento do quadro
 real de tasks, a criação de uma tarefa nova avulsa, a formalização de um
 gap como requisito em `spec.md`, a implementação de uma task pendente
-(redirecionamento para `kanban-start`), ou o ajuste direto de um protótipo
-existente sem processo por trás. Nunca dispara sozinha por inferência do
-modelo — só quando o usuário digitar `/meeting`.
+(redirecionamento para `kanban-start`), o ajuste direto de um protótipo
+existente sem processo por trás, ou a geração de relatórios de QA/
+segurança/deploy/persona (redirecionamento para `create-reports`). Nunca
+dispara sozinha por inferência do modelo — só quando o usuário digitar
+`/meeting`.
 
 **Duas formas de usar este arquivo:**
 - **Ritual completo** (`/meeting` chamado pelo usuário, ou por
-  `/quick-task`): Passo 0 → um dos sete Modos → termina em Retrospectiva.
+  `/quick-task`): Passo 0 → um dos oito Modos → termina em Retrospectiva.
   Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
   `/quick-task` só para atualizar `KANBAN.md` a partir de `tasks.md`, sem
@@ -35,7 +37,7 @@ modelo — só quando o usuário digitar `/meeting`.
 
 ## Passo 0 — Tipo de reunião
 
-Liste as sete opções de uma vez, em texto simples no chat (nunca via
+Liste as oito opções de uma vez, em texto simples no chat (nunca via
 `AskUserQuestion` aqui — o tool trava em 4 opções por chamada, o que forçaria
 paginação; a pergunta abaixo é justamente para não precisar disso), e espere
 o usuário responder digitando o nome ou o número:
@@ -56,15 +58,18 @@ Que tipo de reunião de scrum é essa?
 7. Reunião estratégica (coordenador de pesquisa) — leitura holística e
    periódica do projeto inteiro, nível estratégico, não sobre uma task
    específica.
+8. Criar relatórios — rodar QA/segurança/deploy/persona em paralelo
+   (mesmo redirecionamento de rodar /create-reports diretamente).
 ```
 
 Se `$ARGUMENTS` já contiver claramente uma descrição de tarefa nova (frase em
 linguagem natural, não um slug/caminho existente), pule esta pergunta e siga
 direto para o modo "Criar nova tarefa" com essa descrição — "Atualizar spec",
-"Implementar spec", "Atualizar protótipo", "Criar spec" e "Reunião
-estratégica" só são alcançados escolhendo explicitamente na pergunta, nunca
-por inferência do `$ARGUMENTS` (texto livre não distingue de forma confiável
-um ajuste pequeno de uma feature grande, uma correção só de protótipo, ou
+"Implementar spec", "Atualizar protótipo", "Criar spec", "Reunião
+estratégica" e "Criar relatórios" só são alcançados escolhendo explicitamente
+na pergunta, nunca por inferência do `$ARGUMENTS` (texto livre não distingue
+de forma confiável um ajuste pequeno de uma feature grande, uma correção só
+de protótipo, ou
 uma leitura estratégica).
 
 ## Modo "Acompanhamento"
@@ -189,6 +194,21 @@ um daqueles modos em vez deste — este aqui não deixa nenhum rastro em
    zero — instrução explícita de ponytail: mudança mínima que resolve o
    pedido, reaproveitando markup/JS já existente.
 4. Rode a **Retrospectiva**.
+
+## Modo "Criar relatórios"
+
+Puro redirecionamento — mesmo padrão do Modo "Implementar spec": gerar
+relatórios já é o trabalho de `create-reports/SKILL.md`, que sozinha cobre
+o ciclo inteiro (seleção de tipos de relatório, fan-out paralelo pros
+subagentes certos, coleta e reporte, Retrospectiva própria). Nenhuma
+lógica é duplicada aqui.
+
+1. Rode a skill `create-reports` diretamente (`Skill` tool, mesmo
+   comportamento de digitar `/create-reports`), passando `$ARGUMENTS`
+   adiante se já trouxer alguma preferência de quais relatórios rodar.
+2. Não rode a Retrospectiva deste arquivo depois — a de `create-reports`
+   já é a definitiva desta invocação (mesma razão do Modo "Implementar
+   spec").
 
 ## Modo "Criar spec"
 
@@ -681,6 +701,8 @@ registre a lição aprendida no arquivo correto (um agente em
 - [ ] Se "atualizar protótipo": protótipo existente identificado (sem criar
       pasta nova), `designer` ajustou o protótipo, e nada foi escrito em
       `spec.md`/`KANBAN.md` neste modo
+- [ ] Se "criar relatórios": a skill `create-reports` rodou até o fim, e a
+      Retrospectiva deste arquivo **não** rodou duas vezes
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
       a escolha do usuário (abandonar ou atualizar docs)
 - [ ] Retrospectiva rodou e, se houve problema reportado, o arquivo correto
