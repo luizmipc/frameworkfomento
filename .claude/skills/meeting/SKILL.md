@@ -1,6 +1,6 @@
 ---
 name: "meeting"
-description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/, ou de um relatório de QA/segurança/deploy/reunião estratégica) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), redireciona para a skill kanban-start para implementar uma task pendente, ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
+description: "Reunião de scrum: sincroniza o quadro Kanban local (KANBAN.md) a partir dos checkboxes de todos os specs/*/tasks.md, cria uma nova tarefa avulsa (descrita manualmente ou extraída das dores de um teste de persona em docs/persona/, ou de um relatório de QA/segurança/deploy/reunião estratégica) e a aloca no quadro, formaliza um gap/insight como requisito real em spec.md via product-owner (atualizando o protótipo correspondente quando necessário), redireciona para a skill kanban-start para implementar uma task pendente, ajusta um protótipo existente diretamente via designer sem exigir requisito formal ou task nova (para tweaks puramente visuais), ou roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova que merece spec própria, criando ou atualizando o protótipo dela."
 argument-hint: "Opcional: slug/caminho de uma feature para sincronizar só ela, ou a descrição de uma tarefa nova a criar"
 compatibility: "Requires specs/*/tasks.md no formato gerado por speckit-tasks, docs/ (ver item 0 do plano de implementação), e a skill kanban-start em .claude/skills/kanban-start/SKILL.md (modo Implementar spec)"
 metadata:
@@ -18,13 +18,14 @@ $ARGUMENTS
 
 Esta é a "reunião de scrum": uma sincronização de acompanhamento do quadro
 real de tasks, a criação de uma tarefa nova avulsa, a formalização de um
-gap como requisito em `spec.md`, ou a implementação de uma task pendente
-(redirecionamento para `kanban-start`). Nunca dispara sozinha por
-inferência do modelo — só quando o usuário digitar `/meeting`.
+gap como requisito em `spec.md`, a implementação de uma task pendente
+(redirecionamento para `kanban-start`), ou o ajuste direto de um protótipo
+existente sem processo por trás. Nunca dispara sozinha por inferência do
+modelo — só quando o usuário digitar `/meeting`.
 
 **Duas formas de usar este arquivo:**
 - **Ritual completo** (`/meeting` chamado pelo usuário, ou por
-  `/quick-task`): Passo 0 → um dos seis Modos → termina em Retrospectiva.
+  `/quick-task`): Passo 0 → um dos sete Modos → termina em Retrospectiva.
   Faz a pergunta de tipo de reunião e a checagem de escopo.
 - **Sub-rotina "Sincronização"** (usada internamente por `/kanban-start` e
   `/quick-task` só para atualizar `KANBAN.md` a partir de `tasks.md`, sem
@@ -42,12 +43,16 @@ essa?"**
 - **"Atualizar spec"** — descrever um gap/insight (de um teste de persona,
   de observação direta do quadro, ou de qualquer outra origem) e formalizá-lo
   como requisito em `spec.md`, sem necessariamente criar task avulsa junto.
-- **"Ver mais opções"** — mostra as três opções restantes (abaixo), fora do
-  limite de 4 do `AskUserQuestion`: pergunte de novo via `AskUserQuestion`
-  (3 opções): **"Que tipo de reunião de scrum é essa?"**
+- **"Ver mais opções"** — mostra as quatro opções restantes (abaixo), fora
+  do limite de 4 do `AskUserQuestion`: pergunte de novo via
+  `AskUserQuestion` (4 opções): **"Que tipo de reunião de scrum é essa?"**
   - **"Implementar spec"** — implementar uma task pendente (`T\d{3}` de
     `specs/*/tasks.md` ou `A\d{3}` avulsa) — mesmo ciclo de
     dev/QA/commit de rodar `/kanban-start` diretamente.
+  - **"Atualizar protótipo"** — ajustar um protótipo estático já existente
+    (mudança puramente visual/estrutural, sem requisito novo por trás) sem
+    formalizar nada em `spec.md` nem criar task no quadro — a via rápida
+    quando não há processo a rastrear, só o protótipo a corrigir.
   - **"Criar spec"** — rodar o fluxo completo do Spec Kit
     (specify→clarify→checklist→plan→tasks) para uma feature nova que merece
     spec própria, carregando as tasks geradas direto no quadro e criando (ou
@@ -61,10 +66,11 @@ essa?"**
 Se `$ARGUMENTS` já contiver claramente uma descrição de tarefa nova (frase em
 linguagem natural, não um slug/caminho existente), pule esta pergunta e siga
 direto para o modo "Criar nova tarefa" com essa descrição — "Atualizar spec",
-"Criar spec" e "Reunião estratégica" só são alcançados escolhendo
-explicitamente na pergunta, nunca por inferência do `$ARGUMENTS` (texto livre
-não distingue de forma confiável um ajuste pequeno de uma feature grande ou
-de uma leitura estratégica).
+"Implementar spec", "Atualizar protótipo", "Criar spec" e "Reunião
+estratégica" só são alcançados escolhendo explicitamente na pergunta, nunca
+por inferência do `$ARGUMENTS` (texto livre não distingue de forma confiável
+um ajuste pequeno de uma feature grande, uma correção só de protótipo, ou
+uma leitura estratégica).
 
 ## Modo "Acompanhamento"
 
@@ -161,6 +167,33 @@ Sincronização e Retrospectiva próprias). Nenhuma lógica é duplicada aqui.
 2. Não rode a Retrospectiva deste arquivo depois — a de `kanban-start` já é
    a definitiva desta invocação (mesma razão do passo 6 do Modo "Atualizar
    spec": duas Retrospectivas para o mesmo ciclo seria ruído, não sinal).
+
+## Modo "Atualizar protótipo"
+
+A via rápida para um ajuste puramente visual/estrutural num protótipo já
+existente — sem exigir que a mudança primeiro vire requisito formal em
+`spec.md` (isso é o Modo "Atualizar spec") nem uma task nova no quadro
+antes de agir (isso é o Modo "Criar nova tarefa"). Se a mudança na verdade
+reflete um requisito/gap real (não só "o botão está no lugar errado"), use
+um daqueles modos em vez deste — este aqui não deixa nenhum rastro em
+`spec.md`/`KANBAN.md` de propósito.
+
+1. Se `$ARGUMENTS` não trouxer a descrição da mudança, pergunte no chat
+   (texto livre): "O que precisa mudar no protótipo?"
+2. Descubra os protótipos existentes: `find prototype -mindepth 1 -maxdepth
+   1 -type d`.
+   - Nenhum encontrado: informe que ainda não há protótipo nenhum (criar um
+     novo é via Modo "Criar nova tarefa" ou "Criar spec", conforme o caso)
+     e pare — não há o que atualizar.
+   - Um: use-o direto.
+   - Mais de um: pergunte via `AskUserQuestion` (até 4 opções, rotuladas
+     pelo caminho) qual protótipo ajustar.
+3. Acione o subagente `designer` (`subagent_type: "designer"`) com a
+   descrição da mudança e o caminho do protótipo escolhido, pedindo para
+   refletir a mudança **no protótipo existente**, sem recriar a pasta do
+   zero — instrução explícita de ponytail: mudança mínima que resolve o
+   pedido, reaproveitando markup/JS já existente.
+4. Rode a **Retrospectiva**.
 
 ## Modo "Criar spec"
 
@@ -658,6 +691,9 @@ registre a lição aprendida no arquivo correto (um agente em
       reuniões estratégicas" existem ao final
 - [ ] Se "implementar spec": a skill `kanban-start` rodou até o fim, e a
       Retrospectiva deste arquivo **não** rodou duas vezes
+- [ ] Se "atualizar protótipo": protótipo existente identificado (sem criar
+      pasta nova), `designer` ajustou o protótipo, e nada foi escrito em
+      `spec.md`/`KANBAN.md` neste modo
 - [ ] Checagem de escopo rodou quando havia sinal de desvio, e foi respeitada
       a escolha do usuário (abandonar ou atualizar docs)
 - [ ] Retrospectiva rodou e, se houve problema reportado, o arquivo correto

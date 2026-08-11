@@ -317,6 +317,18 @@ dashboard file is built; the hub already exists.
 
 ---
 
+## Path 6 — Update Prototype (no process)
+
+Trigger: `/meeting` → Modo **"Atualizar protótipo"**. The fast lane for a
+purely visual/structural tweak to a prototype that already exists — no
+requirement formalized in `spec.md` (Path 2 does that), no task added to
+`KANBAN.md` (Path 4 does that). Describe the change, pick the prototype if
+more than one matches, `designer` adjusts it in place, Retrospectiva. If
+the change actually reflects a real gap rather than a cosmetic fix, use
+Path 2 or Path 4 instead — this path leaves no trace on purpose.
+
+---
+
 ## Deploy note
 
 Nothing above ends in an actual deploy. `devops`'s `/check-deployment`
