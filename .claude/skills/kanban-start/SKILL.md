@@ -182,8 +182,8 @@ prompt que inclua, literalmente:
 - lembrete para aplicar a lente do Ponytail (skill `ponytail:ponytail`) ao
   escrever/alterar código;
 - lembrete das regras de handoff de `dev.md`: acionar `designer` se tocar
-  UX, sinalizar `product-owner` (via `scrum-master`) se um requisito estiver
-  ambíguo, em vez de assumir;
+  UX, sinalizar `product-owner` diretamente se um requisito estiver
+  ambíguo (idealmente via um novo `speckit-clarify`), em vez de assumir;
 - instrução para implementar **só** aquela task (não rodar
   `speckit-implement` inteiro nem pular para a próxima) e marcar `[x]` em
   `tasks.md` ao terminar (só se houver `tasks.md` — avulsa não tem checkbox

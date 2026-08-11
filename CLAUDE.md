@@ -40,10 +40,12 @@ the target UI lives in `prototype/avulsa-A001/`.
   `.github/workflows/ci.yml` (roda `./run_tests.sh` em push/PR para
   `main`).
 - Docs vivas em `docs/` (`index.html` como hub, mais `docs/persona/`,
-  `docs/qa-report/`, `docs/cybersec-report/`, `docs/deploy-report/`);
-  specs via Spec Kit em `specs/<slug>/`; PDFs de referência de editais em
-  `ref/`. Fluxo de trabalho (`/meeting`, `/kanban-start`, agentes) em
-  `.claude/skills/` e `.claude/agents/`.
+  `docs/qa-report/`, `docs/cybersec-report/`, `docs/deploy-report/`,
+  `docs/submissions/`); specs via Spec Kit em `specs/<slug>/`; PDFs de
+  referência de editais em `ref/`. Fluxo de trabalho (`/meeting`,
+  `/kanban-start`, agentes) em `.claude/skills/` e `.claude/agents/` —
+  ver `Workflow.md` para o passo a passo de cada fluxo (quem faz o quê,
+  com quais artefatos, e por quê) sem precisar rastrear cada skill.
 
 ## Git workflow
 

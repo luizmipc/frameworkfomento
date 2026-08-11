@@ -45,10 +45,13 @@ Documentação viva do projeto:
 | `/speckit-constitution` | Cria/atualiza os princípios do projeto |
 | `/speckit-specify` | Escreve a spec de uma feature nova |
 | `/speckit-clarify` | Resolve ambiguidades da spec |
+| `/speckit-checklist` | Gera um checklist de qualidade customizado para a feature atual (gate de Definition-of-Ready do `product-owner`) |
 | `/speckit-plan` | Gera o plano técnico (arquitetura, models, etc.) |
 | `/speckit-tasks` | Quebra o plano em tasks (`T001`, `T002`...) |
 | `/speckit-analyze` | Checa consistência entre spec/plano/tasks antes de implementar |
 | `/speckit-implement` | Executa as tasks (uso manual; o dia a dia normalmente passa pelo `/kanban-start`) |
+| `/speckit-converge` | Compara o código atual com `spec.md`/`plan.md`/`tasks.md` e anexa a `tasks.md` qualquer trabalho pendente ainda não coberto |
+| `/speckit-taskstoissues` | Converte as tasks de `tasks.md` em issues do GitHub, deduplicando contra issues já existentes |
 | `/meeting` | "Reunião de scrum", cinco modos: sincroniza o quadro, cria uma tarefa avulsa, formaliza um gap como requisito em `spec.md` (atualizando o protótipo quando fizer sentido), roda o fluxo completo do Spec Kit (specify→clarify→checklist→plan→tasks) para uma feature nova/grande criando/atualizando o protótipo, ou faz uma leitura estratégica holística do projeto pela lente do `coordenador-de-pesquisa` |
 | `/kanban-start` | Escolhe uma tarefa do quadro (aqui no chat) e a implementa de ponta a ponta |
 | `/docs-sync` | Revisa e atualiza `docs/` a partir do estado real do projeto |

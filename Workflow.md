@@ -1,7 +1,8 @@
 # Workflow Runbook
 
 This document is this repo's **Workflow Runbook** in the sense used by
-*Agentic Software Engineering* (Ahmed E. Hassan, 2026) — the Standard
+*Agentic Software Engineering: Foundational Pillars and a Research
+Roadmap* (Hassan et al., 2025) — the Standard
 Operating Procedure for the development loop: named stages, explicit
 gates, required outputs. It exists so a human can read one file and know
 what happens, which agent does it, and why — instead of tracing five
@@ -37,9 +38,11 @@ Two standing constraints, unchanged by anything below:
 - **Mentorship Pack** — `CLAUDE.md` + `.specify/memory/constitution.md` +
   `.claude/agents/*.md`: the institutional rulebook every agent loads
   before doing anything (norms, boundaries, "what good looks like here").
-  The book names this pattern almost exactly: "many teams already
-  approximate this with files like CLAUDE.md, AGENT.md" (Ch1 §1.8) — this
-  repo is one of them, nothing new was built.
+  The book names this pattern directly: practitioners already use
+  project-level configuration files like `CLAUDE.md` and `AGENT.md` to
+  load "institutional knowledge" before every agent task (§8.1,
+  "Meta-prompt files (AGENT.md, CLAUDE.md)") — this repo is one of them,
+  nothing new was built.
 - **Handoff Contract** — the explicit package one agent hands the next:
   what changed, what to do next, what proof already exists. Named inline
   at each handoff below.
@@ -48,9 +51,12 @@ Two standing constraints, unchanged by anything below:
   `dev.md` § "Envelope de autonomia").
 - **Merge-Readiness Pack** — the evidence bundle that proves a task is
   done: `docs/qa-report/*.html` + the task's `KANBAN.md`/`tasks.md` state.
-  A deliberately smaller subset of the book's full field list (Ch1 §1.6)
-  — no plan ledger, exploration archive, or rollback plan tracked
-  separately; see "What was deliberately not built."
+  A deliberately smaller subset of the book's five MRP criteria (§4.2.4:
+  Functional Completeness, Sound Verification, Exemplary SE Hygiene,
+  Clear Rationale and Communication, Full Auditability) — this repo's
+  version is a pass/fail verdict, not the fuller evidence bundle (test
+  plan, static-analysis reports, frozen versioned-artifact trail) the
+  book describes; see "What was deliberately not built."
 - **Resolution Record** — this repo's "Lição aprendida": a dated entry a
   Retrospectiva writes into the responsible `.claude/agents/*.md` or
   `.claude/skills/*/SKILL.md` file.
@@ -78,10 +84,13 @@ descrição dessa feature nova?"
 (writes `specs/<slug>/spec.md`), then `speckit-clarify` (resolves
 ambiguity — no `[NEEDS CLARIFICATION]` marker may remain), then
 `speckit-checklist` (its own Definition-of-Ready gate). *Why a gate here:*
-this is the Eagerness Paradox's "Ask Before You Build" pattern applied at
-the mission level — an ambiguous brief must be clarified before anyone
-builds against it, because a fast executor turns a small ambiguity into
-large rework at full confidence. If `product-owner` reports a block,
+this repo's own name for applying that gate at the mission level — an
+ambiguous brief must be clarified before anyone builds against it, in the
+same spirit as the book's warning that agents "cannot infer the
+expectations or 'stakes' of a task; they may 'overthink' a simple request
+or under-deliver on a critical one" (§4.2.3) — a fast executor turns a
+small ambiguity into large rework at full confidence. If `product-owner`
+reports a block,
 **stop** — no branch, no Sincronização, no Retrospectiva. The mission
 never started.
 
@@ -147,12 +156,15 @@ ask whether the new requirement changes anything visible; if yes,
 `designer` reflects the minimal change in the existing prototype (never
 recreated from scratch).
 
-**2.6 — Closing decision.** Ask: "Requisito formalizado. Criar já uma
-tarefa avulsa para isso?" **Yes** → continue into Path 4's task-creation
-steps (2.2 onward there), skipping its own Retrospectiva since 2.7 below
-already covers it. **No** → go straight to 2.7. This question *is* the
-approval gate for the refinement — no separate Yes/No was added on top of
-it.
+**2.6 — Closing decision.** Ask: "Requisito formalizado em spec.md. Criar
+já uma tarefa avulsa para isso (protótipo e/ou lembrete de
+implementação)?" **Yes** → continue into Path 4's task-creation steps,
+entering partway at 4.3 (`meeting/SKILL.md`'s Modo "Criar nova tarefa",
+step 2 — branch to `main` — since the origin and description are already
+resolved by this path; steps 4.1-4.2 don't re-run), skipping its own
+Retrospectiva since 2.7 below already covers it. **No** → go straight to
+2.7. This question *is* the approval gate for the refinement — no
+separate Yes/No was added on top of it.
 
 **2.7 — Retrospectiva.**
 
@@ -170,6 +182,11 @@ Progress.
 **3.2 — Select a task.** Combines `KANBAN.md`'s `A\d{3}` To Do with
 pending `T\d{3}` read straight from every `specs/*/tasks.md`, presented as
 clickable options (paginated at 4). A Task ID can also be passed inline.
+If `docs/persona/` has at least one report, one extra option is reserved
+in the same list: "Criar tarefa a partir de dores de persona" — picking
+it runs `kanban-start/SKILL.md`'s own "Origem: persona" sub-routine
+(create-then-select from `meeting`'s persona sub-routine, in-line, no
+separate `/meeting` call needed) before returning to normal selection.
 
 **3.3 — Optional Spec Kit step first** (only for `T\d{3}`): let `dev`
 decide, or run `speckit-clarify`/replan/`speckit-analyze` before starting.
@@ -177,11 +194,12 @@ decide, or run `speckit-clarify`/replan/`speckit-analyze` before starting.
 **3.4 — Branch + lock.** The canonical **Branch da feature** routine
 switches to the feature's branch (or `main` for `A\d{3}`). Then the task
 line moves into `KANBAN.md`'s `## In Progress`. *This lock is this repo's
-version of the book's "isolated workspaces with controlled overlap":*
-Coordination Engineering's fleet-scale conflict-manager machinery (many
-agents planning around each other) does not apply here — this repo runs
-one `dev` on one task on one branch at a time by design — but the
-underlying need it solves (no two people silently working the same
+lightweight answer to a need the book raises only as an open research
+problem, not a solved one:* multi-agent SE "needs runtime support for
+isolation, reproducibility, scheduling, and cost control" (§7.5,
+"Distributed Compute Fabrics for Agents") — machinery this repo doesn't
+need because it runs one `dev` on one task on one branch at a time by
+design, but the underlying need (no two people silently working the same
 surface) is met exactly the same way, at the scale this repo actually
 operates at: one task locked In Progress, one branch per feature.
 
@@ -193,10 +211,15 @@ inside its **autonomy envelope** (`dev.md`) — deciding freely on
 reversible work, raising a **Consultation Request Pack** before anything
 destructive/hard-to-reverse. Once a consultation is resolved, `dev` rolls
 the *decision itself* back into `plan.md`/`docs/index.html` (not just a
-note in its own Lição aprendida) — the book calls skipping this "Brief
-Rot" (Ch4.6.8): a decision that only lives in chat/agent-notes leaves the
-Mission Brief lying to the next reader. On completion, `dev`'s report
-includes a minimal work-artifact + evidence summary (what changed, what
+note in its own Lição aprendida) — this repo's name for skipping that
+step is "Brief Rot": a decision that only lives in chat/agent-notes
+leaves the Mission Brief lying to the next reader. The book's own,
+narrower version of this requirement points the same direction: feedback
+and clarifications exchanged with an agent "must be incorporated back
+into the BriefingScript as versioned updates" (§4.2.2) — a brief that
+doesn't absorb its own resolutions stops being the source of truth. On
+completion, `dev`'s report includes a minimal work-artifact + evidence
+summary (what changed, what
 it already checked) — that summary is itself the Handoff Contract into
 step 3.6.
 
@@ -206,10 +229,12 @@ receives that summary and tests against acceptance criteria.
   the `docs/qa-report/*.html` verdict + `KANBAN.md` state). Continue.
 - **Fail** → back to `dev` **exactly once** with the QA report. Still
   failing → **stop**, leave the task In Progress with a note, report to
-  the user. *Why bounded at one retry:* this is the book's "Review loop
-  with bounded iterations" pattern (Ch6.7.9) — after N rejections,
-  escalate to a human instead of looping forever. N=1 here, proportional
-  to this repo's scale.
+  the user. *Why bounded at one retry:* this repo's own bounded-escalation
+  convention — after one rejection, stop and hand the decision to a human
+  rather than looping forever. It's in the same spirit as the book's call
+  for human-in-the-loop control that can pause or "stop low-value work
+  without restarting the whole loop" (§7.2), just enforced as a hard N=1
+  here, proportional to this repo's scale.
 
 **3.7 — Reflect the result.** Sincronização again (T\d{3} `[x]` → drops
 out of In Progress automatically) or, for `A\d{3}`, move the line to Done
@@ -234,7 +259,13 @@ days before it becomes integration-ready as a whole.
 Trigger: `/quick-task` (small, spec-less fixes), or `/meeting` → Modo
 "Criar nova tarefa" → "A partir de um relatório existente" followed by
 `/kanban-start` (when the fix should still show up as a normal avulsa
-task on the board with full traceability to its source report).
+task on the board with full traceability to its source report). The two
+entry points aren't identical past step 4.5: `/quick-task` explicitly
+tells `meeting` to stop before its own step 9 (Retrospectiva), so the
+combined flow gets exactly one, at `/kanban-start`'s end. The manual
+`/meeting` call has no such instruction — its own Retrospectiva runs in
+full before the separately-invoked `/kanban-start` adds its own, so this
+entry point runs two.
 
 **4.1 — Pick the report source.** One of the five "Origem:
 `docs/*-report/`" sub-routines in `meeting/SKILL.md`: persona
@@ -258,7 +289,10 @@ one or creates a new one, same as any other new task.
 
 **4.5 — Sincronização, then hand off into Path 3** (`/kanban-start`) for
 that task — same merge-ready gate, same bounded QA retry, same commit
-flow. No separate mechanism: a problem-report-derived task is just a task.
+flow. No separate mechanism: a problem-report-derived task is just a
+task. Via `/quick-task`, this step also skips `meeting`'s own
+Retrospectiva (see trigger note above); via the manual `/meeting` entry
+point, `meeting`'s Retrospectiva runs here before Path 3 starts.
 
 ---
 
@@ -300,39 +334,52 @@ here.
 
 ## What was deliberately not built
 
-- **A Continuity Pack, a conflict manager, or fleet-scale pipeline
-  machinery.** These are explicitly fleet-scale concerns in the book
-  (many AI teammates, many humans, planned integration windows) — this
-  repo runs one `dev` on one task at a time by design (Path 3, step 3.4).
-  The lightweight equivalents that solve the same underlying problem —
-  `KANBAN.md`'s In Progress lock, one branch per feature, the Handoff
-  Contract already carried in every subagent prompt — already exist and
-  are named above. Build the heavier versions only if this repo starts
-  running multiple agents concurrently on the same feature.
+- **Fleet-scale multi-agent runtime machinery** (shared-workspace
+  isolation, scheduling, cost control across concurrently running agents).
+  The book flags this as an open research gap, not a solved pattern to
+  copy: multi-agent SE "needs runtime support for isolation,
+  reproducibility, scheduling, and cost control" (§7.5) — this repo runs
+  one `dev` on one task at a time by design (Path 3, step 3.4), so it
+  doesn't need that machinery yet. The lightweight equivalents that solve
+  the same underlying problem — `KANBAN.md`'s In Progress lock, one branch
+  per feature, the Handoff Contract already carried in every subagent
+  prompt — already exist and are named above. Build the heavier versions
+  only if this repo starts running multiple agents concurrently on the
+  same feature.
 - **Autonomy-envelope boilerplate on every agent.** Only `dev` touches
   infra/schema/prod-adjacent surfaces, so only `dev.md` carries an
   explicit autonomy envelope and Consultation Request Pack structure.
   Copying that section onto `product-owner`/`designer`/`qa`/others would
-  be the book's own named anti-pattern — "poetic or exhaustive mentorship
-  guidelines" applied where the risk doesn't warrant the ceremony.
+  be ceremony applied where the risk doesn't warrant it — the book itself
+  frames its own engineering-activities list as scaffold, not a checklist
+  to apply uniformly regardless of a project's actual risk profile ("this
+  section does not present a definitive or exhaustive list," §5).
 - **New artifact file types** (a `mission-brief.md`, a `handoff/`
   directory, etc.). Every artifact above reuses a file this repo already
-  has. The book itself warns that coordination rigor must be
-  proportional — over-protocol is a real failure mode in a project this
-  size, not a missing feature.
-- **The full Merge-Readiness Pack field set.** The book's version (Ch1
-  §1.6) also includes a plan ledger (conceptual plan vs. executed plan,
-  with divergence + rationale), an exploration archive (progressive
-  disclosure of dead ends tried), and an explicit rollback plan. This
-  repo's version is just `docs/qa-report/*.html` + `KANBAN.md` state —
-  what changed and whether it passed, not the fuller decision trail. Add
-  the missing fields if a task's blast radius ever justifies the extra
-  ceremony; most tasks here don't.
-- **CI-deterministic enforcement of the QA gate itself.** The book names
-  this exact risk (Ch8.6.4, "Using probabilistic guidance for mandatory
-  procedures"): calling a gate "obrigatório" in a skill file is still
-  prose an agent executes, not code that blocks a merge. This repo's
-  actual deterministic layer is narrower than the process layer: CI
+  has. SASE itself is explicit that rigid, universal process is the wrong
+  target — it "acknowledges that SE is a 'wicked problem' where rigid,
+  universal processes are futile" (p.3) — so adding artifact types this
+  repo's scale doesn't need would cut against the framework's own premise,
+  not fulfill it.
+- **The full Merge-Readiness Pack field set.** The book's five MRP
+  criteria (§4.2.4) are Functional Completeness, Sound Verification,
+  Exemplary SE Hygiene, Clear Rationale and Communication, and Full
+  Auditability — each with its own evidence type (end-to-end test
+  results; the test *plan* plus new test cases, not just pass/fail;
+  static-analysis/lint/complexity reports; a human-readable rationale
+  summary; a frozen, versioned trail of the exact BriefingScript/
+  MentorScript/trajectory used). This repo's version is just
+  `docs/qa-report/*.html` + `KANBAN.md` state — a pass/fail verdict, not
+  that fuller evidence bundle. Add the missing fields if a task's blast
+  radius ever justifies the extra ceremony; most tasks here don't.
+- **CI-deterministic enforcement of the QA gate itself.** This repo names
+  its own risk here, since the book doesn't discuss CI enforcement of a
+  process gate directly: calling a gate "obrigatório" in a skill file is
+  still prose an agent executes, not code that blocks a merge. The book's
+  related, more general observation is that no mainstream agentic tooling
+  today provides "a unified, interlinked revision control system" for
+  process artifacts the way it does for code (§6.1) — this repo's actual
+  deterministic layer is narrower than the process layer: CI
   (`.github/workflows/ci.yml`) enforces lint + Django tests + the
   security self-check on every push/PR via `run_tests.sh`, but nothing
   in CI verifies that a `qa-report` was produced for a given task before

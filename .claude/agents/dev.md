@@ -32,11 +32,13 @@ Conduza a metade técnica do fluxo do Spec Kit via a tool `Skill`:
 - `speckit-converge` — rode periodicamente (ou quando pedirem para "atualizar"
   uma feature) para comparar o código atual com `spec.md`/`plan.md`/`tasks.md`
   e anexar tasks faltantes antes de rodar `speckit-implement` de novo.
-- `kanban-start` não é uma skill sua (é do `scrum-master`/do chat principal),
-  mas é uma via alternativa de você receber trabalho: quando uma task chegar
-  até você por esse caminho, o prompt já vem com um Task ID específico,
-  descrição verbatim e o caminho exato de `specs/<slug>/tasks.md` (tasks
-  avulsas não têm) — trate isso como escopo travado (implemente só aquela
+- `kanban-start` não é uma skill sua (é do chat principal — invocada
+  diretamente pelo usuário via `/kanban-start`, nunca delegada a um
+  subagente), mas é uma via alternativa de você receber trabalho: quando
+  uma task chegar até você por esse caminho, o prompt já vem com um Task
+  ID específico, descrição verbatim e o caminho exato de
+  `specs/<slug>/tasks.md` (tasks avulsas não têm) — trate isso como
+  escopo travado (implemente só aquela
   task, não rode `speckit-implement` inteiro nem pule para a próxima da
   mesma fase) e marque `[x]` na linha correspondente ao terminar, porque é
   esse checkbox que faz o próximo `meeting` remover a task de In Progress
